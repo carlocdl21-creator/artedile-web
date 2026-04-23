@@ -169,6 +169,53 @@
         footer .section-title { color: white; }
         strong { color: var(--blue-light); }
         footer a { color: white; text-decoration: none; }
+        
+/* SOCIAL LINKS */
+.social-link {
+    width: 160px;
+    height: 160px;
+    background: white;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 74, 153, 0.15);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    text-decoration: none;
+    font-weight: 800;
+    color: var(--blue-primary);
+    transition: 0.35s;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+}
+
+.social-link i {
+    font-size: 2.8rem;
+}
+
+.social-link span {
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.social-link:hover {
+    transform: translateY(-8px) scale(1.05);
+    color: white;
+}
+
+/* COLORI HOVER */
+.social-link.instagram:hover {
+    background: radial-gradient(circle at top,
+        #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+}
+
+.social-link.linkedin:hover {
+    background: linear-gradient(135deg, #0a66c2, #004182);
+}
+
     </style>
 </head>
 <body>
@@ -264,7 +311,25 @@
             </div>
         </div>
     </section>
-
+    
+<!-- SOCIAL MEDIA -->
+<section id="social">
+    <div class="container text-center" data-aos="fade-up">
+        <h2 class="section-title">Seguici su <span>Social</span></h2>
+        <!-- qua inserire link instagram -->
+        <div class="d-flex justify-content-center gap-5 mt-4">
+            <a href="https://www.instagram.com/" target="_blank" class="social-link instagram">
+                <i class="fab fa-instagram"></i>
+                <span>Instagram</span>
+            </a>
+            <!-- qua inserire link di linkedin  -->
+            <a href="https://www.linkedin.com/" target="_blank" class="social-link linkedin">
+                <i class="fab fa-linkedin-in"></i>
+                <span>LinkedIn</span>
+            </a>
+        </div>
+    </div>
+</section>
     <footer id="contatti">
         <div class="container">
             <h2 class="section-title text-center">Iniziamo un <span>Progetto</span></h2>
