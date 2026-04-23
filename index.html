@@ -70,62 +70,76 @@
         /* HERO SECTION AGGIORNATA */
        
         
+
 .hero {
-    height: 95vh;
+    min-height: 70vh;
+    padding: 120px 0 100px;
+
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
 
     background:
-        radial-gradient(
-            circle at center,
-            rgba(0, 123, 255, 0.25) 0%,
-            rgba(0, 74, 153, 0.65) 45%,
-            rgba(0, 20, 40, 0.95) 100%
+        linear-gradient(
+            rgba(0, 40, 80, 0.45),
+            rgba(0, 40, 80, 0.65)
         ),
-        url('https://images.unsplash.com/photo-1504307651254-35682ff9355d?q=80&w=2070&auto=format&fit=crop')
+        url('https://images.unsplash.com/photo-1581091870627-3f9f3c3023c5?q=80&w=2070&auto=format&fit=crop')
         center / cover no-repeat;
 
     position: relative;
     overflow: hidden;
 }
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,0.025) 1px,
+            transparent 1px
+        );
+    background-size: 80px 80px;
+
+    z-index: 0;
+}
+
+.hero .hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero h1 { 
+    font-family: 'Montserrat', sans-serif; 
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 900;
+    margin-bottom: 15px;
+    letter-spacing: -1.5px;
+    text-transform: uppercase;
+
+    color: #ffffff;              /* TESTO PIENO, NITIDO */
+    text-shadow: 0 6px 20px rgba(0, 0, 0, 0.45); /* solo profondità, NO blur */
+}
 
 
 
         
-.hero h1 { 
-    font-family: 'Montserrat', sans-serif; 
-    font-size: clamp(2.8rem, 7vw, 5rem);
-    font-weight: 900;
-    margin-bottom: 10px;
-    letter-spacing: -2px;
-    text-transform: uppercase;
-
-    background: linear-gradient(
-        180deg,
-        #ffffff 0%,
-        #dbe9f6 50%,
-        #ffffff 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-
-    text-shadow:
-        0 10px 40px rgba(0, 0, 0, 0.45),
-        0 0 60px rgba(0, 123, 255, 0.25);
+.hero-subtitle {
+    color: #e6f0fa;
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 auto 40px;
 }
 
-
-        .hero-subtitle {
-            color: #d1e3f8;
-            font-weight: 700;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            font-size: 1.1rem;
-            margin-top: 15px;
-            text-shadow: 0px 2px 5px rgba(0,0,0,0.3);
-        }
 
         .btn-call {
             background: var(--blue-primary);
@@ -241,14 +255,23 @@
             </div>
         </div>
     </nav>
-    <header id="home" class="hero">
-        <div class="container" data-aos="zoom-out" data-aos-duration="1500">
-            <h1>ARTEDILE</h1>
-            <div class="hero-subtitle">Innovative Energy & Infrastructure</div>
-            <a href="tel:+393891495308" class="btn-call">CONTATTACI</a>
-        </div>
-    </header>
+    
+<header id="home" class="hero">
+    <div class="container hero-content" data-aos="zoom-out" data-aos-duration="1500">
 
+        <h1>ARTEDILE</h1>
+
+        <div class="hero-subtitle">
+            <strong> IMPIANTI ENERGETICI & COSTRUZIONI EDILI</strong> 
+        </div>
+
+        <div class="hero-actions">
+            <a href="#contatti" class="btn-call primary">Contattaci</a>
+            <a href="#opere" class="btn-call ghost">I nostri lavori</a>
+        </div>
+
+    </div>
+</header>
     <section id="storia">
         <div class="container" data-aos="fade-up">
             <h2 class="section-title">La Nostra <span>Storia</span></h2>
