@@ -71,6 +71,7 @@
        
         
 
+
 .hero {
     min-height: 70vh;
     padding: 120px 0 100px;
@@ -82,15 +83,16 @@
 
     background:
         linear-gradient(
-            rgba(0, 40, 80, 0.45),
-            rgba(0, 40, 80, 0.65)
+            rgba(0, 80, 140, 0.30),
+            rgba(0, 80, 140, 0.45)
         ),
-        url('https://images.unsplash.com/photo-1581091870627-3f9f3c3023c5?q=80&w=2070&auto=format&fit=crop')
+        url('https://images.unsplash.com/photo-1509391366360-fe5bb6058826?q=80&w=2070&auto=format&fit=crop')
         center / cover no-repeat;
 
     position: relative;
     overflow: hidden;
 }
+
 .hero::before {
     content: "";
     position: absolute;
@@ -116,20 +118,17 @@
     z-index: 1;
 }
 
-.hero h1 { 
-    font-family: 'Montserrat', sans-serif; 
-    font-size: clamp(3rem, 6vw, 5.5rem);
+
+.hero h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(3.4rem, 6vw, 5.8rem);
     font-weight: 900;
-    margin-bottom: 15px;
-    letter-spacing: -1.5px;
+    letter-spacing: -1.4px;
     text-transform: uppercase;
 
-    color: #ffffff;              /* TESTO PIENO, NITIDO */
-    text-shadow: 0 6px 20px rgba(0, 0, 0, 0.45); /* solo profondità, NO blur */
+    color: #ffffff;
+    text-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
-
-
-
         
 .hero-subtitle {
     color: #e6f0fa;
@@ -262,7 +261,7 @@
         <h1>ARTEDILE</h1>
 
         <div class="hero-subtitle">
-         Innovative Energy & Infrastructure
+            INNOVATIVE ENERGY & INFRASTRUCTURE
         </div>
 
         <div class="hero-actions">
