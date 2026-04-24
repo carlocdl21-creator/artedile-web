@@ -238,6 +238,7 @@
                     <li class="nav-item"><a class="nav-link" href="#attestazioni"><i class="fas fa-certificate"></i>ATTESTAZIONI</a></li>
                     <li class="nav-item"><a class="nav-link" href="#storia"><i class="fas fa-history"></i>STORIA</a></li>
                     <li class="nav-item"><a class="nav-link" href="#social"><i class="fas fa-share-alt"></i>SOCIAL</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#lavoraconnoi"><i class="fas fa-briefcase me-2"></i>Lavora con noi</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contatti"><i class="fas fa-phone-alt"></i>CONTATTI</a></li>
                 </ul>
             </div>
@@ -343,16 +344,18 @@
         </div>
     </div>
 </section>
-    <section id="attestazioni">
+<section id="attestazioni">
     <div class="container text-center">
         <h2 class="section-title">Qualità Certificata <span></span></h2>
+        
         <div class="row g-4 justify-content-center">
+            
             <div class="col-md-4" data-aos="fade-up">
                 <a href="soa_artedile.pdf" target="_blank" class="text-decoration-none">
                     <div class="cert-box">
                         <i class="fas fa-file-pdf fa-3x text-primary mb-4"></i>
                         <h4 class="fw-bold">ATTESTAZIONE SOA</h4>
-                        <p class="small opacity-50 mb-3">CATEGORIA OG1 - OG11</p>
+                        <p class="small opacity-50 mb-3"></p>
                         <div class="text-primary fw-bold small">
                             <i class="fas fa-download me-2"></i>SCARICA / VISUALIZZA
                         </div>
@@ -361,11 +364,11 @@
             </div>
 
             <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <a href="soa_artedile.pdf" target="_blank" class="text-decoration-none">
+                <a href="iso_artedile.pdf" target="_blank" class="text-decoration-none">
                     <div class="cert-box">
                         <i class="fas fa-medal fa-3x text-primary mb-4"></i>
                         <h4 class="fw-bold">CERTIFICAZIONI ISO</h4>
-                        <p class="small opacity-50 mb-3">9001 • 14001 • 45001</p>
+                        <p class="small opacity-50 mb-3"></p>
                         <div class="text-primary fw-bold small">
                             <i class="fas fa-download me-2"></i>SCARICA / VISUALIZZA
                         </div>
@@ -373,8 +376,20 @@
                 </a>
             </div>
 
-        </div>
-    </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+                <a href="whitelist_artedile.pdf" target="_blank" class="text-decoration-none">
+                    <div class="cert-box">
+                        <i class="fas fa-balance-scale fa-3x text-primary mb-4"></i>
+                        <h4 class="fw-bold">WHITE LIST</h4>
+                        <p class="small opacity-50 mb-3"></p>
+                        <div class="text-primary fw-bold small">
+                            <i class="fas fa-download me-2"></i>SCARICA / VISUALIZZA
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div> </div>
 </section>
    <section id="storia">
     <div class="container" data-aos="fade-up">
@@ -410,7 +425,96 @@
             </div>
         </div>
     </section>
+<section id="lavoraconnoi" class="py-5 bg-light">
+    <div class="container" data-aos="fade-up">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Lavora con <span>Noi</span></h2>
+            <p class="opacity-75">Scegli come unirti alla nostra squadra</p>
+        </div>
 
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion shadow-sm" id="accordionLavoro">
+                    
+                    <div class="accordion-item border-0 mb-3 rounded overflow-hidden">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold py-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInvioCV">
+                                <i class="fas fa-paper-plane me-3 text-primary"></i> INVIA IL TUO CV (CANDIDATURA SPONTANEA)
+                            </button>
+                        </h2>
+                        <div id="collapseInvioCV" class="accordion-collapse collapse" data-bs-parent="#accordionLavoro">
+                            <div class="accordion-body bg-white p-4">
+                                <form action="invio_cv.php" method="POST" enctype="multipart/form-data">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">NOME</label>
+                                            <input type="text" class="form-control" name="nome" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">COGNOME</label>
+                                            <input type="text" class="form-control" name="cognome" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">EMAIL</label>
+                                            <input type="email" class="form-control" name="email" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">CARICA CV (PDF/WORD)</label>
+                                            <input type="file" class="form-control" name="cv_file" accept=".pdf,.doc,.docx" required>
+                                            <div class="form-text">Il file verrà inviato a: info@artedileimpresa.it</div>
+                                        </div>
+                                        <div class="col-12 text-center mt-4">
+                                            <button type="submit" class="btn btn-primary px-5 text-uppercase fw-bold">Invia Candidatura</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 rounded overflow-hidden">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold py-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePosizioni">
+                                <i class="fas fa-briefcase me-3 text-primary"></i> POSIZIONI APERTE
+                            </button>
+                        </h2>
+                        <div id="collapsePosizioni" class="accordion-collapse collapse" data-bs-parent="#accordionLavoro">
+                            <div class="accordion-body bg-white p-4">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">Operaio Edile Specializzato</h6>
+                                            <small class="text-muted">Sede: Milano - Full Time</small>
+                                        </div>
+                                        <span class="badge bg-primary rounded-pill">1 Posto</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">Idraulico / Installatore Impianti</h6>
+                                            <small class="text-muted">Sede: Milano - 1 Anno di Esperienza</small>
+                                        </div>
+                                        <span class="badge bg-primary rounded-pill">1 Posto</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">Geometra di Cantiere</h6>
+                                            <small class="text-muted">Gestione contabilità e squadre</small>
+                                        </div>
+                                        <span class="badge bg-primary rounded-pill">1 Posto</span>
+                                    </li>
+                                </ul>
+                                <p class="mt-4 small text-center opacity-75 italic">
+                                    Se non trovi una posizione adatta, usa il modulo sopra per una candidatura spontanea.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> </div>
+        </div>
+    </div>
+</section>
+</section>
     <footer id="contatti">
         <div class="container">
             <h2 class="section-title text-center"> Diamo una svolta  <span> Insieme</span></h2>
