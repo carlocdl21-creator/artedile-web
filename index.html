@@ -1,564 +1,1343 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARTEDILE</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARTEDILE — Edilizia & Energia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root {
+    --blue:       #1A4B8C;
+    --blue-mid:   #2563B0;
+    --blue-light: #4A90D9;
+    --sky:        #A8C8F0;
+    --sky-pale:   #D6E8F9;
+    --white:      #FFFFFF;
+    --off-white:  #F4F8FC;
+    --grey-light: #E8EEF5;
+    --grey-mid:   #B0BEC5;
+    --grey-dark:  #5A6A7A;
+    --dark:       #1A2332;
+    --accent:     #2980B9;
+  }
 
-    <style>
-        :root {
-            --bg-deep: #ffffff;          /* Bianco */
-            --card-navy: #f0f4f8;        /* Blu chiarissimo per le card */
-            --blue-primary: #004a99;     /* Blu Istituzionale */
-            --blue-light: #007bff;       /* Blu Acceso */
-            --text-main: #05080b;        /* Testo scuro */
-        }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--white);
+    color: var(--dark);
+    overflow-x: hidden;
+  }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            scroll-behavior: smooth;
-        }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--grey-light); }
+  ::-webkit-scrollbar-thumb { background: var(--blue-mid); }
 
-        /* NAVBAR */
-        .navbar {
-            background: rgba(255, 255, 255, 0.98);
-            border-bottom: 1px solid rgba(0, 74, 153, 0.2);
-            padding: 12px 0;
-            backdrop-filter: blur(10px);
-        }
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5vw;
+    height: 72px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(26,75,140,0.1);
+    transition: all .3s;
+    box-shadow: 0 2px 20px rgba(26,75,140,0.06);
+  }
 
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.85rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--blue);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .nav-logo span { color: var(--blue-light); }
 
-        .logo-img {
-            height: 45px;
-            width: auto;
-        }
+  .nav-links {
+    display: flex; gap: 2.2rem; list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--grey-dark);
+    text-decoration: none;
+    transition: color .25s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 2px; background: var(--blue-mid);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .3s;
+  }
+  .nav-links a:hover { color: var(--blue); }
+  .nav-links a:hover::after { transform: scaleX(1); }
 
-        .logo-text {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 1.6rem;
-            color: var(--blue-primary) !important;
-            letter-spacing: -0.5px;
-            text-transform: uppercase;
-        }
+  .hamburger {
+    display: none; flex-direction: column; gap: 5px; cursor: pointer;
+    background: none; border: none; padding: 4px;
+  }
+  .hamburger span { display: block; width: 26px; height: 2px; background: var(--blue); transition: .3s; }
 
-        .nav-link {
-            color: var(--text-main) !important;
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-align: center;
-            transition: 0.3s;
-            opacity: 0.7;
-        }
+  /* ─── HERO ─── */
+  #home {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    position: relative; overflow: hidden;
+    padding-top: 72px;
+    background: #0d1a2e;
+  }
 
-        .nav-link i { display: block; font-size: 1.3rem; margin-bottom: 4px; color: var(--blue-primary); }
-        .nav-link:hover { opacity: 1; transform: translateY(-2px); color: var(--blue-light) !important; }
+  .hero-photo-wrap {
+    position: absolute; inset: -8%;
+    z-index: 0;
+    will-change: transform;
+  }
 
-        /* HERO SECTION */
-        .hero {
-            height: 95vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            background-color: #001e3c; /* Fallback color */
-        }
+  .hero-photo-main {
+    position: absolute; inset: 0;
+    background: url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1800&q=85') center/cover no-repeat;
+    transform-origin: center center;
+    animation: kenBurns 18s ease-in-out infinite alternate;
+    will-change: transform;
+  }
 
-        /* Immagine di sfondo sfocata */
-        .hero::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image: url('hero-artedile.png'); 
-            background-size: cover;
-            background-position: center;
-            filter: blur(5px);
-            transform: scale(1.1); /* Evita bordi bianchi dovuti alla sfocatura */
-            z-index: 1;
-        }
+  @keyframes kenBurns {
+    0%   { transform: scale(1.08) translate(0px, 0px); }
+    50%  { transform: scale(1.13) translate(-12px, -6px); }
+    100% { transform: scale(1.10) translate(10px, 4px); }
+  }
 
-        /* Overlay per leggibilità */
-        .hero::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(
-                rgba(0, 30, 60, 0.5),
-                rgba(0, 74, 153, 0.4)
-            );
-            z-index: 2;
-        }
+  .hero-overlay-base {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(
+      105deg,
+      rgba(10, 20, 40, 0.82) 0%,
+      rgba(15, 30, 60, 0.55) 45%,
+      rgba(26, 75, 140, 0.20) 75%,
+      rgba(74, 144, 217, 0.08) 100%
+    );
+  }
 
-        .hero .container {
-            position: relative;
-            z-index: 3;
-        }
+  .hero-light-streak {
+    position: absolute; inset: 0; z-index: 2;
+    background: radial-gradient(ellipse 60% 40% at 72% 38%,
+      rgba(168, 200, 240, 0.18) 0%,
+      rgba(74, 144, 217, 0.07) 40%,
+      transparent 70%
+    );
+    animation: lightPulse 6s ease-in-out infinite alternate;
+    will-change: opacity, transform;
+  }
+  @keyframes lightPulse {
+    0%   { opacity: 0.6; transform: translate(0px, 0px) scale(1); }
+    100% { opacity: 1.0; transform: translate(15px, -8px) scale(1.05); }
+  }
 
-        .hero h1 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: clamp(3.4rem, 8vw, 6.5rem);
-            font-weight: 900;
-            letter-spacing: -1.4px;
-            text-transform: uppercase;
-            color: #ffffff;
-            text-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
-            margin-bottom: 10px;
-        }
-        
-        .hero-subtitle {
-            color: #e6f0fa;
-            font-size: 1.2rem;
-            font-weight: 700;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            max-width: 800px;
-            margin: 0 auto 30px;
-            text-shadow: 0px 2px 5px rgba(0,0,0,0.4);
-        }
+  .hero-dust {
+    position: absolute; inset: 0; z-index: 2;
+    background-image:
+      radial-gradient(circle 2px at 20% 35%, rgba(168,200,240,0.6) 0%, transparent 100%),
+      radial-gradient(circle 1px at 65% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(circle 2px at 80% 65%, rgba(74,144,217,0.5) 0%, transparent 100%),
+      radial-gradient(circle 1px at 45% 75%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(circle 1.5px at 10% 80%, rgba(168,200,240,0.4) 0%, transparent 100%),
+      radial-gradient(circle 2px at 90% 15%, rgba(255,255,255,0.35) 0%, transparent 100%),
+      radial-gradient(circle 1px at 33% 55%, rgba(74,144,217,0.4) 0%, transparent 100%),
+      radial-gradient(circle 2px at 58% 88%, rgba(168,200,240,0.5) 0%, transparent 100%);
+    animation: dustDrift 12s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes dustDrift {
+    0%   { transform: translate(0, 0); opacity: 0.7; }
+    100% { transform: translate(-18px, -12px); opacity: 1; }
+  }
 
-        .btn-call {
-            background: var(--blue-primary);
-            color: white !important;
-            font-weight: 800;
-            padding: 18px 45px;
-            border-radius: 50px; 
-            text-decoration: none;
-            display: inline-block;
-            transition: 0.4s;
-            margin: 10px;
-            box-shadow: 0 10px 30px rgba(0, 74, 153, 0.3);
-            border: 2px solid var(--blue-primary);
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 2px solid white;
-        }
+  .hero-vignette {
+    position: absolute; inset: 0; z-index: 3;
+    background: radial-gradient(ellipse 90% 90% at 50% 50%,
+      transparent 55%,
+      rgba(5, 12, 25, 0.5) 100%
+    );
+    pointer-events: none;
+  }
 
-        .btn-call:hover { 
-            transform: scale(1.05); 
-            box-shadow: 0 15px 40px rgba(0, 74, 153, 0.5); 
-            background: white; 
-            color: var(--blue-primary) !important; 
-            border-color: white;
-        }
+  .hero-texture {
+    position: absolute; inset: 0; z-index: 3;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(26, 75, 140, 0.02) 3px,
+      rgba(26, 75, 140, 0.02) 4px
+    );
+    pointer-events: none;
+  }
 
-        /* SEZIONI */
-        section { padding: 120px 0; }
-        .section-title { font-family: 'Montserrat', sans-serif; font-weight: 800; text-transform: uppercase; margin-bottom: 60px; }
-        .section-title span { color: var(--blue-primary); }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 3;
+    background-image:
+      linear-gradient(rgba(168,200,240,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(168,200,240,0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
 
-        .cert-box {
-            background: var(--card-navy);
-            border: 1px solid rgba(0, 74, 153, 0.1);
-            padding: 50px 30px;
-            border-radius: 25px; 
-            transition: 0.4s;
-            text-align: center;
-        }
-        .cert-box:hover { border-color: var(--blue-primary); transform: translateY(-12px); background: #e2eaf1; }
+  .hero-line {
+    position: absolute; z-index: 4;
+    bottom: 115px; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(74,144,217,0.4) 20%, rgba(74,144,217,0.4) 80%, transparent 100%);
+    animation: lineGlow 4s ease-in-out infinite alternate;
+  }
+  @keyframes lineGlow {
+    0%   { opacity: 0.4; }
+    100% { opacity: 0.9; }
+  }
 
-        .work-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
-        .work-item {
-            height: 280px; border-radius: 20px; background-size: cover; background-position: center;
-            border: 1px solid rgba(0,0,0,0.05); transition: 0.5s; display: flex; align-items: flex-end; padding: 20px;
-        }
-        .work-item:hover { border-color: var(--blue-primary); transform: scale(1.03); }
-        .work-item span { background: var(--blue-primary); color: white; padding: 6px 15px; border-radius: 50px; font-weight: 800; font-size: 0.8rem; }
+  .hero-content {
+    position: relative; z-index: 5;
+    padding: 0 10vw;
+    max-width: 760px;
+  }
 
-        footer { background: #001e3c !important; border-top: 4px solid var(--blue-primary); padding: 80px 0; color: white; }
-        footer .section-title { color: white; }
-        strong { color: var(--blue-light); }
-        footer a { color: white; text-decoration: none; }
-        
-        /* SOCIAL LINKS */
-        .social-link {
-            width: 160px;
-            height: 160px;
-            background: white;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 74, 153, 0.15);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            font-weight: 800;
-            color: var(--blue-primary);
-            transition: 0.35s;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
-        }
+  .hero-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .72rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    animation: fadeUp .8s ease both;
+  }
+  .hero-label::before {
+    content: ''; display: inline-block;
+    width: 40px; height: 2px; background: var(--blue-light);
+  }
 
-        .social-link i { font-size: 2.8rem; }
-        .social-link span { text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; }
-        .social-link:hover { transform: translateY(-8px) scale(1.05); color: white; }
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 7vw, 6.5rem);
+    font-weight: 300;
+    line-height: 1.0;
+    color: var(--white);
+    margin-bottom: 1.5rem;
+    animation: fadeUp .8s .15s ease both;
+  }
+  h1 strong {
+    font-weight: 700; color: var(--sky);
+    display: block;
+  }
 
-        .social-link.instagram:hover {
-            background: radial-gradient(circle at top, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
-        }
+  .hero-sub {
+    font-size: 1rem;
+    color: rgba(214, 232, 249, 0.75);
+    font-weight: 300;
+    line-height: 1.8;
+    max-width: 480px;
+    margin-bottom: 2.8rem;
+    animation: fadeUp .8s .3s ease both;
+  }
 
-        .social-link.linkedin:hover {
-            background: linear-gradient(135deg, #0a66c2, #004182);
-        }
-    </style>
+  .hero-ctas {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    animation: fadeUp .8s .45s ease both;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 14px 36px;
+    background: var(--blue-light);
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: .82rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all .3s;
+    position: relative; overflow: hidden;
+    box-shadow: 0 8px 30px rgba(74,144,217,0.35);
+  }
+  .btn-primary:hover {
+    background: var(--blue-mid);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 40px rgba(74,144,217,0.5);
+  }
+
+  .btn-outline {
+    display: inline-block;
+    padding: 13px 34px;
+    border: 2px solid rgba(168,200,240,0.6);
+    color: var(--sky);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 600;
+    font-size: .82rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all .3s;
+    backdrop-filter: blur(4px);
+  }
+  .btn-outline:hover {
+    background: rgba(74,144,217,0.2);
+    border-color: var(--sky);
+    color: var(--white);
+    transform: translateY(-2px);
+  }
+
+  /* Stats bar */
+  .hero-stats {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    display: flex;
+    border-top: 1px solid rgba(74,144,217,0.2);
+    background: rgba(10,20,40,0.75);
+    backdrop-filter: blur(16px);
+    z-index: 5;
+    animation: fadeUp .8s .6s ease both;
+  }
+  .stat {
+    flex: 1;
+    padding: 1.5rem 3vw;
+    border-right: 1px solid rgba(74,144,217,0.12);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--sky);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: .7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(168,200,240,0.5);
+    margin-top: .3rem;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SECTIONS SHARED ─── */
+  section { padding: 100px 8vw; }
+
+  .section-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .7rem;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--blue-mid);
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 4vw, 3.8rem);
+    font-weight: 300;
+    color: var(--dark);
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+  }
+  .section-title strong { font-weight: 700; color: var(--blue); }
+
+  .section-sub {
+    font-size: .95rem;
+    color: var(--grey-dark);
+    max-width: 560px;
+    line-height: 1.8;
+    margin-bottom: 3.5rem;
+  }
+
+  .divider {
+    width: 60px; height: 2px;
+    background: var(--blue-light);
+    margin: 1.5rem 0 2.5rem;
+  }
+
+  /* ─── OPERE ─── */
+  #opere { background: var(--off-white); }
+
+  .opere-category { margin-bottom: 5rem; }
+
+  .cat-header {
+    display: flex; align-items: center; gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--grey-light);
+  }
+
+  .cat-icon {
+    width: 52px; height: 52px;
+    border: 1px solid var(--blue-light);
+    background: var(--sky-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; flex-shrink: 0;
+  }
+
+  .cat-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 600;
+    color: var(--blue);
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+  }
+
+  .card {
+    position: relative; overflow: hidden;
+    aspect-ratio: 4/3;
+    cursor: pointer;
+  }
+  .card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform .7s ease;
+    filter: brightness(.85) saturate(.8);
+  }
+  .card:hover img { transform: scale(1.08); filter: brightness(.6) saturate(.7); }
+
+  .card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(26,35,50,.9) 0%, transparent 50%);
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.8rem;
+    transition: background .4s;
+  }
+  .card:hover .card-overlay {
+    background: linear-gradient(to top, rgba(26,35,50,.97) 0%, rgba(26,35,50,.35) 100%);
+  }
+  .card-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: .5rem;
+  }
+  .card-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.2;
+  }
+  .card-desc {
+    font-size: .82rem;
+    color: rgba(255,255,255,0.7);
+    margin-top: .6rem;
+    line-height: 1.6;
+    max-height: 0; overflow: hidden;
+    transition: max-height .4s ease;
+  }
+  .card:hover .card-desc { max-height: 100px; }
+
+  /* ─── ATTESTAZIONI ─── */
+  #attestazioni { background: var(--white); }
+
+  .attestazioni-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    justify-content: center;
+  }
+
+  .att-card {
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 30px;
+    background: var(--off-white);
+    border: 1px solid var(--grey-light);
+    border-radius: 8px;
+    transition: all .3s;
+    position: relative; overflow: hidden;
+  }
+  .att-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 0;
+    background: var(--blue-mid);
+    transition: height .4s;
+  }
+  .att-card:hover { border-color: var(--blue-light); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(26,75,140,0.1); }
+  .att-card:hover::before { height: 100%; }
+
+  .att-icon { margin-bottom: 20px; }
+  .att-icon i { font-size: 3rem; color: var(--blue-light); transition: 0.3s; }
+  .att-card:hover .att-icon i { color: var(--blue); }
+
+  .att-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 700;
+    color: var(--dark);
+    margin-bottom: .5rem;
+  }
+  .att-desc { font-size: .83rem; color: var(--grey-dark); line-height: 1.7; margin-bottom: 1rem; }
+
+  .btn-call {
+    padding: 10px 22px;
+    font-size: .8rem;
+    font-weight: 700;
+    border: 1px solid var(--blue-mid);
+    color: var(--blue-mid);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all .3s;
+  }
+  .btn-call:hover { background: var(--blue-mid); color: white; }
+
+  /* ─── STORIA ─── */
+  #storia {
+    background: var(--sky-pale);
+    position: relative; overflow: hidden;
+  }
+  #storia::before {
+    content: 'ARTEDILE';
+    position: absolute; right: -2vw; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18vw; font-weight: 700;
+    color: rgba(26,75,140,0.04);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .storia-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6vw;
+    align-items: center;
+  }
+
+  .storia-img { position: relative; }
+  .storia-img img {
+    width: 100%; aspect-ratio: 4/5;
+    object-fit: cover;
+    filter: brightness(.9) saturate(.8);
+  }
+  .storia-img::before {
+    content: '';
+    position: absolute; top: -16px; left: -16px;
+    right: 16px; bottom: 16px;
+    border: 1px solid rgba(26,75,140,0.2);
+    pointer-events: none; z-index: 0;
+  }
+  .storia-img img { position: relative; z-index: 1; }
+
+  .timeline { margin-top: 2.5rem; position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 0; top: 8px; bottom: 8px;
+    width: 1px; background: rgba(26,75,140,0.2);
+  }
+  .tl-item {
+    padding-left: 2rem; margin-bottom: 2rem;
+    position: relative;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute; left: -4px; top: 6px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--blue-light);
+  }
+  .tl-year {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .7rem; letter-spacing: 3px;
+    color: var(--blue-mid); text-transform: uppercase;
+    margin-bottom: .3rem;
+  }
+  .tl-text { font-size: .9rem; color: var(--grey-dark); line-height: 1.7; }
+
+  /* ─── SOCIAL ─── */
+  #social { background: var(--white); text-align: center; padding: 60px 0; }
+
+  .social-wrapper { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+
+  .social-card {
+    display: flex; align-items: center; text-align: left;
+    text-decoration: none; margin-bottom: 20px; padding: 30px;
+    border: 1px solid var(--grey-light);
+    background: var(--off-white);
+    border-radius: 4px; transition: 0.3s;
+  }
+  .social-card:hover {
+    background: var(--sky-pale);
+    border-color: var(--blue-light);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(26,75,140,0.1);
+  }
+  .social-icon {
+    margin-right: 25px; font-size: 2.2rem;
+    color: var(--blue-light); min-width: 60px; text-align: center;
+  }
+  .social-card:hover .social-icon { color: var(--blue); }
+  .social-name { font-size: 1.4rem; font-weight: 600; color: var(--dark); margin-bottom: 5px; }
+  .social-handle { color: var(--blue-mid); font-size: 0.85rem; margin-bottom: 10px; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 2px; }
+  .social-desc { color: var(--grey-dark); font-size: 0.9rem; line-height: 1.4; }
+  .social-arrow { color: var(--blue-light); font-size: 1.2rem; margin-left: 20px; }
+
+  /* ─── LAVORA ─── */
+  #lavora {
+    background: linear-gradient(135deg, var(--off-white), var(--sky-pale));
+    padding: 6rem 2rem;
+  }
+
+  .lavora-container {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .career-toggle {
+    background: var(--white);
+    border: 1px solid var(--grey-light);
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all .3s;
+  }
+  .career-toggle:hover { border-color: var(--blue-light); box-shadow: 0 8px 25px rgba(26,75,140,0.1); }
+  .toggle-content { display: flex; gap: 1rem; align-items: center; }
+  .toggle-content i { color: var(--blue); }
+  .toggle-content span { color: var(--dark); font-weight: 500; }
+
+  .positions-wrapper { max-height: 0; overflow: hidden; transition: 0.4s; }
+  .positions-wrapper.active { max-height: 500px; margin: 1rem 0; }
+
+  .position-card-modern {
+    background: var(--white);
+    border-left: 3px solid var(--blue-light);
+    border: 1px solid var(--grey-light);
+    border-left: 3px solid var(--blue-light);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    transition: .3s;
+  }
+  .position-card-modern:hover { transform: translateY(-2px); border-color: var(--blue-light); box-shadow: 0 6px 20px rgba(26,75,140,0.08); }
+  .pos-info h4 { color: var(--dark); font-size: 1rem; }
+  .pos-info p { color: var(--grey-dark); font-size: .8rem; margin-top: .2rem; }
+  .pos-status { color: var(--blue-mid); font-size: .75rem; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 2px; text-transform: uppercase; }
+
+  .spontaneous-box {
+    margin-top: 2rem;
+    padding: 2rem;
+    border: 1px solid var(--blue-light);
+    background: var(--white);
+    border-radius: 4px;
+  }
+  .spontaneous-box h4 { color: var(--blue); margin-bottom: .5rem; }
+  .spontaneous-box p { color: var(--grey-dark); font-size: .9rem; line-height: 1.6; }
+
+  .cv-form-container {
+    background: var(--white);
+    padding: 3rem;
+    border-radius: 15px;
+    border: 1px solid var(--grey-light);
+    box-shadow: 0 8px 40px rgba(26,75,140,0.08);
+  }
+  .cv-form-container h3 { color: var(--blue); margin-bottom: 1.5rem; font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; }
+
+  .form-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1rem; margin-bottom: 1rem;
+  }
+
+  input, select, textarea {
+    background: var(--off-white);
+    border: 1px solid var(--grey-light);
+    color: var(--dark);
+    padding: .9rem 1rem;
+    border-radius: 6px;
+    font-family: 'Barlow', sans-serif;
+    font-size: .9rem;
+    transition: border-color .3s;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--blue-light); outline: none; box-shadow: 0 0 0 3px rgba(74,144,217,0.15); }
+  select option { background: var(--white); color: var(--dark); }
+
+  .file-drop-zone {
+    border: 1px dashed var(--blue-light);
+    padding: 2rem;
+    text-align: center;
+    margin: 1rem 0;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: .3s;
+    background: var(--off-white);
+  }
+  .file-drop-zone:hover { background: var(--sky-pale); border-color: var(--blue-mid); }
+  #file-text { color: var(--grey-dark); font-size: .9rem; margin-bottom: .3rem; }
+  #file-info { color: var(--blue-mid); font-size: .8rem; }
+
+  .apply-btn {
+    width: 100%; padding: 1.1rem;
+    background: var(--blue);
+    color: white; border: none;
+    border-radius: 50px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: .9rem;
+    letter-spacing: 3px; text-transform: uppercase;
+    cursor: pointer; transition: all .3s;
+    box-shadow: 0 8px 25px rgba(26,75,140,0.2);
+  }
+  .apply-btn:hover { background: var(--blue-mid); box-shadow: 0 14px 35px rgba(26,75,140,0.3); transform: translateY(-2px); }
+
+  /* ─── CONTATTI ─── */
+  #contatti { background: var(--off-white); padding: 80px 0; }
+
+  .contatti-layout {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 50px; padding: 0 20px;
+  }
+
+  .contact-item {
+    display: flex; align-items: flex-start;
+    margin-bottom: 30px; background: var(--white);
+    padding: 20px; border-radius: 8px;
+    border-left: 3px solid var(--blue-light);
+    box-shadow: 0 2px 15px rgba(26,75,140,0.05);
+  }
+  .contact-icon-box {
+    margin-right: 20px; font-size: 1.5rem;
+    color: var(--blue-light); min-width: 44px;
+  }
+  .contact-item-label { font-weight: 700; color: var(--dark); text-transform: uppercase; font-size: 0.75rem; margin-bottom: 6px; letter-spacing: 1px; font-family: 'Barlow Condensed', sans-serif; }
+  .contact-item-value { color: var(--grey-dark); line-height: 1.7; font-size: 0.92rem; }
+  .contact-item-value a { color: var(--grey-dark); text-decoration: none; transition: color .3s; }
+  .contact-item-value a:hover { color: var(--blue); }
+
+  .contact-form {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--grey-light);
+    box-shadow: 0 8px 40px rgba(26,75,140,0.08);
+  }
+  .contact-form h3 { color: var(--dark); margin-bottom: 25px; font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; }
+
+  .submit-btn {
+    width: 100%; padding: 15px;
+    background: var(--blue); border: none;
+    color: white; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px;
+    cursor: pointer; transition: 0.3s; border-radius: 4px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: .9rem;
+    box-shadow: 0 8px 25px rgba(26,75,140,0.2);
+  }
+  .submit-btn:hover { background: var(--blue-mid); transform: translateY(-2px); box-shadow: 0 14px 35px rgba(26,75,140,0.3); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--dark);
+    border-top: 1px solid rgba(74,144,217,0.2);
+    padding: 3rem 8vw;
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; font-weight: 700;
+    letter-spacing: 4px; color: var(--sky);
+    text-transform: uppercase;
+  }
+  .footer-copy { font-size: .75rem; color: var(--grey-mid); letter-spacing: 1.5px; }
+  .footer-links { display: flex; gap: 2rem; list-style: none; }
+  .footer-links a {
+    font-size: .75rem; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--grey-mid);
+    text-decoration: none; transition: color .25s;
+  }
+  .footer-links a:hover { color: var(--sky); }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
+    background: var(--blue); color: var(--white);
+    padding: 1rem 2rem;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: .85rem; letter-spacing: 2px;
+    text-transform: uppercase;
+    transform: translateY(120px); opacity: 0;
+    transition: all .4s cubic-bezier(.34,1.56,.64,1);
+    border-radius: 4px;
+    box-shadow: 0 8px 30px rgba(26,75,140,0.3);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ─── FADE IN ─── */
+  .fade-in { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 900px) {
+    .nav-links { display: none; flex-direction: column; gap: 0; }
+    .nav-links.open {
+      display: flex; position: fixed; top: 72px; left: 0; right: 0;
+      background: rgba(255,255,255,0.98); backdrop-filter: blur(20px);
+      padding: 2rem 5vw; border-bottom: 1px solid var(--grey-light);
+    }
+    .nav-links.open li { padding: .8rem 0; border-bottom: 1px solid var(--grey-light); }
+    .hamburger { display: flex; }
+    .cards-grid { grid-template-columns: 1fr 1fr; }
+    .storia-layout, .lavora-container, .contatti-layout { grid-template-columns: 1fr; }
+    .storia-img { display: none; }
+    .form-row { grid-template-columns: 1fr; }
+    .hero-stats { position: relative; flex-wrap: wrap; }
+    .stat { flex: 50%; }
+    .hero-content { padding: 0 5vw; }
+  }
+  @media (max-width: 600px) {
+    .cards-grid { grid-template-columns: 1fr; }
+    section { padding: 70px 5vw; }
+    footer { flex-direction: column; text-align: center; }
+  }
+</style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="#home">
-                <img src="Designer.png" alt="Logo" class="logo-img">
-                <span class="logo-text">Artedile</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#home"><i class="fas fa-home"></i>HOME</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#opere"><i class="fas fa-hard-hat"></i>OPERE</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#attestazioni"><i class="fas fa-certificate"></i>ATTESTAZIONI</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#storia"><i class="fas fa-history"></i>STORIA</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#social"><i class="fas fa-share-alt"></i>SOCIAL</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#lavoraconnoi"><i class="fas fa-briefcase me-2"></i>Lavora con noi</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contatti"><i class="fas fa-phone-alt"></i>CONTATTI</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    
-    <header id="home" class="hero">
-        <div class="container" data-aos="zoom-out" data-aos-duration="1500">
-            <h1>ARTEDILE</h1>
-            <p class="hero-subtitle">Innovative Energy & Infrastructure</p>
-            
-            <div class="btn-container">
-                <a href="#contatti" class="btn-call">Contattaci</a>
-                <a href="#opere" class="btn-call btn-outline">I nostri lavori</a>
-            </div>
-        </div>
-    </header>
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#home" class="nav-logo">ARTE<span>DILE</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#opere">Opere</a></li>
+    <li><a href="#attestazioni">Attestazioni</a></li>
+    <li><a href="#storia">Storia</a></li>
+    <li><a href="#social">Social</a></li>
+    <li><a href="#lavora">Lavora con noi</a></li>
+    <li><a href="#contatti">Contatti</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HOME / HERO -->
+<section id="home">
+
+  <!-- Photo with 3D animation layers -->
+  <div class="hero-photo-wrap" id="heroParallax">
+    <div class="hero-photo-main"></div>
+  </div>
+  <div class="hero-overlay-base"></div>
+  <div class="hero-light-streak"></div>
+  <div class="hero-dust"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-texture"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-line"></div>
+
+  <div class="hero-content">
+    <div class="hero-label">Impianti energetici &amp; Edilizia dal 2001</div>
+    <h1>Costruire il <strong>Futuro</strong> con Arte</h1>
+    <p class="hero-sub">
+      Specialisti in impianti energetici, edilizia civile e restauro architettonico. 
+      Ogni progetto è un'opera che dura nel tempo.
+    </p>
+    <div class="hero-ctas">
+      <a href="#opere" class="btn-primary">Scopri le Opere</a>
+      <a href="#contatti" class="btn-outline">Contattaci</a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">60+</div>
+      <div class="stat-label">Anni di esperienza</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">500+</div>
+      <div class="stat-label">Progetti completati</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">12 MW</div>
+      <div class="stat-label">Fotovoltaico installato</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Certificato SOA</div>
+    </div>
+  </div>
+</section>
+
+<!-- OPERE -->
 <section id="opere">
-    <div class="container">
-        <h2 class="section-title">Portfolio <span>Opere</span></h2>
-        <div class="mb-5">
-            <h4 class="mb-4 text-uppercase fw-bold"><i class="fas fa-hammer me-3 text-primary"></i>EDILIZIA</h4>
-            <div class="work-grid">
-                
-                <div id="carouselEdilizia1" class="carousel slide carousel-fade work-item p-0 overflow-hidden" data-bs-ride="carousel" data-bs-interval="2000">
-                    <div class="carousel-inner h-100">
-                        <div class="carousel-item active h-100">
-                            <div class="w-100 h-100" style="background: url(edilizia_1.png) center/cover;"></div>
-                        </div>
-                        <div class="carousel-item h-100">
-                            <div class="w-100 h-100" style="background: url(edilizia_2.png) center/cover;"></div>
-                        </div>
-                        <div class="carousel-item h-100">
-                            <div class="w-100 h-100" style="background: url(edilizia_3.png) center/cover;"></div>
-                        </div>
-                    </div>
-                    <span class="position-absolute m-3" style="z-index: 10;">EDILIZIA</span>
-                </div>
+  <div class="section-label">Il Nostro Portfolio</div>
+  <h2 class="section-title">Le Nostre <strong>Opere</strong></h2>
+  <div class="divider"></div>
 
-                <div id="carouselEdilizia2" class="carousel slide carousel-fade work-item p-0 overflow-hidden" data-bs-ride="carousel" data-bs-interval="2000">
-                    <div class="carousel-inner h-100">
-                        <div class="carousel-item active h-100">
-                            <div class="w-100 h-100" style="background: url(restauro_2.png) center/cover;"></div>
-                        </div>
-                        <div class="carousel-item h-100">
-                            <div class="w-100 h-100" style="background: url(restauro_1.png) center/cover;"></div>
-                        </div>
-                        <div class="carousel-item h-100">
-                            <div class="w-100 h-100" style="background: url(restauro_3.png) center/cover;"></div>
-                        </div>
-                    </div>
-                    <span class="position-absolute m-3" style="z-index: 10;">RESTAURO</span>
-                </div>
-
-                <div id="carouselEdilizia3" class="carousel slide carousel-fade work-item p-0 overflow-hidden" data-bs-ride="carousel" data-bs-interval="2000">
-                    <div class="carousel-inner h-100">
-                        <div class="carousel-item active h-100">
-                            <div class="w-100 h-100" style="background: url(opere_speciali_1.png) center/cover;"></div>
-                        </div>
-                        <div class="carousel-item h-100">
-                            <div class="w-100 h-100" style="background: url(opere_speciali_2.png) center/cover;"></div>
-                        </div>
-                        <div class="carousel-item h-100">
-                            <div class="w-100 h-100" style="background: url(opere_speciali_3.png) center/cover;"></div>
-                        </div>
-                    </div>
-                    <span class="position-absolute m-3" style="z-index: 10;">OPERE STRUTTURALI</span>
-                </div>
-            </div>
-        </div>
-
-        <div>
-            <h4 class="mb-4 text-uppercase fw-bold"><i class="fas fa-bolt me-3 text-primary"></i>IMPIANTI</h4>
-            <div class="work-grid">
-                
-                <div id="carouselImpianti1" class="carousel slide carousel-fade work-item p-0 overflow-hidden" data-bs-ride="carousel" data-bs-interval="2000">
-                    <div class="carousel-inner h-100">
-                        <div class="carousel-item active h-100">
-                            <div class="w-100 h-100" style="background: url(fotovoltaico_1.png) center/cover;"></div>
-                        </div>
-                    </div>
-                    <span class="position-absolute m-3" style="z-index: 10;">Parco Fotovoltaico</span>
-                </div>
-
-                <div id="carouselImpianti2" class="carousel slide carousel-fade work-item p-0 overflow-hidden" data-bs-ride="carousel" data-bs-interval="2000">
-                    <div class="carousel-inner h-100">
-                        <div class="carousel-item active h-100">
-                            <div class="w-100 h-100" style="background: url(impianto_3.jpeg) center/cover;"></div>
-                        </div>
-                    </div>
-                    <span class="position-absolute m-3" style="z-index: 10;">Impianti Meccanici</span>
-                </div>
-
-                <div id="carouselImpianti3" class="carousel slide carousel-fade work-item p-0 overflow-hidden" data-bs-ride="carousel" data-bs-interval="2000">
-                    <div class="carousel-inner h-100">
-                        <div class="carousel-item active h-100">
-                            <div class="w-100 h-100" style="background: url(impianto_1.jpeg) center/cover;"></div>
-                        </div>
-                    </div>
-                    <span class="position-absolute m-3" style="z-index: 10;">Impianti Elettrici</span>
-                </div>
-            </div>
-        </div>
+  <div class="opere-category fade-in">
+    <div class="cat-header">
+      <div class="cat-icon">🏗️</div>
+      <div>
+        <div class="cat-title">Edilizia</div>
+        <div style="font-size:.8rem;color:var(--grey-dark);margin-top:.2rem;">Costruzioni civili, restauri e opere strutturali</div>
+      </div>
     </div>
+    <div class="cards-grid">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1590725121839-892b458a74fe?w=800&q=80" alt="Edilizia Generale" loading="lazy">
+        <div class="card-overlay">
+          <div class="card-tag">Edilizia</div>
+          <div class="card-name">Edilizia Generale</div>
+          <div class="card-desc">Costruzioni residenziali e commerciali chiavi in mano, con utilizzo di materiali certificati e tecniche costruttive all'avanguardia.</div>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80" alt="Restauro" loading="lazy">
+        <div class="card-overlay">
+          <div class="card-tag">Conservazione</div>
+          <div class="card-name">Restauro</div>
+          <div class="card-desc">Recupero e valorizzazione di edifici storici e di pregio architettonico, nel rispetto dei vincoli della Soprintendenza.</div>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80" alt="Opere Strutturali" loading="lazy">
+        <div class="card-overlay">
+          <div class="card-tag">Ingegneria</div>
+          <div class="card-name">Opere Strutturali</div>
+          <div class="card-desc">Consolidamenti statici, adeguamenti sismici, fondazioni speciali e opere in cemento armato per infrastrutture complesse.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="opere-category fade-in">
+    <div class="cat-header">
+      <div class="cat-icon">⚡</div>
+      <div>
+        <div class="cat-title">Impianti</div>
+        <div style="font-size:.8rem;color:var(--grey-dark);margin-top:.2rem;">Soluzioni energetiche e impiantistiche innovative</div>
+      </div>
+    </div>
+    <div class="cards-grid">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80" alt="Parco Fotovoltaico" loading="lazy">
+        <div class="card-overlay">
+          <div class="card-tag">Energia Rinnovabile</div>
+          <div class="card-name">Parco Fotovoltaico</div>
+          <div class="card-desc">Progettazione e installazione di parchi fotovoltaici industriali e utility-scale. Oltre 12 MW di potenza installata in Italia.</div>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80" alt="Impianti Meccanici" loading="lazy">
+        <div class="card-overlay">
+          <div class="card-tag">Meccanica</div>
+          <div class="card-name">Impianti Meccanici</div>
+          <div class="card-desc">Climatizzazione, riscaldamento, idraulica e trattamento aria. Sistemi integrati per il benessere abitativo e industriale.</div>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80" alt="Impianti Elettrici" loading="lazy">
+        <div class="card-overlay">
+          <div class="card-tag">Elettrica</div>
+          <div class="card-name">Impianti Elettrici</div>
+          <div class="card-desc">Quadri elettrici, cabine MT/BT, illuminazione LED intelligente, domotica e sistemi di building automation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
+
+<!-- ATTESTAZIONI -->
 <section id="attestazioni">
-    <div class="container text-center">
-        <h2 class="section-title">Qualità Certificata <span></span></h2>
-        
-        <div class="row g-4 justify-content-center">
-            
-            <div class="col-md-4" data-aos="fade-up">
-                <a href="soa_artedile.pdf" target="_blank" class="text-decoration-none">
-                    <div class="cert-box">
-                        <i class="fas fa-file-pdf fa-3x text-primary mb-4"></i>
-                        <h4 class="fw-bold">ATTESTAZIONE SOA</h4>
-                        <p class="small opacity-50 mb-3"></p>
-                        <div class="text-primary fw-bold small">
-                            <i class="fas fa-download me-2"></i>SCARICA / VISUALIZZA
-                        </div>
-                    </div>
-                </a>
-            </div>
+  <div class="section-label">Qualifiche & Certificazioni</div>
+  <h2 class="section-title">Le Nostre <strong>Attestazioni</strong></h2>
+  <p class="section-sub">Operiamo con le massime certificazioni di settore, garanzia di qualità, sicurezza e affidabilità per ogni tipologia di intervento.</p>
+  <div class="divider"></div>
 
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <a href="Artedile SRL -  UNI EN ISO 90012015.pdf" target="_blank" class="text-decoration-none">
-                    <div class="cert-box">
-                        <i class="fas fa-medal fa-3x text-primary mb-4"></i>
-                        <h4 class="fw-bold">CERTIFICAZIONI ISO</h4>
-                        <p class="small opacity-50 mb-3"></p>
-                        <div class="text-primary fw-bold small">
-                            <i class="fas fa-download me-2"></i>SCARICA / VISUALIZZA
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
-                <a href="Artedile SRL - White List e rinnovo.pdf" target="_blank" class="text-decoration-none">
-                    <div class="cert-box">
-                        <i class="fas fa-balance-scale fa-3x text-primary mb-4"></i>
-                        <h4 class="fw-bold">WHITE LIST</h4>
-                        <p class="small opacity-50 mb-3"></p>
-                        <div class="text-primary fw-bold small">
-                            <i class="fas fa-download me-2"></i>SCARICA / VISUALIZZA
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-        </div> </div>
-</section>
-   <section id="storia">
-    <div class="container" data-aos="fade-up">
-        <h2 class="section-title">La Nostra <span>Storia</span></h2>
-        <div class="row">
-            <div class="col-lg-8"> <p class="opacity-75 lh-base" style="font-size: 0.9rem; letter-spacing: 0.5px; text-align: justify;">
-                    <strong>Artedile </strong> nasce nel 2001 da una solida tradizione familiare attiva 
-                    sin dagli anni ’60 nel settore delle costruzioni e ristrutturazioni. 
-                    Un percorso di crescita che passa anche dalla fondazione, nel 1994, del Consorzio DeMa, 
-                    segnando l’ingresso in progetti di maggiore rilievo. Oggi l’azienda è una realtà dinamica 
-                    e affidabile, che unisce esperienza e innovazione. Dall’edilizia al restauro, fino alla 
-                    riqualificazione energetica e agli impianti tecnologici, 
-                    Artedile opera con certificazioni SOA e standard elevati, offrendo soluzioni moderne, 
-                    efficienti e orientate al futuro.
-                </p>
-            </div>
-        </div>
+  <div class="attestazioni-grid">
+    <div class="att-card fade-in">
+      <div class="att-icon"><i class="fas fa-file-contract"></i></div>
+      <div class="att-name">ATTESTAZIONE SOA</div>
+      <div class="att-desc">Certificazione per l'esecuzione di lavori pubblici.</div>
+      <a href="soa_artedile.pdf" download class="btn-call">SCARICA PDF</a>
     </div>
-</section>
-   
-    <section id="social">
-        <div class="container text-center" data-aos="fade-up">
-            <h2 class="section-title">Seguici sui <span>Social</span></h2>
-            <div class="d-flex justify-content-center gap-5 mt-4">
-                <a href="https://www.instagram.com/artedile?igsh=eGFxbmRsamp6ejc0&utm_source=qr" target="_blank" class="social-link instagram">
-                    <i class="fab fa-instagram"></i>
-                    <span>Instagram</span>
-                </a>
-                <a href="https://www.linkedin.com/company/artedilesrl/about/?viewAsMember=true" target="_blank" class="social-link linkedin">
-                    <i class="fab fa-linkedin-in"></i>
-                    <span>LinkedIn</span>
-                </a>
-            </div>
-        </div>
-    </section>
-<section id="lavoraconnoi" class="py-5 bg-light">
-    <div class="container" data-aos="fade-up">
-        <div class="text-center mb-5">
-            <h2 class="section-title">Lavora con <span>Noi</span></h2>
-            <p class="opacity-75">Scegli come unirti alla nostra squadra</p>
-        </div>
-
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="accordion shadow-sm" id="accordionLavoro">
-                    
-                    <div class="accordion-item border-0 mb-3 rounded overflow-hidden">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-bold py-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInvioCV">
-                                <i class="fas fa-paper-plane me-3 text-primary"></i> INVIA IL TUO CV (CANDIDATURA SPONTANEA)
-                            </button>
-                        </h2>
-                        <div id="collapseInvioCV" class="accordion-collapse collapse" data-bs-parent="#accordionLavoro">
-                            <div class="accordion-body bg-white p-4">
-                                <form action="invio_cv.php" method="POST" enctype="multipart/form-data">
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label small fw-bold">NOME</label>
-                                            <input type="text" class="form-control" name="nome" required>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label small fw-bold">COGNOME</label>
-                                            <input type="text" class="form-control" name="cognome" required>
-                                        </div>
-                                        <div class="col-12">
-                                            <label class="form-label small fw-bold">EMAIL</label>
-                                            <input type="email" class="form-control" name="email" required>
-                                        </div>
-                                        <div class="col-12">
-                                            <label class="form-label small fw-bold">CARICA CV (PDF/WORD)</label>
-                                            <input type="file" class="form-control" name="cv_file" accept=".pdf,.doc,.docx" required>
-                                            <div class="form-text">Il file verrà inviato a: info@artedileimpresa.it</div>
-                                        </div>
-                                        <div class="col-12 text-center mt-4">
-                                            <button type="submit" class="btn btn-primary px-5 text-uppercase fw-bold">Invia Candidatura</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item border-0 rounded overflow-hidden">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed fw-bold py-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePosizioni">
-                                <i class="fas fa-briefcase me-3 text-primary"></i> POSIZIONI APERTE
-                            </button>
-                        </h2>
-                        <div id="collapsePosizioni" class="accordion-collapse collapse" data-bs-parent="#accordionLavoro">
-                            <div class="accordion-body bg-white p-4">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                        <div>
-                                            <h6 class="mb-1 fw-bold">Operaio Edile Specializzato</h6>
-                                            <small class="text-muted">Sede: Milano - Full Time</small>
-                                        </div>
-                                        <span class="badge bg-primary rounded-pill">1 Posto</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                        <div>
-                                            <h6 class="mb-1 fw-bold">Idraulico / Installatore Impianti</h6>
-                                            <small class="text-muted">Sede: Milano - 1 Anno di Esperienza</small>
-                                        </div>
-                                        <span class="badge bg-primary rounded-pill">1 Posto</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                        <div>
-                                            <h6 class="mb-1 fw-bold">Geometra di Cantiere</h6>
-                                            <small class="text-muted">Gestione contabilità e squadre</small>
-                                        </div>
-                                        <span class="badge bg-primary rounded-pill">1 Posto</span>
-                                    </li>
-                                </ul>
-                                <p class="mt-4 small text-center opacity-75 italic">
-                                    Se non trovi una posizione adatta, usa il modulo sopra per una candidatura spontanea.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div> </div>
-        </div>
+    <div class="att-card fade-in">
+      <div class="att-icon"><i class="fas fa-certificate"></i></div>
+      <div class="att-name">CERTIFICAZIONI ISO</div>
+      <div class="att-desc">Sistema di Gestione della Qualità certificato. Processi controllati.</div>
+      <a href="Artedile SRL - UNI EN ISO 90012015.pdf" download class="btn-call">SCARICA PDF</a>
     </div>
+    <div class="att-card fade-in">
+      <div class="att-icon"><i class="fas fa-shield-halved"></i></div>
+      <div class="att-name">WHITE LIST</div>
+      <div class="att-desc">Certificato di legalità e trasparenza operativa.</div>
+      <a href="Artedile SRL - White List e rinnovo.pdf" download class="btn-call">SCARICA PDF</a>
+    </div>
+  </div>
 </section>
-</section>
-    <footer id="contatti">
-        <div class="container">
-            <h2 class="section-title text-center"> Diamo una svolta  <span> Insieme</span></h2>
-            <div class="row g-5 mt-4 justify-content-center text-center">
-                <div class="col-md-4">
-                    <div class="d-flex flex-column align-items-center">
-                        <i class="fas fa-envelope-open-text fa-2x text-primary mb-3"></i>
-                        <h5 class="fw-bold mb-3">EMAIL & PEC</h5>
-                       <p class="small opacity-75">
-                            <strong>Info:</strong> 
-                            <a href="mailto:info@artedileimpresa.it?subject=Richiesta%20informazioni&body=Buongiorno,%0A%0AMi%20chiamo%20[Nome%20e%20Cognome].%0AVorrei%20ricevere%20maggiori%20informazioni%20riguardo%20i%20vostri%20servizi.%0A%0ATipo%20di%20intervento:%20[Inserire%20tipo]%0ALocalit%C3%A0:%20[Inserire%20citt%C3%A0]%0A%0AResto%20in%20attesa%20di%20un%20vostro%20gentile%20riscontro.%0A%0ACordiali%20saluti.">
-                             info@artedileimpresa.it</a><br>
-                            <strong>PEC:</strong> 
-    <a href="mailto:artedilesrl@legalmail.it?subject=Richiesta%20informazioni&body=Buongiorno,%0A%0AMi%20chiamo%20[Nome%20e%20Cognome].%0AVorrei%20ricevere%20maggiori%20informazioni%20riguardo%20i%20vostri%20servizi.%0A%0ATipo%20di%20intervento:%20[Inserire%20tipo]%0ALocalit%C3%A0:%20[Inserire%20citt%C3%A0]%0A%0AResto%20in%20attesa%20di%20un%20vostro%20gentile%20riscontro.%0A%0ACordiali%20saluti.">
-    artedilesrl@legalmail.it</a>
-</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="d-flex flex-column align-items-center">
-                        <i class="fas fa-phone-alt fa-2x text-primary mb-3"></i>
-                        <h5 class="fw-bold mb-3">CONTATTI DIRETTI</h5>
-                        <p class="small opacity-75">
-                            <strong>Carlo De Luca:</strong> +39 389 149 5308<br>
-                            <strong>Giuseppe De Luca:</strong> +39 320 773 5065
-                        </p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="d-flex flex-column align-items-center">
-                        <i class="fas fa-map-marker-alt fa-2x text-primary mb-3"></i>
-                        <h5 class="fw-bold mb-3">LE NOSTRE SEDI</h5>
-                        <p class="small opacity-75">
-                            <strong>Milano:</strong> Via Atto Vannucci, 5 (MI)<br>
-                            <strong>Pietrapaola:</strong> Via San Remo, 4  (CS)
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script> AOS.init({ duration: 1000, once: true }); </script>
+<!-- STORIA -->
+<section id="storia">
+  <div class="storia-layout">
+    <div class="storia-img fade-in">
+      <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80" alt="Storia ARTEDILE" loading="lazy">
+    </div>
+    <div class="fade-in">
+      <div class="section-label">Chi Siamo</div>
+      <h2 class="section-title">Una Storia di <strong>Passione</strong></h2>
+      <div class="divider"></div>
+      <p class="section-sub">
+        Nata nel 2001 dalla visione di costruttori appassionati, ARTEDILE è cresciuta fino a diventare un punto di riferimento nel panorama edilizio ed energetico italiano. Ogni mattone posato, ogni kilowatt prodotto raccontano la nostra storia.
+      </p>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-year">1994 — Consorzio DEMA</div>
+          <div class="tl-text">Un percorso di crescita che passa anche dalla fondazione, nel 1994, del Consorzio DeMa, segnando l'ingresso in progetti di maggiore rilievo.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2001 — Prima espansione</div>
+          <div class="tl-text">Ottenimento delle prime attestazioni SOA e ampliamento del team con professionisti specializzati nel restauro.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2011 — Divisione Energia</div>
+          <div class="tl-text">Nascita della divisione impianti con i primi parchi fotovoltaici. ARTEDILE diventa player nel mercato delle rinnovabili.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">Oggi</div>
+          <div class="tl-text">Artedile opera con certificazioni SOA e standard elevati, offrendo soluzioni moderne, efficienti e orientate al futuro.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL -->
+<section id="social" style="text-align: center; padding: 60px 0; background: var(--white);">
+  <div class="section-label" style="color: var(--blue-mid);">Seguici</div>
+  <h2 class="section-title" style="color: var(--dark);">Siamo sui <strong>Social</strong></h2>
+  <p class="section-sub" style="max-width: 700px; margin: 20px auto; color: var(--grey-dark); line-height: 1.6;">
+    Rimani aggiornato su cantieri, novità e progetti. Seguici sui nostri canali social per non perdere nessuna novità.
+  </p>
+  <div class="divider" style="margin: 0 auto 40px auto; width: 60px; height: 2px; background: var(--blue-light);"></div>
+
+  <div class="social-wrapper">
+    <a href="https://www.instagram.com/artedile?igsh=eGFxbmRsamp6ejc0&utm_source=qr" target="_blank" class="social-card fade-in">
+      <div class="social-icon"><i class="fab fa-instagram"></i></div>
+      <div style="flex-grow: 1;">
+        <div class="social-name">Instagram</div>
+        <div class="social-handle">@ARTEDILE</div>
+        <div class="social-desc">Immagini esclusive dai cantieri, prima e dopo e il dietro le quinte dei nostri progetti.</div>
+      </div>
+      <div class="social-arrow">→</div>
+    </a>
+    <a href="https://www.linkedin.com/company/artedilesrl/about/?viewAsMember=true" target="_blank" class="social-card fade-in">
+      <div class="social-icon"><i class="fab fa-linkedin-in"></i></div>
+      <div style="flex-grow: 1;">
+        <div class="social-name">LinkedIn</div>
+        <div class="social-handle">ARTEDILE</div>
+        <div class="social-desc">Aggiornamenti professionali, opportunità di lavoro e collaborazioni B2B nel settore.</div>
+      </div>
+      <div class="social-arrow">→</div>
+    </a>
+  </div>
+</section>
+
+<!-- LAVORA CON NOI -->
+<section id="lavora">
+  <div class="section-label">Carriera & Futuro</div>
+  <h2 class="section-title">Costruisci il tuo <strong>Domani</strong></h2>
+  <div class="divider"></div>
+
+  <div class="lavora-container">
+    <div class="career-info">
+      <p class="section-sub">
+        In ARTEDILE crediamo che la forza di un'azienda risieda nelle persone. Cerchiamo professionisti pronti a innovare il settore dell'edilizia e dell'energia.
+      </p>
+
+      <div class="career-toggle" onclick="togglePositions()">
+        <div class="toggle-content">
+          <i class="fas fa-briefcase"></i>
+          <span>Vedi le Posizioni Aperte</span>
+        </div>
+        <i class="fas fa-chevron-down" id="toggle-icon" style="color: var(--blue-light);"></i>
+      </div>
+
+      <div class="positions-wrapper" id="positions-menu">
+        <div class="position-card-modern">
+          <div class="pos-info">
+            <h4>Elettricista</h4>
+            <p>Impianti Elettrici</p>
+          </div>
+          <span class="pos-status">Aperta</span>
+        </div>
+        <div class="position-card-modern">
+          <div class="pos-info">
+            <h4>Elettricista / Idraulico</h4>
+            <p>Impianti Tecnici</p>
+          </div>
+          <span class="pos-status">Aperta</span>
+        </div>
+      </div>
+
+      <div class="spontaneous-box">
+        <h4>Candidatura Spontanea</h4>
+        <p>Non trovi la posizione adatta? Inviaci comunque il tuo profilo tramite il modulo a fianco.</p>
+      </div>
+    </div>
+
+    <div class="cv-form-container">
+      <h3>Invia il tuo CV</h3>
+      <form action="invio_cv.php" method="POST" enctype="multipart/form-data">
+        <div class="form-row">
+          <input type="text" name="nome" placeholder="Nome" required>
+          <input type="text" name="cognome" placeholder="Cognome" required>
+        </div>
+        <div class="form-row">
+          <input type="email" name="email" placeholder="Email" required>
+          <input type="tel" name="telefono" placeholder="Telefono">
+        </div>
+        <select name="posizione" required style="margin-bottom: 1rem;">
+          <option value="">Posizione di interesse</option>
+          <option>Elettricista / Idraulico</option>
+          <option>Candidatura Spontanea</option>
+        </select>
+        <div class="file-drop-zone" onclick="document.getElementById('cv-file').click()">
+          <input type="file" id="cv-file" name="cv_file" hidden onchange="updateFileName(this)">
+          <p id="file-text">Carica il tuo CV</p>
+          <span id="file-info">PDF o DOCX</span>
+        </div>
+        <button type="submit" class="apply-btn">Invia Candidatura</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CONTATTI -->
+<section id="contatti">
+  <div class="section-label" style="text-align: center; color: var(--blue-mid);">Parliamo</div>
+  <h2 class="section-title" style="text-align: center;">Diamo una svolta <strong>INSIEME</strong></h2>
+  <div class="divider" style="width: 60px; height: 2px; background: var(--blue-light); margin: 0 auto 50px auto;"></div>
+
+  <div class="contatti-layout">
+    <div class="contact-info fade-in">
+      <div class="contact-item">
+        <div class="contact-icon-box"><i class="fas fa-map-marked-alt"></i></div>
+        <div>
+          <div class="contact-item-label">Le Nostre Sedi</div>
+          <div class="contact-item-value">
+            <strong>Sede Legale:</strong> Via San Remo, 4 - 87067 Pietrapaola (CS)<br>
+            <strong style="display:inline-block; margin-top:8px;">Sede Operativa:</strong> Via Atto Vannucci, 5 - 20135 Milano (MI)
+          </div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon-box"><i class="fas fa-phone-alt"></i></div>
+        <div>
+          <div class="contact-item-label">Telefono</div>
+          <div class="contact-item-value">
+            <a href="tel:+393891495308">Carlo De Luca: +39 389 149 5308</a><br>
+            <a href="tel:+393207735065">Giuseppe De Luca: +39 320 773 5065</a>
+          </div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon-box"><i class="fas fa-envelope-open-text"></i></div>
+        <div>
+          <div class="contact-item-label">Email & PEC</div>
+          <div class="contact-item-value">
+            <a href="mailto:info@artedile.it">info@artedile.it</a><br>
+            <a href="mailto:artedile@pec.it" style="color: var(--blue-mid);">artedile@pec.it</a>
+          </div>
+        </div>
+      </div>
+      <div class="contact-item" style="border-left-color: var(--grey-mid);">
+        <div class="contact-icon-box" style="color: var(--grey-mid);"><i class="fas fa-briefcase"></i></div>
+        <div class="contact-item-value" style="font-size: .8rem; color: var(--grey-mid);">
+          P.IVA: IT 01234567890 | C.F.: 01234567890 | REA: RM – 123456
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-form fade-in">
+      <h3>Invia un Messaggio</h3>
+      <div class="form-row" style="margin-bottom: 20px;">
+        <input type="text" id="c-nome" placeholder="Nome e Cognome">
+        <input type="text" id="c-azienda" placeholder="Azienda">
+      </div>
+      <input type="email" id="c-email" placeholder="Email" style="margin-bottom: 15px;">
+      <select id="c-oggetto" style="margin-bottom: 15px;">
+        <option value="">Seleziona oggetto...</option>
+        <option>Preventivo Edilizia</option>
+        <option>Preventivo Restauro</option>
+        <option>Preventivo Fotovoltaico</option>
+        <option>Informazioni Generali</option>
+      </select>
+      <textarea id="c-messaggio" placeholder="Come possiamo aiutarti?" style="min-height: 120px; margin-bottom: 15px;"></textarea>
+      <div style="display:flex; align-items:center; gap:.8rem; margin-bottom:20px;">
+        <input type="checkbox" id="privacy" style="accent-color:var(--blue); width: auto;">
+        <label for="privacy" style="font-size:.75rem; color:var(--grey-dark); cursor:pointer;">
+          Accetto la Privacy Policy e il trattamento dati GDPR.
+        </label>
+      </div>
+      <button class="submit-btn" onclick="submitContact()">Invia Messaggio →</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ARTEDILE</div>
+  <ul class="footer-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#opere">Opere</a></li>
+    <li><a href="#attestazioni">Attestazioni</a></li>
+    <li><a href="#storia">Storia</a></li>
+    <li><a href="#contatti">Contatti</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 ARTEDILE S.r.l. — Tutti i diritti riservati</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ─── HERO MOUSE PARALLAX ─── */
+(function() {
+  const wrap = document.getElementById('heroParallax');
+  const section = document.getElementById('home');
+  let targetX = 0, targetY = 0;
+  let currentX = 0, currentY = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    const rect = section.getBoundingClientRect();
+    if (e.clientY > rect.bottom || e.clientY < rect.top) return;
+    // Normalize -1 to 1
+    targetX = (e.clientX / window.innerWidth - 0.5) * 2;
+    targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  // Device tilt support
+  window.addEventListener('deviceorientation', (e) => {
+    if (e.gamma !== null) {
+      targetX = Math.max(-1, Math.min(1, e.gamma / 20));
+      targetY = Math.max(-1, Math.min(1, (e.beta - 30) / 20));
+    }
+  });
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function tick() {
+    currentX = lerp(currentX, targetX, 0.06);
+    currentY = lerp(currentY, targetY, 0.06);
+
+    // Subtle parallax shift of the whole photo wrap
+    const moveX = currentX * 14;
+    const moveY = currentY * 8;
+    wrap.style.transform = `translate(${moveX}px, ${moveY}px)`;
+
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+/* ─── Hamburger menu ─── */
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => navLinks.classList.remove('open'));
+});
+
+/* ─── Navbar scroll ─── */
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  if (window.scrollY > 80) {
+    nav.style.boxShadow = '0 4px 30px rgba(26,75,140,0.12)';
+  } else {
+    nav.style.boxShadow = '0 2px 20px rgba(26,75,140,0.06)';
+  }
+});
+
+/* ─── Fade in observer ─── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), 100);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+/* ─── Toast ─── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ─── Toggle positions ─── */
+function togglePositions() {
+  const menu = document.getElementById('positions-menu');
+  const icon = document.getElementById('toggle-icon');
+  menu.classList.toggle('active');
+  icon.style.transform = menu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+/* ─── File upload ─── */
+function updateFileName(input) {
+  document.getElementById('file-text').innerText = "File caricato";
+  document.getElementById('file-info').innerText = input.files[0].name;
+}
+
+/* ─── Submit Contact ─── */
+function submitContact() {
+  const nome = document.getElementById('c-nome').value.trim();
+  const email = document.getElementById('c-email').value.trim();
+  const azienda = document.getElementById('c-azienda').value.trim();
+  const oggetto = document.getElementById('c-oggetto').value;
+  const messaggio = document.getElementById('c-messaggio').value.trim();
+  const privacy = document.getElementById('privacy').checked;
+
+  if (!nome || !email) { showToast('⚠ Compila nome ed email'); return; }
+  if (!privacy) { showToast('⚠ Accetta la Privacy Policy'); return; }
+
+  const destinatario = "info@artedileimpresa.it";
+  const subject = encodeURIComponent(`Nuovo Contatto: ${oggetto} - ${azienda}`);
+  const body = encodeURIComponent(`Nome: ${nome}\nEmail: ${email}\nAzienda: ${azienda}\n\nMessaggio:\n${messaggio}`);
+  window.location.href = `mailto:${destinatario}?subject=${subject}&body=${body}`;
+
+  ['c-nome','c-azienda','c-email','c-messaggio'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('c-oggetto').value = '';
+  document.getElementById('privacy').checked = false;
+}
+</script>
 </body>
 </html>
