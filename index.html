@@ -298,7 +298,6 @@
     transform: translateY(-2px);
   }
 
-  /* Stats bar */
   .hero-stats {
     position: absolute; bottom: 0; left: 0; right: 0;
     display: flex;
@@ -334,7 +333,6 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ─── SECTIONS SHARED ─── */
   section { padding: 100px 8vw; }
 
   .section-label {
@@ -370,7 +368,6 @@
     margin: 1.5rem 0 2.5rem;
   }
 
-  /* ─── OPERE ─── */
   #opere { background: var(--off-white); }
 
   .opere-category { margin-bottom: 5rem; }
@@ -451,7 +448,6 @@
   }
   .card:hover .card-desc { max-height: 100px; }
 
-  /* ─── ATTESTAZIONI ─── */
   #attestazioni { background: var(--white); }
 
   .attestazioni-grid {
@@ -506,7 +502,6 @@
   }
   .btn-call:hover { background: var(--blue-mid); color: white; }
 
-  /* ─── STORIA ─── */
   #storia {
     background: var(--sky-pale);
     position: relative; overflow: hidden;
@@ -569,7 +564,6 @@
   }
   .tl-text { font-size: .9rem; color: var(--grey-dark); line-height: 1.7; }
 
-  /* ─── SOCIAL ─── */
   #social { background: var(--white); text-align: center; padding: 60px 0; }
 
   .social-wrapper { max-width: 900px; margin: 0 auto; padding: 0 20px; }
@@ -597,7 +591,6 @@
   .social-desc { color: var(--grey-dark); font-size: 0.9rem; line-height: 1.4; }
   .social-arrow { color: var(--blue-light); font-size: 1.2rem; margin-left: 20px; }
 
-  /* ─── LAVORA ─── */
   #lavora {
     background: linear-gradient(135deg, var(--off-white), var(--sky-pale));
     padding: 6rem 2rem;
@@ -710,8 +703,8 @@
     box-shadow: 0 8px 25px rgba(26,75,140,0.2);
   }
   .apply-btn:hover { background: var(--blue-mid); box-shadow: 0 14px 35px rgba(26,75,140,0.3); transform: translateY(-2px); }
+  .apply-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-  /* ─── CONTATTI ─── */
   #contatti { background: var(--off-white); padding: 80px 0; }
 
   .contatti-layout {
@@ -756,8 +749,8 @@
     box-shadow: 0 8px 25px rgba(26,75,140,0.2);
   }
   .submit-btn:hover { background: var(--blue-mid); transform: translateY(-2px); box-shadow: 0 14px 35px rgba(26,75,140,0.3); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-  /* ─── FOOTER ─── */
   footer {
     background: var(--dark);
     border-top: 1px solid rgba(74,144,217,0.2);
@@ -781,7 +774,6 @@
   }
   .footer-links a:hover { color: var(--sky); }
 
-  /* ─── TOAST ─── */
   .toast {
     position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
     background: var(--blue); color: var(--white);
@@ -793,14 +785,14 @@
     transition: all .4s cubic-bezier(.34,1.56,.64,1);
     border-radius: 4px;
     box-shadow: 0 8px 30px rgba(26,75,140,0.3);
+    max-width: 320px;
   }
   .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.toast-error { background: #c0392b; }
 
-  /* ─── FADE IN ─── */
   .fade-in { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
   .fade-in.visible { opacity: 1; transform: translateY(0); }
 
-  /* ─── MOBILE ─── */
   @media (max-width: 900px) {
     .nav-links { display: none; flex-direction: column; gap: 0; }
     .nav-links.open {
@@ -846,8 +838,6 @@
 
 <!-- HOME / HERO -->
 <section id="home">
-
-  <!-- Photo with 3D animation layers -->
   <div class="hero-photo-wrap" id="heroParallax">
     <div class="hero-photo-main"></div>
   </div>
@@ -863,7 +853,7 @@
     <div class="hero-label">Impianti energetici &amp; Edilizia dal 2001</div>
     <h1>Costruire il <strong>Futuro</strong> con Arte</h1>
     <p class="hero-sub">
-      Specialisti in impianti energetici, edilizia civile e restauro architettonico. 
+      Specialisti in impianti energetici, edilizia civile e restauro architettonico.
       Ogni progetto è un'opera che dura nel tempo.
     </p>
     <div class="hero-ctas">
@@ -873,20 +863,18 @@
   </div>
   <div class="hero-stats">
     <div class="stat">
-        <div class="stat-num">60+</div>
-        <div class="stat-label">Anni di esperienza</div>
+      <div class="stat-num">60+</div>
+      <div class="stat-label">Anni di esperienza</div>
     </div>
-    
     <div class="stat">
-        <div class="stat-num">500+</div>
-        <div class="stat-label">Progetti completati</div>
+      <div class="stat-num">500+</div>
+      <div class="stat-label">Progetti completati</div>
     </div>
-    
     <div class="stat">
-        <div class="stat-num">100%</div>
-        <div class="stat-label">Certificato SOA</div>
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Certificato SOA</div>
     </div>
-</div>
+  </div>
 </section>
 
 <!-- OPERE -->
@@ -970,7 +958,7 @@
 
 <!-- ATTESTAZIONI -->
 <section id="attestazioni">
-  <div class="section-label">Qualifiche & Certificazioni</div>
+  <div class="section-label">Qualifiche &amp; Certificazioni</div>
   <h2 class="section-title">Le Nostre <strong>Attestazioni</strong></h2>
   <p class="section-sub">Operiamo con le massime certificazioni di settore, garanzia di qualità, sicurezza e affidabilità per ogni tipologia di intervento.</p>
   <div class="divider"></div>
@@ -1065,7 +1053,7 @@
 
 <!-- LAVORA CON NOI -->
 <section id="lavora">
-  <div class="section-label">Carriera & Futuro</div>
+  <div class="section-label">Carriera &amp; Futuro</div>
   <h2 class="section-title">Costruisci il tuo <strong>Domani</strong></h2>
   <div class="divider"></div>
 
@@ -1108,7 +1096,8 @@
 
     <div class="cv-form-container">
       <h3>Invia il tuo CV</h3>
-      <form action="invio_cv.php" method="POST" enctype="multipart/form-data">
+      <!-- FORM CV — invia a /api/send-cv via fetch -->
+      <form id="cv-form" enctype="multipart/form-data">
         <div class="form-row">
           <input type="text" name="nome" placeholder="Nome" required>
           <input type="text" name="cognome" placeholder="Cognome" required>
@@ -1119,15 +1108,17 @@
         </div>
         <select name="posizione" required style="margin-bottom: 1rem;">
           <option value="">Posizione di interesse</option>
+          <option>Elettricista</option>
           <option>Elettricista / Idraulico</option>
           <option>Candidatura Spontanea</option>
         </select>
+        <textarea name="messaggio" placeholder="Messaggio (opzionale)" style="min-height: 80px; margin-bottom: 1rem;"></textarea>
         <div class="file-drop-zone" onclick="document.getElementById('cv-file').click()">
-          <input type="file" id="cv-file" name="cv_file" hidden onchange="updateFileName(this)">
+          <input type="file" id="cv-file" name="cv_file" hidden accept=".pdf,.doc,.docx" onchange="updateFileName(this)">
           <p id="file-text">Carica il tuo CV</p>
-          <span id="file-info">PDF o DOCX</span>
+          <span id="file-info">PDF o DOCX — max 5MB</span>
         </div>
-        <button type="submit" class="apply-btn">Invia Candidatura</button>
+        <button type="submit" class="apply-btn" id="cv-submit-btn">Invia Candidatura</button>
       </form>
     </div>
   </div>
@@ -1164,7 +1155,7 @@
       <div class="contact-item">
         <div class="contact-icon-box"><i class="fas fa-envelope-open-text"></i></div>
         <div>
-          <div class="contact-item-label">Email & PEC</div>
+          <div class="contact-item-label">Email &amp; PEC</div>
           <div class="contact-item-value">
             <a href="mailto:info@artedile.it">info@artedile.it</a><br>
             <a href="mailto:artedile@pec.it" style="color: var(--blue-mid);">artedile@pec.it</a>
@@ -1181,6 +1172,7 @@
 
     <div class="contact-form fade-in">
       <h3>Invia un Messaggio</h3>
+      <!-- FORM CONTATTO — invia a /api/send-contact via fetch -->
       <div class="form-row" style="margin-bottom: 20px;">
         <input type="text" id="c-nome" placeholder="Nome e Cognome">
         <input type="text" id="c-azienda" placeholder="Azienda">
@@ -1200,7 +1192,7 @@
           Accetto la Privacy Policy e il trattamento dati GDPR.
         </label>
       </div>
-      <button class="submit-btn" onclick="submitContact()">Invia Messaggio →</button>
+      <button class="submit-btn" id="contact-submit-btn" onclick="submitContact()">Invia Messaggio →</button>
     </div>
   </div>
 </section>
@@ -1231,12 +1223,10 @@
   document.addEventListener('mousemove', (e) => {
     const rect = section.getBoundingClientRect();
     if (e.clientY > rect.bottom || e.clientY < rect.top) return;
-    // Normalize -1 to 1
     targetX = (e.clientX / window.innerWidth - 0.5) * 2;
     targetY = (e.clientY / window.innerHeight - 0.5) * 2;
   });
 
-  // Device tilt support
   window.addEventListener('deviceorientation', (e) => {
     if (e.gamma !== null) {
       targetX = Math.max(-1, Math.min(1, e.gamma / 20));
@@ -1249,12 +1239,7 @@
   function tick() {
     currentX = lerp(currentX, targetX, 0.06);
     currentY = lerp(currentY, targetY, 0.06);
-
-    // Subtle parallax shift of the whole photo wrap
-    const moveX = currentX * 14;
-    const moveY = currentY * 8;
-    wrap.style.transform = `translate(${moveX}px, ${moveY}px)`;
-
+    wrap.style.transform = `translate(${currentX * 14}px, ${currentY * 8}px)`;
     requestAnimationFrame(tick);
   }
   tick();
@@ -1271,11 +1256,9 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 /* ─── Navbar scroll ─── */
 window.addEventListener('scroll', () => {
   const nav = document.getElementById('navbar');
-  if (window.scrollY > 80) {
-    nav.style.boxShadow = '0 4px 30px rgba(26,75,140,0.12)';
-  } else {
-    nav.style.boxShadow = '0 2px 20px rgba(26,75,140,0.06)';
-  }
+  nav.style.boxShadow = window.scrollY > 80
+    ? '0 4px 30px rgba(26,75,140,0.12)'
+    : '0 2px 20px rgba(26,75,140,0.06)';
 });
 
 /* ─── Fade in observer ─── */
@@ -1290,11 +1273,12 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
 /* ─── Toast ─── */
-function showToast(msg) {
+function showToast(msg, isError) {
   const t = document.getElementById('toast');
   t.textContent = msg;
+  t.classList.toggle('toast-error', !!isError);
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
+  setTimeout(() => t.classList.remove('show'), 4000);
 }
 
 /* ─── Toggle positions ─── */
@@ -1307,12 +1291,45 @@ function togglePositions() {
 
 /* ─── File upload ─── */
 function updateFileName(input) {
-  document.getElementById('file-text').innerText = "File caricato";
+  document.getElementById('file-text').innerText = 'File caricato';
   document.getElementById('file-info').innerText = input.files[0].name;
 }
 
-/* ─── Submit Contact ─── */
-function submitContact() {
+/* ─── Endpoint email ─── */
+const API_BASE = '';
+
+/* ─── Invio CV ─── */
+document.getElementById('cv-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('cv-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Invio in corso...';
+
+  try {
+    const res = await fetch(API_BASE + '/send-cv.php', {
+      method: 'POST',
+      body: new FormData(this)
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      showToast('Candidatura inviata con successo!');
+      this.reset();
+      document.getElementById('file-text').innerText = 'Carica il tuo CV';
+      document.getElementById('file-info').innerText = 'PDF o DOCX — max 5MB';
+    } else {
+      showToast(data.error || 'Errore durante l\'invio.', true);
+    }
+  } catch {
+    showToast('Errore di connessione. Riprova.', true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Invia Candidatura';
+  }
+});
+
+/* ─── Invio Messaggio Contatto ─── */
+async function submitContact() {
   const nome = document.getElementById('c-nome').value.trim();
   const email = document.getElementById('c-email').value.trim();
   const azienda = document.getElementById('c-azienda').value.trim();
@@ -1320,20 +1337,38 @@ function submitContact() {
   const messaggio = document.getElementById('c-messaggio').value.trim();
   const privacy = document.getElementById('privacy').checked;
 
-  if (!nome || !email) { showToast('⚠ Compila nome ed email'); return; }
-  if (!privacy) { showToast('⚠ Accetta la Privacy Policy'); return; }
+  if (!nome || !email) { showToast('Compila nome ed email', true); return; }
+  if (!privacy) { showToast('Accetta la Privacy Policy', true); return; }
 
-  const destinatario = "info@artedileimpresa.it";
-  const subject = encodeURIComponent(`Nuovo Contatto: ${oggetto} - ${azienda}`);
-  const body = encodeURIComponent(`Nome: ${nome}\nEmail: ${email}\nAzienda: ${azienda}\n\nMessaggio:\n${messaggio}`);
-  window.location.href = `mailto:${destinatario}?subject=${subject}&body=${body}`;
+  const btn = document.getElementById('contact-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Invio in corso...';
 
-  ['c-nome','c-azienda','c-email','c-messaggio'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  document.getElementById('c-oggetto').value = '';
-  document.getElementById('privacy').checked = false;
+  try {
+    const res = await fetch(API_BASE + '/send-contact.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, email, azienda, oggetto, messaggio })
+    });
+    const data = await res.json();
+
+    if (data.ok) {
+      showToast('Messaggio inviato con successo!');
+      ['c-nome','c-azienda','c-email','c-messaggio'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      document.getElementById('c-oggetto').value = '';
+      document.getElementById('privacy').checked = false;
+    } else {
+      showToast(data.error || 'Errore durante l\'invio.', true);
+    }
+  } catch {
+    showToast('Errore di connessione. Riprova.', true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Invia Messaggio →';
+  }
 }
 </script>
 </body>
