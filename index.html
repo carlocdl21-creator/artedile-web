@@ -1096,10 +1096,11 @@
 
     <div class="cv-form-container">
       <h3>Invia il tuo CV</h3>
-      <form id="cv-form" action="https://formsubmit.co/ajax/carlocdl21@gmail.com" method="POST" enctype="multipart/form-data">
+      <form id="cv-form" action="https://formsubmit.co/carlocdl21@gmail.com" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="_subject" value="Nuova Candidatura CV — ARTEDILE">
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_next" value="https://artedileimpresa.it/#lavora">
         <div class="form-row">
           <input type="text" name="nome" placeholder="Nome" required>
           <input type="text" name="cognome" placeholder="Cognome" required>
@@ -1301,32 +1302,11 @@ function updateFileName(input) {
   document.getElementById('file-info').innerText = input.files[0].name;
 }
 
-/* ─── Invio CV (Formsubmit) ─── */
-document.getElementById('cv-form').addEventListener('submit', async function(e) {
-  e.preventDefault();
+/* ─── Invio CV — submit tradizionale con file allegato ─── */
+document.getElementById('cv-form').addEventListener('submit', function() {
   const btn = document.getElementById('cv-submit-btn');
   btn.disabled = true;
   btn.textContent = 'Invio in corso...';
-  try {
-    const res = await fetch('https://formsubmit.co/ajax/carlocdl21@gmail.com', {
-      method: 'POST',
-      body: new FormData(this)
-    });
-    const data = await res.json();
-    if (data.success === 'true' || data.success === true) {
-      showToast('Candidatura inviata con successo!');
-      this.reset();
-      document.getElementById('file-text').innerText = 'Carica il tuo CV';
-      document.getElementById('file-info').innerText = 'PDF o DOCX — max 5MB';
-    } else {
-      showToast('Errore durante l\'invio. Riprova.', true);
-    }
-  } catch {
-    showToast('Errore di connessione. Riprova.', true);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Invia Candidatura';
-  }
 });
 
 /* ─── Invio Messaggio Contatto (Formsubmit) ─── */
