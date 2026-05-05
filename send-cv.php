@@ -42,7 +42,7 @@ if ($_FILES['cv_file']['size'] > 5 * 1024 * 1024) {
     exit;
 }
 
-$destinatario = 'info@artedileimpresa.it';
+$destinatario = 'carlocdl21@gmail.com';
 $subject = "CANDIDATURA: $nome $cognome - $posizione";
 $boundary = md5(time() . rand());
 
