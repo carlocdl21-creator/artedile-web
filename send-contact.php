@@ -22,7 +22,7 @@ if (!$nome || !$email) {
     exit;
 }
 
-$destinatario = 'info@artedileimpresa.it';
+$destinatario = 'carlocdl21@gmail.com';
 $subject = 'Nuovo Contatto: ' . ($oggetto ?: 'Informazioni') . ' - ' . ($azienda ?: $nome);
 
 $boundary = md5(time());
