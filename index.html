@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <style>
   :root {
     --blue:       #1A4B8C;
@@ -793,6 +795,85 @@
   .fade-in { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
   .fade-in.visible { opacity: 1; transform: translateY(0); }
 
+  /* ─── CUSTOM CURSOR ─── */
+  .cursor-dot {
+    position: fixed; pointer-events: none; z-index: 99999;
+    width: 8px; height: 8px;
+    background: var(--blue-light); border-radius: 50%;
+    transform: translate(-50%,-50%);
+    transition: transform 0.08s;
+  }
+  .cursor-ring {
+    position: fixed; pointer-events: none; z-index: 99998;
+    width: 42px; height: 42px;
+    border: 1.5px solid rgba(74,144,217,0.6); border-radius: 50%;
+    transform: translate(-50%,-50%);
+    transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
+  }
+  .cursor-ring.cursor-hover {
+    width: 64px; height: 64px;
+    background: rgba(74,144,217,0.07);
+    border-color: var(--blue-light);
+  }
+  @media (pointer: coarse) { .cursor-dot, .cursor-ring { display: none; } }
+
+  /* ─── SCROLL PROGRESS BAR ─── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--blue), var(--blue-light), var(--sky), var(--blue-light), var(--blue));
+    background-size: 300% 100%;
+    z-index: 10000;
+    box-shadow: 0 0 12px rgba(74,144,217,0.7);
+    animation: barShimmer 3s linear infinite;
+  }
+  @keyframes barShimmer {
+    0%   { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+  }
+
+  /* ─── FLOATING ORBS ─── */
+  .section-orb {
+    position: absolute; border-radius: 50%;
+    pointer-events: none; filter: blur(70px);
+    opacity: 0.13;
+    animation: orbFloat 14s ease-in-out infinite alternate;
+  }
+  @keyframes orbFloat {
+    0%   { transform: translate(0,0) scale(1); }
+    100% { transform: translate(30px,-50px) scale(1.2); }
+  }
+
+  /* ─── HERO CSS ANIMATIONS → GSAP takes over ─── */
+  .hero-label, #home h1, .hero-sub, .hero-ctas, .hero-stats {
+    animation: none !important;
+    opacity: 0;
+  }
+
+  /* ─── FADE-IN reset — GSAP handles all reveals ─── */
+  .fade-in          { opacity: 1 !important; transform: none !important; }
+  .fade-in.visible  { opacity: 1; transform: none; }
+
+  /* ─── NAV ACTIVE ─── */
+  .nav-links a.nav-active { color: var(--blue); }
+  .nav-links a.nav-active::after { transform: scaleX(1); }
+
+  /* ─── ATT CARD ICON GLOW ─── */
+  .att-icon i { transition: all 0.35s; }
+  .att-card:hover .att-icon i {
+    text-shadow: 0 0 20px rgba(74,144,217,0.8), 0 0 40px rgba(74,144,217,0.4);
+    transform: scale(1.15) translateY(-3px);
+  }
+
+  /* ─── SECTION TITLE ─── */
+  .section-title { display: block; }
+
+  /* ─── CARD CLIP-PATH SUPPORT ─── */
+  .card { transform-origin: bottom center; }
+
+  /* ─── STAT GLOW ─── */
+  .stat-num { transition: text-shadow 0.3s; }
+
   @media (max-width: 900px) {
     .nav-links { display: none; flex-direction: column; gap: 0; }
     .nav-links.open {
@@ -1301,6 +1382,219 @@ function updateFileName(input) {
   document.getElementById('file-text').innerText = 'File caricato';
   document.getElementById('file-info').innerText = input.files[0].name;
 }
+
+/* ─── CUSTOM CURSOR ─── */
+(function() {
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+  const dot  = document.createElement('div');
+  const ring = document.createElement('div');
+  dot.className = 'cursor-dot'; ring.className = 'cursor-ring';
+  document.body.append(dot, ring);
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  gsap.ticker.add(() => {
+    rx += (mx - rx) * 0.16; ry += (my - ry) * 0.16;
+    dot.style.left  = mx + 'px'; dot.style.top  = my + 'px';
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  });
+  document.querySelectorAll('a,button,.card,.att-card,.social-card,.career-toggle').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('cursor-hover'));
+  });
+})();
+
+/* ─── SCROLL PROGRESS BAR ─── */
+(function() {
+  const bar = document.createElement('div');
+  bar.id = 'progress-bar';
+  document.body.prepend(bar);
+  window.addEventListener('scroll', () => {
+    bar.style.width = Math.min(window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100, 100) + '%';
+  }, { passive: true });
+})();
+
+/* ══════════════════════════════════════
+   GSAP + ScrollTrigger — Animations
+══════════════════════════════════════ */
+gsap.registerPlugin(ScrollTrigger);
+
+/* ── Hero entrance (staggered timeline) ── */
+(function() {
+  const tl = gsap.timeline({ delay: 0.15 });
+  tl.fromTo('.hero-label', { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.85, ease: 'power3.out' })
+    .fromTo('#home h1',    { y: 90, opacity: 0 }, { y: 0, opacity: 1, duration: 1.0,  ease: 'power3.out' }, '-=0.45')
+    .fromTo('.hero-sub',   { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8,  ease: 'power3.out' }, '-=0.5')
+    .fromTo('.hero-ctas',  { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7,  ease: 'power3.out' }, '-=0.4')
+    .fromTo('.hero-stats', { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7,  ease: 'power3.out' }, '-=0.3');
+})();
+
+/* ── Hero stats counter ── */
+(function() {
+  const stats = document.querySelectorAll('.stat-num');
+  stats.forEach(el => { el.dataset.val = el.textContent.trim(); el.textContent = '0'; });
+  ScrollTrigger.create({
+    trigger: '.hero-stats', start: 'top 90%', once: true,
+    onEnter() {
+      stats.forEach(el => {
+        const raw = el.dataset.val, num = parseInt(raw.replace(/\D/g,'')), suffix = raw.replace(/[0-9]/g,'');
+        const o = { v: 0 };
+        gsap.to(o, { v: num, duration: 2.2, ease: 'power2.out',
+          onUpdate() { el.textContent = Math.round(o.v) + (o.v >= num ? suffix : ''); },
+          onComplete() { el.textContent = raw; }
+        });
+      });
+    }
+  });
+})();
+
+/* ── Section labels slide from left ── */
+document.querySelectorAll('.section-label').forEach(el => {
+  gsap.from(el, { x: -40, opacity: 0, duration: 0.7, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+});
+
+/* ── Section titles rise up ── */
+document.querySelectorAll('.section-title').forEach(el => {
+  gsap.from(el, { y: 60, opacity: 0, duration: 1, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 86%', once: true } });
+});
+
+/* ── Section subtitles ── */
+document.querySelectorAll('.section-sub').forEach(el => {
+  gsap.from(el, { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
+});
+
+/* ── Dividers draw in ── */
+document.querySelectorAll('.divider').forEach(el => {
+  gsap.from(el, { width: 0, duration: 1.3, ease: 'power2.out',
+    scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
+});
+
+/* ── Opere: category headers alternating left/right ── */
+document.querySelectorAll('.cat-header').forEach((el, i) => {
+  gsap.from(el, { x: i % 2 === 0 ? -80 : 80, opacity: 0, duration: 0.9, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+});
+
+/* ── Opere: cards clip-path curtain from bottom ── */
+document.querySelectorAll('.cards-grid').forEach(grid => {
+  gsap.fromTo(grid.querySelectorAll('.card'),
+    { clipPath: 'inset(100% 0% 0% 0%)', opacity: 0 },
+    { clipPath: 'inset(0% 0% 0% 0%)', opacity: 1, stagger: 0.15, duration: 1, ease: 'power3.out',
+      scrollTrigger: { trigger: grid, start: 'top 78%', once: true } }
+  );
+});
+
+/* ── Attestazioni: cards bounce up ── */
+gsap.fromTo('.att-card',
+  { y: 100, opacity: 0 },
+  { y: 0, opacity: 1, stagger: 0.14, duration: 0.85, ease: 'back.out(1.4)',
+    scrollTrigger: { trigger: '.attestazioni-grid', start: 'top 80%', once: true } }
+);
+
+/* ── Storia: image horizontal curtain reveal ── */
+gsap.fromTo('.storia-img img',
+  { clipPath: 'inset(0% 100% 0% 0%)' },
+  { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.6, ease: 'power4.inOut',
+    scrollTrigger: { trigger: '.storia-img', start: 'top 75%', once: true } }
+);
+
+/* ── Storia: text block slides from right ── */
+gsap.from('#storia .section-sub, #storia .timeline', {
+  x: 70, opacity: 0, stagger: 0.15, duration: 0.9, ease: 'power3.out',
+  scrollTrigger: { trigger: '#storia', start: 'top 70%', once: true }
+});
+
+/* ── Timeline items sequential from left ── */
+document.querySelectorAll('.tl-item').forEach((el, i) => {
+  gsap.from(el, { x: -60, opacity: 0, duration: 0.7, ease: 'power3.out', delay: i * 0.1,
+    scrollTrigger: { trigger: '.timeline', start: 'top 80%', once: true } });
+});
+
+/* ── Social cards: alternating fly-in ── */
+document.querySelectorAll('.social-card').forEach((el, i) => {
+  gsap.from(el, { x: i % 2 === 0 ? -110 : 110, opacity: 0, duration: 1, ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
+});
+
+/* ── Lavora: career left, form right ── */
+gsap.from('.career-info', { x: -80, opacity: 0, duration: 1, ease: 'power3.out',
+  scrollTrigger: { trigger: '.lavora-container', start: 'top 78%', once: true } });
+gsap.from('.cv-form-container', { x: 80, opacity: 0, duration: 1, ease: 'power3.out',
+  scrollTrigger: { trigger: '.lavora-container', start: 'top 78%', once: true } });
+
+/* ── Contatti: info from left, form from right ── */
+gsap.from('.contact-info .contact-item', { x: -80, opacity: 0, stagger: 0.1, duration: 0.85, ease: 'power3.out',
+  scrollTrigger: { trigger: '.contatti-layout', start: 'top 80%', once: true } });
+gsap.from('.contact-form', { x: 80, opacity: 0, duration: 1, ease: 'power3.out',
+  scrollTrigger: { trigger: '.contatti-layout', start: 'top 80%', once: true } });
+
+/* ── Footer ── */
+gsap.from('footer > *', { y: 40, opacity: 0, stagger: 0.1, duration: 0.7, ease: 'power3.out',
+  scrollTrigger: { trigger: 'footer', start: 'top 90%', once: true } });
+
+/* ── MAGNETIC BUTTONS ── */
+(function() {
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+  document.querySelectorAll('.btn-primary,.btn-outline,.apply-btn,.submit-btn,.btn-call').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const r = btn.getBoundingClientRect();
+      gsap.to(btn, { x: (e.clientX - r.left - r.width/2) * 0.35, y: (e.clientY - r.top - r.height/2) * 0.35,
+        duration: 0.4, ease: 'power2.out', overwrite: true });
+    });
+    btn.addEventListener('mouseleave', () => {
+      gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1,0.5)', overwrite: true });
+    });
+  });
+})();
+
+/* ── 3D CARD TILT ── */
+(function() {
+  if (window.matchMedia('(pointer: coarse)').matches) return;
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width  - 0.5) * 16;
+      const y = ((e.clientY - r.top)  / r.height - 0.5) * 16;
+      gsap.to(card, { rotationX: -y, rotationY: x, scale: 1.04,
+        transformPerspective: 700, duration: 0.25, ease: 'power2.out', overwrite: true });
+    });
+    card.addEventListener('mouseleave', () => {
+      gsap.to(card, { rotationX: 0, rotationY: 0, scale: 1,
+        duration: 0.6, ease: 'elastic.out(1,0.4)', overwrite: true });
+    });
+  });
+})();
+
+/* ── FLOATING ORBS in storia ── */
+(function() {
+  const sec = document.getElementById('storia');
+  if (!sec) return;
+  [{ s:'320px', c:'#1A4B8C', t:'-100px', r:'-80px', b:'auto', l:'auto', d:'0s' },
+   { s:'220px', c:'#2563B0', t:'auto',   r:'auto',  b:'-80px', l:'-60px', d:'5s' }
+  ].forEach(({ s, c, t, r, b, l, d }) => {
+    const orb = document.createElement('div');
+    orb.className = 'section-orb';
+    orb.style.cssText = `width:${s};height:${s};background:${c};top:${t};right:${r};bottom:${b};left:${l};animation-delay:${d};`;
+    sec.appendChild(orb);
+  });
+})();
+
+/* ── ACTIVE NAV on scroll ── */
+(function() {
+  document.querySelectorAll('section[id]').forEach(sec => {
+    ScrollTrigger.create({
+      trigger: sec, start: 'top 45%', end: 'bottom 45%',
+      onToggle(self) {
+        if (!self.isActive) return;
+        document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('nav-active'));
+        const a = document.querySelector(`.nav-links a[href="#${sec.id}"]`);
+        if (a) a.classList.add('nav-active');
+      }
+    });
+  });
+})();
 
 /* ─── Invio CV — submit tradizionale con file allegato ─── */
 document.getElementById('cv-form').addEventListener('submit', function() {
