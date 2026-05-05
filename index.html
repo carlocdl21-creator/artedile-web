@@ -1296,7 +1296,7 @@ function updateFileName(input) {
 }
 
 /* ─── Endpoint email ─── */
-const API_BASE = '';
+const API_BASE = 'https://error-tracker-carlodeluca2100.replit.app';
 
 /* ─── Invio CV ─── */
 document.getElementById('cv-form').addEventListener('submit', async function(e) {
@@ -1306,7 +1306,7 @@ document.getElementById('cv-form').addEventListener('submit', async function(e) 
   btn.textContent = 'Invio in corso...';
 
   try {
-    const res = await fetch(API_BASE + '/send-cv.php', {
+    const res = await fetch(API_BASE + '/api/send-cv', {
       method: 'POST',
       body: new FormData(this)
     });
@@ -1345,7 +1345,7 @@ async function submitContact() {
   btn.textContent = 'Invio in corso...';
 
   try {
-    const res = await fetch(API_BASE + '/send-contact.php', {
+    const res = await fetch(API_BASE + '/api/send-contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nome, email, azienda, oggetto, messaggio })
