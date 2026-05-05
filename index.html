@@ -1096,8 +1096,10 @@
 
     <div class="cv-form-container">
       <h3>Invia il tuo CV</h3>
-      <form id="cv-form" name="cv-form" method="POST" data-netlify="true" enctype="multipart/form-data">
-        <input type="hidden" name="form-name" value="cv-form">
+      <form id="cv-form" action="https://formsubmit.co/ajax/carlocdl21@gmail.com" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_subject" value="Nuova Candidatura CV — ARTEDILE">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
         <div class="form-row">
           <input type="text" name="nome" placeholder="Nome" required>
           <input type="text" name="cognome" placeholder="Cognome" required>
@@ -1172,8 +1174,10 @@
 
     <div class="contact-form fade-in">
       <h3>Invia un Messaggio</h3>
-      <form id="contact-form" name="contact-form" method="POST" data-netlify="true">
-        <input type="hidden" name="form-name" value="contact-form">
+      <form id="contact-form" action="https://formsubmit.co/ajax/carlocdl21@gmail.com" method="POST">
+        <input type="hidden" name="_subject" value="Nuovo Messaggio di Contatto — ARTEDILE">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
         <div class="form-row" style="margin-bottom: 20px;">
           <input type="text" id="c-nome" name="nome" placeholder="Nome e Cognome">
           <input type="text" id="c-azienda" name="azienda" placeholder="Azienda">
@@ -1297,15 +1301,19 @@ function updateFileName(input) {
   document.getElementById('file-info').innerText = input.files[0].name;
 }
 
-/* ─── Invio CV (Netlify Forms) ─── */
+/* ─── Invio CV (Formsubmit) ─── */
 document.getElementById('cv-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const btn = document.getElementById('cv-submit-btn');
   btn.disabled = true;
   btn.textContent = 'Invio in corso...';
   try {
-    const res = await fetch('/', { method: 'POST', body: new FormData(this) });
-    if (res.ok) {
+    const res = await fetch('https://formsubmit.co/ajax/carlocdl21@gmail.com', {
+      method: 'POST',
+      body: new FormData(this)
+    });
+    const data = await res.json();
+    if (data.success === 'true' || data.success === true) {
       showToast('Candidatura inviata con successo!');
       this.reset();
       document.getElementById('file-text').innerText = 'Carica il tuo CV';
@@ -1321,7 +1329,7 @@ document.getElementById('cv-form').addEventListener('submit', async function(e) 
   }
 });
 
-/* ─── Invio Messaggio Contatto (Netlify Forms) ─── */
+/* ─── Invio Messaggio Contatto (Formsubmit) ─── */
 document.getElementById('contact-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const privacy = document.getElementById('privacy').checked;
@@ -1330,8 +1338,12 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   btn.disabled = true;
   btn.textContent = 'Invio in corso...';
   try {
-    const res = await fetch('/', { method: 'POST', body: new FormData(this) });
-    if (res.ok) {
+    const res = await fetch('https://formsubmit.co/ajax/carlocdl21@gmail.com', {
+      method: 'POST',
+      body: new FormData(this)
+    });
+    const data = await res.json();
+    if (data.success === 'true' || data.success === true) {
       showToast('Messaggio inviato con successo!');
       this.reset();
     } else {
