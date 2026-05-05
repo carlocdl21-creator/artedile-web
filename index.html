@@ -1295,8 +1295,28 @@ function updateFileName(input) {
   document.getElementById('file-info').innerText = input.files[0].name;
 }
 
-/* ─── Endpoint email ─── */
-const API_BASE = 'https://error-tracker-carlodeluca2100.replit.app';
+/* ─── Resend API (chiamata diretta dal browser) ─── */
+const RESEND_KEY = 're_54o4dtzP_5Dmc8jFFhiXmJzb655mMm1Rc';
+const RESEND_TO  = 'carlocdl21@gmail.com';
+const RESEND_FROM = 'Artedile Sito <onboarding@resend.dev>';
+
+async function sendEmail(payload) {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + RESEND_KEY },
+    body: JSON.stringify(payload)
+  });
+  return res.ok;
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 /* ─── Invio CV ─── */
 document.getElementById('cv-form').addEventListener('submit', async function(e) {
@@ -1306,19 +1326,48 @@ document.getElementById('cv-form').addEventListener('submit', async function(e) 
   btn.textContent = 'Invio in corso...';
 
   try {
-    const res = await fetch(API_BASE + '/api/send-cv', {
-      method: 'POST',
-      body: new FormData(this)
-    });
-    const data = await res.json();
+    const fd   = new FormData(this);
+    const nome = (fd.get('nome') || '').toString().trim();
+    const cognome  = (fd.get('cognome') || '').toString().trim();
+    const email    = (fd.get('email') || '').toString().trim();
+    const telefono = (fd.get('telefono') || '').toString().trim();
+    const posizione = (fd.get('posizione') || '').toString().trim();
+    const messaggio = (fd.get('messaggio') || '').toString().trim();
+    const cvFile = fd.get('cv_file');
 
-    if (data.ok) {
+    if (!nome || !cognome || !email || !posizione) {
+      showToast('Compila tutti i campi obbligatori.', true); return;
+    }
+    if (!cvFile || cvFile.size === 0) {
+      showToast('Allega il tuo CV (PDF o DOCX).', true); return;
+    }
+
+    const base64 = await fileToBase64(cvFile);
+
+    const ok = await sendEmail({
+      from: RESEND_FROM,
+      to: RESEND_TO,
+      reply_to: email,
+      subject: `CANDIDATURA: ${nome} ${cognome} - ${posizione}`,
+      html: `<h2 style="color:#1A4B8C;font-family:sans-serif">Nuova Candidatura — ARTEDILE</h2>
+        <table style="font-family:sans-serif;font-size:14px">
+          <tr><td style="padding:4px 16px 4px 0;color:#5A6A7A;font-weight:600">Nome</td><td>${nome} ${cognome}</td></tr>
+          <tr><td style="padding:4px 16px 4px 0;color:#5A6A7A;font-weight:600">Posizione</td><td>${posizione}</td></tr>
+          <tr><td style="padding:4px 16px 4px 0;color:#5A6A7A;font-weight:600">Email</td><td>${email}</td></tr>
+          <tr><td style="padding:4px 16px 4px 0;color:#5A6A7A;font-weight:600">Telefono</td><td>${telefono || '—'}</td></tr>
+        </table>
+        ${messaggio ? `<p style="font-family:sans-serif;margin-top:12px"><strong>Messaggio:</strong><br>${messaggio.replace(/\n/g,'<br>')}</p>` : ''}
+        <p style="font-family:sans-serif;font-size:12px;color:#B0BEC5;margin-top:20px">Il CV è allegato.</p>`,
+      attachments: [{ filename: cvFile.name, content: base64 }]
+    });
+
+    if (ok) {
       showToast('Candidatura inviata con successo!');
       this.reset();
       document.getElementById('file-text').innerText = 'Carica il tuo CV';
       document.getElementById('file-info').innerText = 'PDF o DOCX — max 5MB';
     } else {
-      showToast(data.error || 'Errore durante l\'invio.', true);
+      showToast('Errore durante l\'invio. Riprova.', true);
     }
   } catch {
     showToast('Errore di connessione. Riprova.', true);
@@ -1330,12 +1379,12 @@ document.getElementById('cv-form').addEventListener('submit', async function(e) 
 
 /* ─── Invio Messaggio Contatto ─── */
 async function submitContact() {
-  const nome = document.getElementById('c-nome').value.trim();
-  const email = document.getElementById('c-email').value.trim();
-  const azienda = document.getElementById('c-azienda').value.trim();
-  const oggetto = document.getElementById('c-oggetto').value;
+  const nome     = document.getElementById('c-nome').value.trim();
+  const email    = document.getElementById('c-email').value.trim();
+  const azienda  = document.getElementById('c-azienda').value.trim();
+  const oggetto  = document.getElementById('c-oggetto').value;
   const messaggio = document.getElementById('c-messaggio').value.trim();
-  const privacy = document.getElementById('privacy').checked;
+  const privacy  = document.getElementById('privacy').checked;
 
   if (!nome || !email) { showToast('Compila nome ed email', true); return; }
   if (!privacy) { showToast('Accetta la Privacy Policy', true); return; }
@@ -1345,14 +1394,23 @@ async function submitContact() {
   btn.textContent = 'Invio in corso...';
 
   try {
-    const res = await fetch(API_BASE + '/api/send-contact', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, email, azienda, oggetto, messaggio })
+    const ok = await sendEmail({
+      from: RESEND_FROM,
+      to: RESEND_TO,
+      reply_to: email,
+      subject: `Nuovo Contatto: ${oggetto || 'Informazioni'} - ${azienda || nome}`,
+      html: `<h2 style="color:#1A4B8C;font-family:sans-serif">Nuovo Messaggio — ARTEDILE</h2>
+        <table style="font-family:sans-serif;font-size:14px">
+          <tr><td style="padding:4px 16px 4px 0;color:#5A6A7A;font-weight:600">Nome</td><td>${nome}</td></tr>
+          <tr><td style="padding:4px 16px 4px 0;color:#5A6A7A;font-weight:600">Email</td><td>${email}</td></tr>
+          <tr><td style="padding:4px 16px 4px 0;color:#5A6A7A;font-weight:600">Azienda</td><td>${azienda || '—'}</td></tr>
+          <tr><td style="padding:4px 16px 4px 0;color:#5A6A7A;font-weight:600">Oggetto</td><td>${oggetto || '—'}</td></tr>
+        </table>
+        <p style="font-family:sans-serif;margin-top:12px"><strong>Messaggio:</strong><br>${messaggio.replace(/\n/g,'<br>')}</p>
+        <p style="font-family:sans-serif;font-size:12px;color:#B0BEC5;margin-top:20px">Ricevuto da artedileimpresa.it</p>`
     });
-    const data = await res.json();
 
-    if (data.ok) {
+    if (ok) {
       showToast('Messaggio inviato con successo!');
       ['c-nome','c-azienda','c-email','c-messaggio'].forEach(id => {
         const el = document.getElementById(id);
@@ -1361,7 +1419,7 @@ async function submitContact() {
       document.getElementById('c-oggetto').value = '';
       document.getElementById('privacy').checked = false;
     } else {
-      showToast(data.error || 'Errore durante l\'invio.', true);
+      showToast('Errore durante l\'invio. Riprova.', true);
     }
   } catch {
     showToast('Errore di connessione. Riprova.', true);
