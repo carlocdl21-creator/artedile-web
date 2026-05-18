@@ -3,2060 +3,3228 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARTEDILE — Edilizia & Energia</title>
-<link rel="icon" type="image/png" href="Designer.png">
-<link rel="shortcut icon" type="image/png" href="Designer.png">
-<link rel="apple-touch-icon" href="Designer.png">  
-<link rel="icon" type="image/png" href="/artedile-logo.png">
-<link rel="apple-touch-icon" href="/artedile-logo.png">
+<title>ARTEDILE — Costruire il Futuro con Arte</title>
+<meta name="description" content="Specialisti in impianti energetici, edilizia civile e restauro architettonico dal 2001. Certificazione SOA, ISO 9001, White List Antimafia.">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Barlow:wght@200;300;400;500;600&family=Barlow+Condensed:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
-  }
-}
-</script>
+
 <style>
   :root {
-    --blue:       #1A4B8C;
-    --blue-mid:   #2563B0;
-    --blue-light: #4A90D9;
-    --sky:        #A8C8F0;
-    --sky-pale:   #D6E8F9;
-    --white:      #FFFFFF;
-    --off-white:  #F4F8FC;
-    --grey-light: #E8EEF5;
-    --grey-mid:   #B0BEC5;
-    --grey-dark:  #5A6A7A;
-    --dark:       #1A2332;
-    --accent:     #2980B9;
+    /* Backgrounds (era scuro, ora chiaro luminoso) */
+    --bg-base:     #f8fafc;
+    --bg-soft:     #eef3f9;
+    --bg-card:     #ffffff;
+    --bg-overlay:  rgba(255,255,255,0.78);
+
+    /* Brand blues */
+    --blue:        #1A4B8C;
+    --blue-mid:    #2563B0;
+    --blue-light:  #4A90D9;
+    --blue-deep:   #0d2545;
+    --sky:         #6FA1D8;
+    --sky-pale:    #D6E8F9;
+
+    /* Text */
+    --text:        #0d2545;
+    --text-mid:    #3a4858;
+    --text-soft:   #5a6a7a;
+    --text-faint:  #93a3b5;
+
+    /* Lines / borders */
+    --line:        rgba(26,75,140,0.12);
+    --line-strong: rgba(26,75,140,0.25);
+
+    /* Accents */
+    --accent:      #2980B9;
+    --gold:        #c9a96a;
+
+    --font-display: 'Cormorant Garamond', serif;
+    --font-body:    'Barlow', sans-serif;
+    --font-cond:    'Barlow Condensed', sans-serif;
+    --font-mono:    'Space Mono', monospace;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { overflow-x: hidden; max-width: 100vw; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: auto; }
   body {
-    font-family: 'Barlow', sans-serif;
-    background: var(--white);
-    color: var(--dark);
+    font-family: var(--font-body);
+    background: var(--bg-base);
+    color: var(--text);
     overflow-x: hidden;
+    cursor: none;
   }
 
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--grey-light); }
-  ::-webkit-scrollbar-thumb { background: var(--blue-mid); }
+  ::-webkit-scrollbar { width: 0; display: none; }
+  body { -ms-overflow-style: none; scrollbar-width: none; }
 
-  /* ─── NAV ─── */
+  /* ─────────────────────────────────────────
+     PRELOADER
+  ───────────────────────────────────────── */
+  #preloader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--bg-base);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 1.2s ease, visibility 1.2s ease;
+  }
+  #preloader.done { opacity: 0; visibility: hidden; }
+
+  .pre-logo {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    letter-spacing: 0.6em;
+    color: var(--blue);
+    text-transform: uppercase;
+    font-weight: 300;
+    padding-left: 0.6em;
+    opacity: 0;
+    animation: preFade 1.4s ease 0.2s forwards;
+  }
+  .pre-bar {
+    width: 240px; height: 1px;
+    background: var(--line);
+    margin-top: 3rem;
+    overflow: hidden;
+    position: relative;
+  }
+  .pre-bar::after {
+    content: ''; position: absolute;
+    inset: 0; width: 0;
+    background: linear-gradient(90deg, transparent, var(--blue-mid), transparent);
+    animation: preLoad 2.4s ease 0.6s forwards;
+  }
+  .pre-text {
+    font-family: var(--font-cond);
+    font-size: 0.68rem;
+    letter-spacing: 0.4em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    margin-top: 1.4rem;
+    opacity: 0;
+    animation: preFade 1s ease 1s forwards;
+  }
+  @keyframes preFade { to { opacity: 1; } }
+  @keyframes preLoad { to { width: 100%; } }
+
+  /* ─────────────────────────────────────────
+     3D CANVAS — il "mondo" che fa da background
+  ───────────────────────────────────────── */
+  #scene-canvas {
+    position: fixed; inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    width: 100vw; height: 100vh;
+  }
+
+  /* Vignetting e atmosfera sopra la scena 3D — ammorbidisce molto la 3D */
+  .scene-vignette {
+    position: fixed; inset: 0; z-index: 2;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 110% 90% at 50% 50%, rgba(248,250,252,0.45) 0%, rgba(238,243,249,0.7) 100%),
+      radial-gradient(ellipse 70% 50% at 50% 0%, rgba(74,144,217,0.03) 0%, transparent 70%);
+  }
+  .scene-grain {
+    position: fixed; inset: 0; z-index: 3;
+    pointer-events: none;
+    opacity: 0.08;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");
+  }
+
+  /* Cursore custom */
+  .cursor-dot, .cursor-ring {
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+  }
+  .cursor-dot {
+    width: 5px; height: 5px;
+    background: var(--blue);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(26,75,140,0.4);
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
+  }
+  .cursor-ring.hover {
+    width: 60px; height: 60px;
+    background: rgba(26,75,140,0.06);
+    border-color: var(--blue);
+  }
+
+  /* ─────────────────────────────────────────
+     SCROLL HUD (nascosto)
+  ───────────────────────────────────────── */
+  .scroll-hud {
+    display: none;
+  }
+
+  /* ─────────────────────────────────────────
+     NAVBAR
+  ───────────────────────────────────────── */
   nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 0 5vw;
-    height: 72px;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(26,75,140,0.1);
-    transition: all .3s;
-    box-shadow: 0 2px 20px rgba(26,75,140,0.06);
+    padding: 1.6rem 4vw;
+    background: linear-gradient(180deg, rgba(248,250,252,0.95) 0%, rgba(248,250,252,0.75) 70%, rgba(248,250,252,0) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: padding 0.4s ease, background 0.4s ease;
+  }
+  nav.compact {
+    padding: 1rem 4vw;
+    background: rgba(248,250,252,0.92);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 2px 30px rgba(13,37,69,0.06);
   }
 
   .nav-logo {
-    display: flex; align-items: center; gap: .7rem;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.4rem;
-    font-weight: 700;
-    letter-spacing: 4px;
-    color: var(--blue);
+    display: flex; align-items: center; gap: 0.9rem;
     text-decoration: none;
+  }
+  .nav-logo-mark {
+    width: 26px; height: 26px;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: navMarkSpin 22s linear infinite;
+  }
+  .nav-logo-mark svg { width: 100%; height: 100%; }
+  @keyframes navMarkSpin { to { transform: rotateY(360deg); } }
+
+  .nav-logo-text {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.35em;
+    color: var(--blue);
     text-transform: uppercase;
   }
-  .nav-logo img {
-    height: 42px; width: auto; display: block;
-    filter: drop-shadow(0 2px 6px rgba(26,75,140,0.18));
-  }
-  .nav-logo span { color: var(--blue-light); }
-  @media (max-width: 600px) {
-    .nav-logo .nav-logo-text { display: none; }
-    .nav-logo img { height: 38px; }
+  .nav-logo-text em {
+    font-style: normal;
+    color: var(--blue-light);
+    font-weight: 400;
   }
 
   .nav-links {
-    display: flex; gap: 2.2rem; list-style: none;
+    display: flex; gap: 2.4rem; list-style: none;
   }
   .nav-links a {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: .8rem;
-    font-weight: 600;
-    letter-spacing: 2.5px;
+    font-family: var(--font-cond);
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
-    color: var(--grey-dark);
+    color: var(--text-soft);
     text-decoration: none;
-    transition: color .25s;
     position: relative;
+    padding: 0.5rem 0;
+    transition: color 0.3s;
   }
+  .nav-links a::before { display: none; }
   .nav-links a::after {
-    content: '';
-    position: absolute; bottom: -4px; left: 0; right: 0;
-    height: 2px; background: var(--blue-mid);
-    transform: scaleX(0); transform-origin: left;
-    transition: transform .3s;
+    content: ''; position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 1px;
+    background: var(--blue);
+    transition: width 0.4s ease;
   }
   .nav-links a:hover { color: var(--blue); }
-  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-links a.active { color: var(--blue); }
+  .nav-links a.active::after { width: 100%; }
 
-  .hamburger {
-    display: none; flex-direction: column; gap: 5px; cursor: pointer;
-    background: none; border: none; padding: 4px;
+  .nav-cta {
+    font-family: var(--font-cond);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--blue);
+    padding: 0.85rem 1.6rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    border: 1px solid var(--blue);
   }
-  .hamburger span { display: block; width: 26px; height: 2px; background: var(--blue); transition: .3s; }
+  .nav-cta:hover {
+    background: transparent;
+    color: var(--blue);
+  }
 
-  /* ─── HERO ─── */
-  #home {
+  .hamburger { display: none; }
+
+  /* ─────────────────────────────────────────
+     SCROLL CONTAINER — total height drives camera
+  ───────────────────────────────────────── */
+  .journey {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Each "stage" of the 3D journey */
+  .stage {
+    position: relative;
+    min-height: 130vh;
+    padding: 0 8vw;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+  }
+  /* Wash bianco semi-trasparente che ammorbidisce ulteriormente la 3D sotto i contenuti */
+  .stage:not(#stage-hero)::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      rgba(248,250,252,0) 0%,
+      rgba(248,250,252,0.65) 12%,
+      rgba(248,250,252,0.78) 50%,
+      rgba(248,250,252,0.65) 88%,
+      rgba(248,250,252,0) 100%);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .stage-inner {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* Stage marker — nascosto su richiesta */
+  .stage-marker {
+    display: none;
+  }
+
+  .stage-label {
+    font-family: var(--font-cond);
+    font-size: 0.7rem;
+    letter-spacing: 0.45em;
+    color: var(--blue-mid);
+    text-transform: uppercase;
+    margin-bottom: 1.4rem;
+    display: inline-flex; align-items: center; gap: 0.8rem;
+  }
+  .stage-label::before {
+    content: '◆';
+    color: var(--blue-light);
+    font-size: 0.5rem;
+  }
+
+  .stage-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 5vw, 4.6rem);
+    font-weight: 300;
+    line-height: 1;
+    color: var(--text);
+    margin-bottom: 1.8rem;
+    letter-spacing: -0.01em;
+  }
+  .stage-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--blue);
+  }
+  .stage-title strong {
+    font-weight: 700;
+    font-style: normal;
+    color: var(--blue);
+  }
+
+  .stage-sub {
+    font-family: var(--font-body);
+    font-size: 1.02rem;
+    line-height: 1.85;
+    color: var(--text-soft);
+    font-weight: 400;
+    max-width: 520px;
+    margin-bottom: 2.6rem;
+  }
+
+  /* ─────────────────────────────────────────
+     STAGE 1 — HERO
+  ───────────────────────────────────────── */
+  #stage-hero {
     min-height: 100vh;
-    display: flex; align-items: center;
-    position: relative; overflow: hidden;
-    padding-top: 72px;
-    background: #0d1a2e;
+    align-items: center;
   }
 
-  .hero-photo-wrap {
-    position: absolute; inset: -8%;
-    z-index: 0;
-    will-change: transform;
+  .hero-eyebrow {
+    font-family: var(--font-cond);
+    font-size: 0.7rem;
+    letter-spacing: 0.5em;
+    color: var(--blue-mid);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    display: inline-flex; align-items: center; gap: 1.2rem;
+    opacity: 0;
+    animation: heroFade 1s ease 1.2s forwards;
   }
-  /* On touch devices: lock the photo wrap so the page doesn't jitter */
-  @media (pointer: coarse), (max-width: 900px) {
-    .hero-photo-wrap { inset: 0 !important; transform: none !important; }
-  }
-
-  .hero-photo-main {
-    position: absolute; inset: 0;
-    background:
-      linear-gradient(180deg, rgba(8,18,38,0.55) 0%, rgba(8,18,38,0.35) 40%, rgba(5,11,24,0.85) 100%),
-      url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1920&q=85') center/cover no-repeat;
-    transform-origin: center center;
-    will-change: transform;
-    animation: kenBurns 20s ease-in-out infinite alternate;
+  .hero-eyebrow::before {
+    content: ''; width: 50px; height: 1px; background: var(--blue-mid);
   }
 
-  /* ─── 3D HERO CANVAS ─── */
-  #hero3d {
-    position: absolute; inset: 0; z-index: 1;
-    width: 100%; height: 100%;
-    display: block;
-    touch-action: none;
-  }
-  .hero-hint {
-    position: absolute; z-index: 6;
-    bottom: 130px; left: 50%; transform: translateX(-50%);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: .68rem; letter-spacing: 4px; text-transform: uppercase;
-    color: rgba(168,200,240,0.6);
-    display: flex; align-items: center; gap: .8rem;
-    pointer-events: none;
-    animation: hintPulse 2.5s ease-in-out infinite;
-  }
-  .hero-hint i { font-size: 1rem; color: var(--sky); }
-  @keyframes hintPulse {
-    0%, 100% { opacity: 0.5; transform: translate(-50%, 0); }
-    50%      { opacity: 1;   transform: translate(-50%, -4px); }
-  }
-  @media (max-width: 600px) {
-    .hero-hint { bottom: 200px; font-size: .6rem; letter-spacing: 3px; }
-  }
-
-  @keyframes kenBurns {
-    0%   { transform: scale(1.08) translate(0px, 0px); }
-    50%  { transform: scale(1.13) translate(-12px, -6px); }
-    100% { transform: scale(1.10) translate(10px, 4px); }
-  }
-
-  .hero-overlay-base {
-    position: absolute; inset: 0; z-index: 1;
-    background: linear-gradient(
-      105deg,
-      rgba(10, 20, 40, 0.82) 0%,
-      rgba(15, 30, 60, 0.55) 45%,
-      rgba(26, 75, 140, 0.20) 75%,
-      rgba(74, 144, 217, 0.08) 100%
-    );
-  }
-
-  .hero-light-streak {
-    position: absolute; inset: 0; z-index: 2;
-    background: radial-gradient(ellipse 60% 40% at 72% 38%,
-      rgba(168, 200, 240, 0.18) 0%,
-      rgba(74, 144, 217, 0.07) 40%,
-      transparent 70%
-    );
-    animation: lightPulse 6s ease-in-out infinite alternate;
-    will-change: opacity, transform;
-  }
-  @keyframes lightPulse {
-    0%   { opacity: 0.6; transform: translate(0px, 0px) scale(1); }
-    100% { opacity: 1.0; transform: translate(15px, -8px) scale(1.05); }
-  }
-
-  .hero-dust {
-    position: absolute; inset: 0; z-index: 2;
-    background-image:
-      radial-gradient(circle 2px at 20% 35%, rgba(168,200,240,0.6) 0%, transparent 100%),
-      radial-gradient(circle 1px at 65% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
-      radial-gradient(circle 2px at 80% 65%, rgba(74,144,217,0.5) 0%, transparent 100%),
-      radial-gradient(circle 1px at 45% 75%, rgba(255,255,255,0.3) 0%, transparent 100%),
-      radial-gradient(circle 1.5px at 10% 80%, rgba(168,200,240,0.4) 0%, transparent 100%),
-      radial-gradient(circle 2px at 90% 15%, rgba(255,255,255,0.35) 0%, transparent 100%),
-      radial-gradient(circle 1px at 33% 55%, rgba(74,144,217,0.4) 0%, transparent 100%),
-      radial-gradient(circle 2px at 58% 88%, rgba(168,200,240,0.5) 0%, transparent 100%);
-    animation: dustDrift 12s ease-in-out infinite alternate;
-    pointer-events: none;
-  }
-  @keyframes dustDrift {
-    0%   { transform: translate(0, 0); opacity: 0.7; }
-    100% { transform: translate(-18px, -12px); opacity: 1; }
-  }
-
-  .hero-vignette {
-    position: absolute; inset: 0; z-index: 3;
-    background: radial-gradient(ellipse 90% 90% at 50% 50%,
-      transparent 55%,
-      rgba(5, 12, 25, 0.5) 100%
-    );
-    pointer-events: none;
-  }
-
-  .hero-texture {
-    position: absolute; inset: 0; z-index: 3;
-    background-image: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 3px,
-      rgba(26, 75, 140, 0.02) 3px,
-      rgba(26, 75, 140, 0.02) 4px
-    );
-    pointer-events: none;
-  }
-
-  .hero-grid {
-    position: absolute; inset: 0; z-index: 3;
-    background-image:
-      linear-gradient(rgba(168,200,240,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(168,200,240,0.04) 1px, transparent 1px);
-    background-size: 80px 80px;
-    pointer-events: none;
-  }
-
-  .hero-line {
-    position: absolute; z-index: 4;
-    bottom: 115px; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba(74,144,217,0.4) 20%, rgba(74,144,217,0.4) 80%, transparent 100%);
-    animation: lineGlow 4s ease-in-out infinite alternate;
-  }
-  @keyframes lineGlow {
-    0%   { opacity: 0.4; }
-    100% { opacity: 0.9; }
-  }
-
-  .hero-content {
-    position: relative; z-index: 5;
-    padding: 0 10vw;
+  #stage-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 5.5vw, 5rem);
+    font-weight: 300;
+    line-height: 1.02;
+    color: var(--text);
+    margin-bottom: 2rem;
+    letter-spacing: -0.01em;
     max-width: 760px;
   }
-
-  .hero-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: .72rem;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    color: var(--sky);
-    margin-bottom: 1.5rem;
-    display: flex; align-items: center; gap: 1rem;
-    animation: fadeUp .8s ease both;
-  }
-  .hero-label::before {
-    content: ''; display: inline-block;
-    width: 40px; height: 2px; background: var(--blue-light);
-  }
-
-  h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(3.2rem, 7vw, 6.5rem);
-    font-weight: 300;
-    line-height: 1.0;
-    color: var(--white);
-    margin-bottom: 1.5rem;
-    animation: fadeUp .8s .15s ease both;
-  }
-  h1 strong {
-    font-weight: 700; color: var(--sky);
+  #stage-hero h1 .line {
     display: block;
+    opacity: 0;
+    transform: translateY(60px);
+    animation: heroLineUp 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
+  #stage-hero h1 .line:nth-child(1) { animation-delay: 1.4s; }
+  #stage-hero h1 .line:nth-child(2) { animation-delay: 1.65s; }
+  #stage-hero h1 .line:nth-child(3) { animation-delay: 1.9s; }
+
+  #stage-hero h1 em {
+    font-style: italic;
+    color: var(--blue-mid);
+    position: relative;
+  }
+  #stage-hero h1 strong {
+    font-weight: 700;
+    font-style: normal;
+    background: linear-gradient(120deg, var(--blue) 0%, var(--blue-mid) 50%, var(--blue-light) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  @keyframes heroFade { to { opacity: 1; } }
+  @keyframes heroLineUp { to { opacity: 1; transform: translateY(0); } }
 
   .hero-sub {
-    font-size: 1rem;
-    color: rgba(214, 232, 249, 0.75);
-    font-weight: 300;
-    line-height: 1.8;
-    max-width: 480px;
-    margin-bottom: 2.8rem;
-    animation: fadeUp .8s .3s ease both;
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--text-soft);
+    font-weight: 400;
+    max-width: 540px;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: heroFade 1s ease 2.4s forwards;
   }
 
   .hero-ctas {
     display: flex; gap: 1rem; flex-wrap: wrap;
-    animation: fadeUp .8s .45s ease both;
+    opacity: 0;
+    animation: heroFade 1s ease 2.7s forwards;
   }
 
-  .btn-primary {
-    display: inline-block;
-    padding: 14px 36px;
-    background: var(--blue-light);
-    color: var(--white);
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    font-size: .82rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: all .3s;
-    position: relative; overflow: hidden;
-    box-shadow: 0 8px 30px rgba(74,144,217,0.35);
-  }
-  .btn-primary:hover {
-    background: var(--blue-mid);
-    transform: translateY(-2px);
-    box-shadow: 0 14px 40px rgba(74,144,217,0.5);
-  }
-
-  .btn-outline {
-    display: inline-block;
-    padding: 13px 34px;
-    border: 2px solid rgba(168,200,240,0.6);
-    color: var(--sky);
-    font-family: 'Barlow Condensed', sans-serif;
+  /* ─────────────────────────────────────────
+     BUTTONS
+  ───────────────────────────────────────── */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center; gap: 0.9rem;
+    padding: 1.1rem 2.4rem;
+    font-family: var(--font-cond);
+    font-size: 0.78rem;
     font-weight: 600;
-    font-size: .82rem;
-    letter-spacing: 3px;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
     text-decoration: none;
-    transition: all .3s;
-    backdrop-filter: blur(4px);
+    cursor: none;
+    transition: all 0.4s;
+    border: 1px solid transparent;
+    overflow: hidden;
   }
-  .btn-outline:hover {
-    background: rgba(74,144,217,0.2);
-    border-color: var(--sky);
-    color: var(--white);
-    transform: translateY(-2px);
+  .btn-primary {
+    background: var(--blue);
+    color: #fff;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--blue-deep);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+    z-index: 0;
+  }
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary span { position: relative; z-index: 1; }
+  .btn-primary .arr { position: relative; z-index: 1; transition: transform 0.4s; }
+  .btn-primary:hover .arr { transform: translateX(6px); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--blue);
+    border-color: var(--line-strong);
+  }
+  .btn-ghost:hover {
+    border-color: var(--blue);
+    background: rgba(26,75,140,0.05);
   }
 
+  /* ─────────────────────────────────────────
+     HERO STATS — floating panel
+  ───────────────────────────────────────── */
   .hero-stats {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    display: flex;
-    border-top: 1px solid rgba(74,144,217,0.2);
-    background: rgba(10,20,40,0.75);
-    backdrop-filter: blur(16px);
-    z-index: 5;
-    animation: fadeUp .8s .6s ease both;
+    position: absolute;
+    bottom: 8vh; right: 4vw;
+    z-index: 20;
+    display: flex; flex-direction: column;
+    gap: 1rem;
+    padding: 1.6rem 1.8rem;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    max-width: 240px;
+    box-shadow: 0 18px 60px rgba(13,37,69,0.08);
+    opacity: 0;
+    animation: heroFade 1s ease 3s forwards;
   }
-  .stat {
-    flex: 1;
-    padding: 1.5rem 3vw;
-    border-right: 1px solid rgba(74,144,217,0.12);
+  .hero-stats::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 14px; height: 14px;
+    border-top: 1px solid var(--blue);
+    border-left: 1px solid var(--blue);
   }
-  .stat:last-child { border-right: none; }
-  .stat-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2.4rem;
+  .hero-stats::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; right: -1px;
+    width: 14px; height: 14px;
+    border-bottom: 1px solid var(--blue);
+    border-right: 1px solid var(--blue);
+  }
+  .hero-stat {
+    display: flex; align-items: baseline; gap: 0.6rem;
+  }
+  .hero-stat-num {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
     font-weight: 700;
-    color: var(--sky);
+    color: var(--blue);
     line-height: 1;
   }
-  .stat-label {
-    font-size: .7rem;
-    letter-spacing: 2px;
+  .hero-stat-lbl {
+    font-family: var(--font-cond);
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: rgba(168,200,240,0.5);
-    margin-top: .3rem;
+    color: var(--text-soft);
   }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(28px); }
-    to   { opacity: 1; transform: translateY(0); }
+  /* ─────────────────────────────────────────
+     STAGE 2 — OPERE (3D city/portfolio)
+  ───────────────────────────────────────── */
+  #stage-opere {
+    min-height: 220vh;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-top: 18vh;
+    padding-bottom: 10vh;
   }
 
-  section { padding: 100px 8vw; }
-
-  .section-label {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: .7rem;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    color: var(--blue-mid);
-    margin-bottom: 1rem;
+  .opere-intro {
+    max-width: 720px;
+    margin-bottom: 6rem;
   }
 
-  .section-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2.2rem, 4vw, 3.8rem);
-    font-weight: 300;
-    color: var(--dark);
-    line-height: 1.15;
-    margin-bottom: 1.5rem;
-  }
-  .section-title strong { font-weight: 700; color: var(--blue); }
-
-  .section-sub {
-    font-size: .95rem;
-    color: var(--grey-dark);
-    max-width: 560px;
-    line-height: 1.8;
-    margin-bottom: 3.5rem;
+  .opere-categories {
+    width: 100%;
+    display: flex; flex-direction: column;
+    gap: 6rem;
   }
 
-  .divider {
-    width: 60px; height: 2px;
-    background: var(--blue-light);
-    margin: 1.5rem 0 2.5rem;
+  .opere-cat {
+    position: relative;
   }
-
-  #opere { background: var(--off-white); }
-
-  .opere-category { margin-bottom: 5rem; }
-
-  .cat-header {
-    display: flex; align-items: center; gap: 1.5rem;
+  .opere-cat-head {
+    display: flex; align-items: center; gap: 2rem;
     margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--grey-light);
+    padding-bottom: 1.6rem;
+    border-bottom: 1px solid var(--line);
   }
-
-  .cat-icon {
-    width: 52px; height: 52px;
-    border: 1px solid var(--blue-light);
-    background: var(--sky-pale);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.4rem; flex-shrink: 0;
+  .opere-cat-num {
+    display: none;
   }
-
-  .cat-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2rem; font-weight: 600;
+  .opere-cat-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 400;
+    color: var(--text);
+    flex: 1;
+  }
+  .opere-cat-title em {
+    font-style: italic;
     color: var(--blue);
   }
+  .opere-cat-desc {
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    max-width: 320px;
+    line-height: 1.7;
+  }
 
-  .cards-grid {
+  .opere-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.5px;
+    gap: 1.4rem;
   }
 
-  .card {
-    position: relative; overflow: hidden;
-    aspect-ratio: 4/3;
-    cursor: pointer;
+  .opera-card {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    cursor: none;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
+    background: var(--bg-card);
+    box-shadow: 0 10px 30px rgba(13,37,69,0.06);
   }
-  .card img {
+  .opera-card-num {
+    display: none;
+  }
+  .opera-card img {
     width: 100%; height: 100%;
     object-fit: cover;
-    transition: transform .7s ease;
-    filter: brightness(.85) saturate(.8);
+    filter: brightness(0.9) saturate(1) contrast(1.02);
+    transition: filter 0.7s, transform 0.7s;
   }
-  .card:hover img { transform: scale(1.08); filter: brightness(.6) saturate(.7); }
-
-  .card-overlay {
+  .opera-card::before {
+    content: '';
     position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(26,35,50,.9) 0%, transparent 50%);
-    display: flex; flex-direction: column;
-    justify-content: flex-end;
+    background:
+      linear-gradient(180deg, transparent 35%, rgba(13,37,69,0.92) 100%),
+      linear-gradient(120deg, rgba(26,75,140,0.18) 0%, transparent 60%);
+    z-index: 2;
+    transition: opacity 0.4s;
+  }
+  .opera-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    border: 1px solid rgba(74,144,217,0);
+    z-index: 3;
+    transition: border-color 0.5s;
+    pointer-events: none;
+  }
+  .opera-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 25px 60px rgba(13,37,69,0.15);
+  }
+  .opera-card:hover img { filter: brightness(1.05) saturate(1.1); transform: scale(1.05); }
+  .opera-card:hover::after { border-color: var(--blue-light); }
+
+  .opera-card-content {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
     padding: 1.8rem;
-    transition: background .4s;
+    z-index: 4;
   }
-  .card:hover .card-overlay {
-    background: linear-gradient(to top, rgba(26,35,50,.97) 0%, rgba(26,35,50,.35) 100%);
-  }
-  .card-tag {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: .65rem;
-    letter-spacing: 3px;
+  .opera-card-tag {
+    font-family: var(--font-cond);
+    font-size: 0.62rem;
+    letter-spacing: 0.32em;
     text-transform: uppercase;
-    color: var(--sky);
-    margin-bottom: .5rem;
+    color: #cfe2f7;
+    margin-bottom: 0.7rem;
+    display: inline-flex; align-items: center; gap: 0.5rem;
   }
-  .card-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--white);
-    line-height: 1.2;
+  .opera-card-tag::before {
+    content: ''; width: 18px; height: 1px; background: #cfe2f7;
   }
-  .card-desc {
-    font-size: .82rem;
-    color: rgba(255,255,255,0.7);
-    margin-top: .6rem;
-    line-height: 1.6;
-    max-height: 0; overflow: hidden;
-    transition: max-height .4s ease;
+  .opera-card-name {
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 0.6rem;
   }
-  .card:hover .card-desc { max-height: 100px; }
+  .opera-card-desc {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.78);
+    line-height: 1.65;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, margin-top 0.5s ease;
+  }
+  .opera-card:hover .opera-card-desc {
+    max-height: 200px;
+    margin-top: 0.4rem;
+  }
 
-  #attestazioni { background: var(--white); }
-
-  .attestazioni-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+  /* ─────────────────────────────────────────
+     STAGE 3 — ATTESTAZIONI (orbital gallery)
+  ───────────────────────────────────────── */
+  #stage-attestazioni {
+    min-height: 150vh;
+    flex-direction: column;
+    align-items: flex-start;
     justify-content: center;
+    padding-top: 14vh;
+  }
+
+  .att-intro {
+    max-width: 680px;
+    margin-bottom: 5rem;
+  }
+
+  .att-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.4rem;
+    width: 100%;
   }
 
   .att-card {
-    text-align: center;
-    display: flex; flex-direction: column; align-items: center;
-    padding: 30px;
-    background: var(--off-white);
-    border: 1px solid var(--grey-light);
-    border-radius: 8px;
-    transition: all .3s;
-    position: relative; overflow: hidden;
+    position: relative;
+    padding: 2.6rem 2rem 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    text-align: left;
+    overflow: hidden;
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-style: preserve-3d;
+    box-shadow: 0 6px 24px rgba(13,37,69,0.05);
   }
   .att-card::before {
     content: '';
-    position: absolute; top: 0; left: 0;
-    width: 3px; height: 0;
-    background: var(--blue-mid);
-    transition: height .4s;
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--blue), transparent);
+    opacity: 0;
+    transition: opacity 0.5s;
   }
-  .att-card:hover { border-color: var(--blue-light); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(26,75,140,0.1); }
-  .att-card:hover::before { height: 100%; }
-
-  .att-icon { margin-bottom: 20px; }
-  .att-icon i { font-size: 3rem; color: var(--blue-light); transition: 0.3s; }
-  .att-card:hover .att-icon i { color: var(--blue); }
-
-  .att-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.3rem; font-weight: 700;
-    color: var(--dark);
-    margin-bottom: .5rem;
+  .att-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: -100%;
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--blue-light), transparent);
+    transition: left 0.8s ease;
   }
-  .att-desc { font-size: .83rem; color: var(--grey-dark); line-height: 1.7; margin-bottom: 1rem; }
+  .att-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--line-strong);
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(13,37,69,0.12);
+  }
+  .att-card:hover::before { opacity: 1; }
+  .att-card:hover::after { left: 100%; }
 
-  .btn-call {
-    padding: 10px 22px;
-    font-size: .8rem;
-    font-weight: 700;
-    border: 1px solid var(--blue-mid);
+  .att-card-num {
+    display: none;
+  }
+  .att-card-icon {
+    width: 56px; height: 56px;
+    margin-bottom: 1.6rem;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-soft);
+    position: relative;
+  }
+  .att-card-icon::before, .att-card-icon::after {
+    content: ''; position: absolute;
+    width: 6px; height: 6px;
+    border-color: var(--blue);
+    border-style: solid;
+    border-width: 0;
+  }
+  .att-card-icon::before {
+    top: -3px; left: -3px;
+    border-top-width: 1px; border-left-width: 1px;
+  }
+  .att-card-icon::after {
+    bottom: -3px; right: -3px;
+    border-bottom-width: 1px; border-right-width: 1px;
+  }
+  .att-card-icon i {
+    font-size: 1.5rem;
+    color: var(--blue);
+  }
+  .att-card-name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.7rem;
+    letter-spacing: 0.02em;
+  }
+  .att-card-desc {
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    line-height: 1.7;
+    margin-bottom: 1.8rem;
+  }
+  .att-card-meta {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--text-faint);
+    letter-spacing: 0.15em;
+    margin-bottom: 1.8rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--line);
+  }
+  .att-card-meta div { margin-bottom: 0.3rem; }
+  .att-card-meta strong {
     color: var(--blue-mid);
-    text-decoration: none;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+  }
+  .att-download {
+    font-family: var(--font-cond);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all .3s;
+    color: var(--blue);
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    padding: 0.7rem 1.1rem;
+    border: 1px solid var(--line-strong);
+    transition: all 0.3s;
   }
-  .btn-call:hover { background: var(--blue-mid); color: white; }
+  .att-download:hover {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+  }
+  .att-download i { font-size: 0.85rem; }
 
-  #storia {
-    background: var(--sky-pale);
-    position: relative; overflow: hidden;
-  }
-  #storia::before {
-    content: 'ARTEDILE';
-    position: absolute; right: -2vw; top: 50%;
-    transform: translateY(-50%);
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 18vw; font-weight: 700;
-    color: rgba(26,75,140,0.04);
-    white-space: nowrap;
-    pointer-events: none;
+  /* ─────────────────────────────────────────
+     STAGE 4 — STORIA (temporal tunnel)
+  ───────────────────────────────────────── */
+  #stage-storia {
+    min-height: 180vh;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 14vh;
+    padding-bottom: 8vh;
   }
 
   .storia-layout {
+    width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 6vw;
-    align-items: center;
+    gap: 5rem;
+    align-items: flex-start;
   }
 
-  .storia-img { position: relative; }
-  .storia-img img {
-    width: 100%; aspect-ratio: 4/5;
-    object-fit: cover;
-    filter: brightness(.9) saturate(.8);
+  .storia-text {
+    position: sticky;
+    top: 18vh;
   }
-  .storia-img::before {
-    content: '';
-    position: absolute; top: -16px; left: -16px;
-    right: 16px; bottom: 16px;
-    border: 1px solid rgba(26,75,140,0.2);
-    pointer-events: none; z-index: 0;
-  }
-  .storia-img img { position: relative; z-index: 1; }
 
-  .timeline { margin-top: 2.5rem; position: relative; }
-  .timeline::before {
-    content: '';
-    position: absolute; left: 0; top: 8px; bottom: 8px;
-    width: 1px; background: rgba(26,75,140,0.2);
-  }
-  .tl-item {
-    padding-left: 2rem; margin-bottom: 2rem;
+  .storia-timeline {
     position: relative;
+    padding-left: 2.4rem;
   }
-  .tl-item::before {
+  .storia-timeline::before {
     content: '';
-    position: absolute; left: -4px; top: 6px;
-    width: 9px; height: 9px;
+    position: absolute;
+    left: 0; top: 12px; bottom: 12px;
+    width: 1px;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      var(--line-strong) 12%,
+      var(--line-strong) 88%,
+      transparent 100%);
+  }
+  .tl-node {
+    position: relative;
+    padding-bottom: 5rem;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s, transform 0.9s;
+  }
+  .tl-node.in { opacity: 1; transform: translateY(0); }
+  .tl-node:last-child { padding-bottom: 0; }
+  .tl-node::before {
+    content: '';
+    position: absolute;
+    left: -2.4rem; top: 12px;
+    width: 11px; height: 11px;
+    border: 1px solid var(--blue);
+    background: var(--bg-base);
     border-radius: 50%;
-    background: var(--blue-light);
+    transform: translateX(-5px);
+    box-shadow: 0 0 14px rgba(26,75,140,0.25);
+  }
+  .tl-node::after {
+    content: '';
+    position: absolute;
+    left: -2.4rem; top: 17px;
+    width: 1.5rem; height: 1px;
+    background: var(--line-strong);
   }
   .tl-year {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: .7rem; letter-spacing: 3px;
-    color: var(--blue-mid); text-transform: uppercase;
-    margin-bottom: .3rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    color: var(--blue-mid);
+    margin-bottom: 0.6rem;
   }
-  .tl-text { font-size: .9rem; color: var(--grey-dark); line-height: 1.7; }
+  .tl-title {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+    line-height: 1.2;
+  }
+  .tl-body {
+    font-size: 0.92rem;
+    line-height: 1.85;
+    color: var(--text-soft);
+    max-width: 460px;
+  }
 
-  #social { background: var(--white); text-align: center; padding: 60px 0; }
+  /* ─────────────────────────────────────────
+     STAGE 5 — SOCIAL
+  ───────────────────────────────────────── */
+  #stage-social {
+    min-height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 12vh;
+    padding-bottom: 8vh;
+  }
+  #stage-social .stage-inner {
+    text-align: center;
+    display: flex; flex-direction: column;
+    align-items: center;
+  }
 
-  .social-wrapper { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+  .social-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.4rem;
+    width: 100%;
+    max-width: 920px;
+    margin-top: 3rem;
+  }
 
   .social-card {
-    display: flex; align-items: center; text-align: left;
-    text-decoration: none; margin-bottom: 20px; padding: 30px;
-    border: 1px solid var(--grey-light);
-    background: var(--off-white);
-    border-radius: 4px; transition: 0.3s;
+    display: flex; align-items: center;
+    gap: 1.8rem;
+    padding: 1.8rem 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    text-decoration: none;
+    transition: all 0.4s;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(13,37,69,0.04);
   }
   .social-card:hover {
-    background: var(--sky-pale);
-    border-color: var(--blue-light);
-    transform: translateY(-3px);
-    box-shadow: 0 12px 40px rgba(26,75,140,0.1);
+    border-color: var(--line-strong);
+    background: var(--bg-soft);
+    transform: translateY(-4px);
+    box-shadow: 0 18px 50px rgba(13,37,69,0.1);
   }
-  .social-icon {
-    margin-right: 25px; font-size: 2.2rem;
-    color: var(--blue-light); min-width: 60px; text-align: center;
+  .social-card-icon {
+    width: 50px; height: 50px;
+    border: 1px solid var(--line-strong);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; color: var(--blue);
+    flex-shrink: 0;
   }
-  .social-card:hover .social-icon { color: var(--blue); }
-  .social-name { font-size: 1.4rem; font-weight: 600; color: var(--dark); margin-bottom: 5px; }
-  .social-handle { color: var(--blue-mid); font-size: 0.85rem; margin-bottom: 10px; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 2px; }
-  .social-desc { color: var(--grey-dark); font-size: 0.9rem; line-height: 1.4; }
-  .social-arrow { color: var(--blue-light); font-size: 1.2rem; margin-left: 20px; }
-
-  #lavora {
-    background: linear-gradient(135deg, var(--off-white), var(--sky-pale));
-    padding: 6rem 2rem;
+  .social-card-text { flex: 1; }
+  .social-card-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem; font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.2rem;
   }
-
-  .lavora-container {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 4rem;
-    max-width: 1200px;
-    margin: 0 auto;
+  .social-card-handle {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--blue-mid);
+    letter-spacing: 0.18em;
+    margin-bottom: 0.5rem;
   }
-
-  .career-toggle {
-    background: var(--white);
-    border: 1px solid var(--grey-light);
-    padding: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-    border-radius: 10px;
-    transition: all .3s;
+  .social-card-desc {
+    font-size: 0.82rem;
+    color: var(--text-soft);
+    line-height: 1.5;
   }
-  .career-toggle:hover { border-color: var(--blue-light); box-shadow: 0 8px 25px rgba(26,75,140,0.1); }
-  .toggle-content { display: flex; gap: 1rem; align-items: center; }
-  .toggle-content i { color: var(--blue); }
-  .toggle-content span { color: var(--dark); font-weight: 500; }
-
-  .positions-wrapper { max-height: 0; overflow: hidden; transition: 0.4s; }
-  .positions-wrapper.active { max-height: 500px; margin: 1rem 0; }
-
-  .position-card-modern {
-    background: var(--white);
-    border-left: 3px solid var(--blue-light);
-    border: 1px solid var(--grey-light);
-    border-left: 3px solid var(--blue-light);
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    transition: .3s;
+  .social-card-arr {
+    color: var(--blue);
+    font-size: 1.2rem;
+    transition: transform 0.4s;
   }
-  .position-card-modern:hover { transform: translateY(-2px); border-color: var(--blue-light); box-shadow: 0 6px 20px rgba(26,75,140,0.08); }
-  .pos-info h4 { color: var(--dark); font-size: 1rem; }
-  .pos-info p { color: var(--grey-dark); font-size: .8rem; margin-top: .2rem; }
-  .pos-status { color: var(--blue-mid); font-size: .75rem; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 2px; text-transform: uppercase; }
+  .social-card:hover .social-card-arr { transform: translateX(6px); }
 
-  .spontaneous-box {
-    margin-top: 2rem;
-    padding: 2rem;
-    border: 1px solid var(--blue-light);
-    background: var(--white);
-    border-radius: 4px;
-  }
-  .spontaneous-box h4 { color: var(--blue); margin-bottom: .5rem; }
-  .spontaneous-box p { color: var(--grey-dark); font-size: .9rem; line-height: 1.6; }
-
-  .cv-form-container {
-    background: var(--white);
-    padding: 3rem;
-    border-radius: 15px;
-    border: 1px solid var(--grey-light);
-    box-shadow: 0 8px 40px rgba(26,75,140,0.08);
-  }
-  .cv-form-container h3 { color: var(--blue); margin-bottom: 1.5rem; font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; }
-
-  .form-row {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 1rem; margin-bottom: 1rem;
+  /* ─────────────────────────────────────────
+     STAGE 6 — LAVORA
+  ───────────────────────────────────────── */
+  #stage-lavora {
+    min-height: 180vh;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 14vh;
+    padding-bottom: 8vh;
   }
 
-  input, select, textarea {
-    background: var(--off-white);
-    border: 1px solid var(--grey-light);
-    color: var(--dark);
-    padding: .9rem 1rem;
-    border-radius: 6px;
-    font-family: 'Barlow', sans-serif;
-    font-size: .9rem;
-    transition: border-color .3s;
+  .lavora-layout {
     width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: flex-start;
   }
-  input:focus, select:focus, textarea:focus { border-color: var(--blue-light); outline: none; box-shadow: 0 0 0 3px rgba(74,144,217,0.15); }
-  select option { background: var(--white); color: var(--dark); }
 
-  .file-drop-zone {
-    border: 1px dashed var(--blue-light);
-    padding: 2rem;
-    text-align: center;
-    margin: 1rem 0;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: .3s;
-    background: var(--off-white);
+  .career-info { padding-top: 1rem; }
+
+  .positions-block {
+    margin-top: 2.2rem;
+    padding: 1.8rem;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    box-shadow: 0 6px 24px rgba(13,37,69,0.05);
   }
-  .file-drop-zone:hover { background: var(--sky-pale); border-color: var(--blue-mid); }
-  #file-text { color: var(--grey-dark); font-size: .9rem; margin-bottom: .3rem; }
-  #file-info { color: var(--blue-mid); font-size: .8rem; }
-
-  .apply-btn {
-    width: 100%; padding: 1.1rem;
+  .positions-block-head {
+    display: flex; align-items: center; gap: 0.9rem;
+    padding-bottom: 1.2rem;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .positions-block-head i {
+    color: var(--blue);
+    font-size: 1.05rem;
+  }
+  .positions-block-head .ttl {
+    font-family: var(--font-cond);
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text);
+    font-weight: 600;
+    flex: 1;
+  }
+  .positions-block-head .badge {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: #fff;
     background: var(--blue);
-    color: white; border: none;
-    border-radius: 50px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; font-size: .9rem;
-    letter-spacing: 3px; text-transform: uppercase;
-    cursor: pointer; transition: all .3s;
-    box-shadow: 0 8px 25px rgba(26,75,140,0.2);
+    padding: 0.3rem 0.6rem;
+    letter-spacing: 0.15em;
   }
-  .apply-btn:hover { background: var(--blue-mid); box-shadow: 0 14px 35px rgba(26,75,140,0.3); transform: translateY(-2px); }
-  .apply-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-  #contatti { background: var(--off-white); padding: 80px 0; }
+  .position {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 1.4rem;
+    margin-top: 0.7rem;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--blue);
+    transition: all 0.3s;
+  }
+  .position:first-of-type { margin-top: 0; }
+  .position:hover {
+    border-left-color: var(--blue-light);
+    background: #fff;
+    transform: translateX(4px);
+    box-shadow: 0 8px 24px rgba(13,37,69,0.06);
+  }
+  .position-info h4 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+  }
+  .position-info p {
+    font-family: var(--font-cond);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+  }
+  .position-status {
+    font-family: var(--font-cond);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #2d8f43;
+    padding: 0.35rem 0.8rem;
+    border: 1px solid rgba(45,143,67,0.3);
+    background: rgba(45,143,67,0.08);
+  }
+
+  .spontaneous {
+    margin-top: 1.5rem;
+    padding: 1.5rem 1.8rem;
+    background: rgba(74,144,217,0.08);
+    border-left: 3px solid var(--blue-light);
+  }
+  .spontaneous h4 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .spontaneous p {
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    line-height: 1.7;
+  }
+
+  /* ─────────────────────────────────────────
+     FORMS — glass panels (chiari)
+  ───────────────────────────────────────── */
+  .form-panel {
+    padding: 2.4rem 2.2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    position: relative;
+    box-shadow: 0 10px 40px rgba(13,37,69,0.06);
+  }
+  .form-panel::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 16px; height: 16px;
+    border-top: 1px solid var(--blue);
+    border-left: 1px solid var(--blue);
+  }
+  .form-panel::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; right: -1px;
+    width: 16px; height: 16px;
+    border-bottom: 1px solid var(--blue);
+    border-right: 1px solid var(--blue);
+  }
+  .form-panel h3 {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--text);
+    margin-bottom: 1.8rem;
+    font-weight: 500;
+  }
+  .form-panel h3 em {
+    color: var(--blue);
+    font-style: italic;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+  .form-panel input,
+  .form-panel select,
+  .form-panel textarea {
+    width: 100%;
+    padding: 0.95rem 1.1rem;
+    background: var(--bg-base);
+    border: 1px solid var(--line);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    margin-bottom: 0.8rem;
+    transition: all 0.3s;
+    outline: none;
+  }
+  .form-panel input::placeholder,
+  .form-panel textarea::placeholder {
+    color: var(--text-faint);
+  }
+  .form-panel input:focus,
+  .form-panel select:focus,
+  .form-panel textarea:focus {
+    border-color: var(--blue);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(26,75,140,0.08);
+  }
+  .form-panel select { color: var(--text-soft); }
+  .form-panel select option { background: #fff; color: var(--text); }
+  .form-panel textarea { resize: vertical; min-height: 90px; }
+
+  .file-drop {
+    padding: 1.6rem;
+    border: 1px dashed var(--line-strong);
+    text-align: center;
+    cursor: none;
+    transition: all 0.3s;
+    margin-bottom: 1rem;
+    background: var(--bg-soft);
+  }
+  .file-drop:hover {
+    border-color: var(--blue);
+    background: rgba(26,75,140,0.04);
+  }
+  .file-drop p {
+    font-family: var(--font-cond);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text);
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+  }
+  .file-drop span {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-faint);
+    letter-spacing: 0.1em;
+  }
+  .file-drop.has-file { border-color: var(--blue); background: rgba(26,75,140,0.05); }
+  .file-drop.has-file p::before {
+    content: '✓ ';
+    color: #2d8f43;
+  }
+
+  .form-privacy {
+    display: flex; align-items: flex-start; gap: 0.8rem;
+    font-size: 0.74rem;
+    color: var(--text-soft);
+    margin-bottom: 1.2rem;
+    line-height: 1.5;
+  }
+  .form-privacy input {
+    width: 16px; height: 16px;
+    margin: 0; padding: 0;
+    flex-shrink: 0;
+    accent-color: var(--blue);
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 1.15rem 1.4rem;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    font-family: var(--font-cond);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .submit-btn:hover { background: var(--blue-deep); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ─────────────────────────────────────────
+     STAGE 7 — CONTATTI
+  ───────────────────────────────────────── */
+  #stage-contatti {
+    min-height: 160vh;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 14vh;
+    padding-bottom: 8vh;
+  }
+  #stage-contatti .stage-inner {
+    text-align: center;
+  }
+  #stage-contatti .stage-label { justify-content: center; }
+  #stage-contatti .stage-title { text-align: center; }
 
   .contatti-layout {
-    max-width: 1200px; margin: 0 auto;
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 50px; padding: 0 20px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    margin-top: 4rem;
+    text-align: left;
   }
 
   .contact-item {
-    display: flex; align-items: flex-start;
-    margin-bottom: 30px; background: var(--white);
-    padding: 20px; border-radius: 8px;
-    border-left: 3px solid var(--blue-light);
-    box-shadow: 0 2px 15px rgba(26,75,140,0.05);
+    margin-bottom: 2.2rem;
+    padding-left: 4rem;
+    position: relative;
   }
-  .contact-icon-box {
-    margin-right: 20px; font-size: 1.5rem;
-    color: var(--blue-light); min-width: 44px;
+  .contact-icon {
+    position: absolute;
+    left: 0; top: 4px;
+    width: 38px; height: 38px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-card);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--blue);
+    font-size: 0.95rem;
   }
-  .contact-item-label { font-weight: 700; color: var(--dark); text-transform: uppercase; font-size: 0.75rem; margin-bottom: 6px; letter-spacing: 1px; font-family: 'Barlow Condensed', sans-serif; }
-  .contact-item-value { color: var(--grey-dark); line-height: 1.7; font-size: 0.92rem; }
-  .contact-item-value a { color: var(--grey-dark); text-decoration: none; transition: color .3s; }
-  .contact-item-value a:hover { color: var(--blue); }
+  .contact-label {
+    font-family: var(--font-cond);
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--blue-mid);
+    margin-bottom: 0.5rem;
+  }
+  .contact-value {
+    font-size: 0.92rem;
+    color: var(--text-mid);
+    line-height: 1.75;
+  }
+  .contact-value a {
+    color: var(--text-mid);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .contact-value a:hover { color: var(--blue); }
+  .contact-value strong {
+    color: var(--blue);
+    font-weight: 600;
+    font-family: var(--font-cond);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.2rem;
+    margin-top: 0.6rem;
+  }
+  .contact-value strong:first-child { margin-top: 0; }
 
-  .contact-form {
-    background: var(--white);
-    padding: 40px;
-    border-radius: 12px;
-    border: 1px solid var(--grey-light);
-    box-shadow: 0 8px 40px rgba(26,75,140,0.08);
-  }
-  .contact-form h3 { color: var(--dark); margin-bottom: 25px; font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; }
-
-  .submit-btn {
-    width: 100%; padding: 15px;
-    background: var(--blue); border: none;
-    color: white; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 2px;
-    cursor: pointer; transition: 0.3s; border-radius: 4px;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: .9rem;
-    box-shadow: 0 8px 25px rgba(26,75,140,0.2);
-  }
-  .submit-btn:hover { background: var(--blue-mid); transform: translateY(-2px); box-shadow: 0 14px 35px rgba(26,75,140,0.3); }
-  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
+  /* ─────────────────────────────────────────
+     FOOTER
+  ───────────────────────────────────────── */
   footer {
-    background: var(--dark);
-    border-top: 1px solid rgba(74,144,217,0.2);
-    padding: 3rem 8vw;
-    display: flex; align-items: center;
-    justify-content: space-between; gap: 2rem;
-    flex-wrap: wrap;
+    position: relative;
+    z-index: 10;
+    padding: 5rem 8vw 3rem;
+    background: linear-gradient(180deg, transparent 0%, var(--bg-soft) 60%, var(--bg-soft) 100%);
+    text-align: center;
+    border-top: 1px solid var(--line);
   }
   .footer-logo {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.4rem; font-weight: 700;
-    letter-spacing: 4px; color: var(--sky);
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.4em;
+    color: var(--blue);
     text-transform: uppercase;
+    padding-left: 0.4em;
+    margin-bottom: 1.6rem;
   }
-  .footer-copy { font-size: .75rem; color: var(--grey-mid); letter-spacing: 1.5px; }
-  .footer-links { display: flex; gap: 2rem; list-style: none; }
+  .footer-links {
+    display: flex; justify-content: center; gap: 2.5rem;
+    list-style: none;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
   .footer-links a {
-    font-size: .75rem; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--grey-mid);
-    text-decoration: none; transition: color .25s;
-  }
-  .footer-links a:hover { color: var(--sky); }
-
-  .toast {
-    position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
-    background: var(--blue); color: var(--white);
-    padding: 1rem 2rem;
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700; font-size: .85rem; letter-spacing: 2px;
+    font-family: var(--font-cond);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
-    transform: translateY(120px); opacity: 0;
-    transition: all .4s cubic-bezier(.34,1.56,.64,1);
-    border-radius: 4px;
-    box-shadow: 0 8px 30px rgba(26,75,140,0.3);
-    max-width: 320px;
+    color: var(--text-soft);
+    text-decoration: none;
+    transition: color 0.3s;
   }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.toast-error { background: #c0392b; }
-
-  .fade-in { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
-  .fade-in.visible { opacity: 1; transform: translateY(0); }
-
-  /* ─── CUSTOM CURSOR ─── */
-  .cursor-dot {
-    position: fixed; pointer-events: none; z-index: 99999;
-    width: 8px; height: 8px;
-    background: var(--blue-light); border-radius: 50%;
-    transform: translate(-50%,-50%);
-    transition: transform 0.08s;
+  .footer-links a:hover { color: var(--blue); }
+  .footer-copy {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    color: var(--text-faint);
+    text-transform: uppercase;
   }
-  .cursor-ring {
-    position: fixed; pointer-events: none; z-index: 99998;
+
+  /* ─────────────────────────────────────────
+     TOAST
+  ───────────────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 2.5rem; left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    padding: 1.1rem 2rem;
+    background: var(--blue);
+    color: #fff;
+    font-family: var(--font-cond);
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    z-index: 9000;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 14px 50px rgba(26,75,140,0.35);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: #c83a3a; color: #fff; }
+
+  /* ─────────────────────────────────────────
+     PDF VIEWER MODAL
+  ───────────────────────────────────────── */
+  .pdf-modal {
+    position: fixed; inset: 0;
+    z-index: 9500;
+    background: rgba(248,250,252,0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 4rem 4vw 2rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
+  .pdf-modal.open { opacity: 1; visibility: visible; }
+
+  .pdf-modal-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 30%, rgba(74,144,217,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(26,75,140,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .pdf-modal-header {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.4rem;
+    padding-bottom: 1.4rem;
+    border-bottom: 1px solid var(--line);
+    transform: translateY(-30px);
+    opacity: 0;
+    transition: all 0.6s 0.1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .pdf-modal.open .pdf-modal-header { transform: translateY(0); opacity: 1; }
+
+  .pdf-modal-title {
+    display: flex; align-items: center; gap: 1.4rem;
+  }
+  .pdf-modal-num {
+    display: none;
+  }
+  .pdf-modal-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+  .pdf-modal-name em {
+    font-style: italic;
+    color: var(--blue);
+  }
+
+  .pdf-modal-actions {
+    display: flex; gap: 0.8rem;
+  }
+
+  .pdf-action-btn {
+    font-family: var(--font-cond);
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--blue);
+    background: var(--bg-card);
+    border: 1px solid var(--line-strong);
+    padding: 0.7rem 1.2rem;
+    cursor: none;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    transition: all 0.3s;
+  }
+  .pdf-action-btn:hover {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+  }
+  .pdf-action-btn.primary {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+  }
+  .pdf-action-btn.primary:hover {
+    background: var(--blue-deep);
+    border-color: var(--blue-deep);
+  }
+
+  .pdf-close {
     width: 42px; height: 42px;
-    border: 1.5px solid rgba(74,144,217,0.6); border-radius: 50%;
-    transform: translate(-50%,-50%);
-    transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
-  }
-  .cursor-ring.cursor-hover {
-    width: 64px; height: 64px;
-    background: rgba(74,144,217,0.07);
-    border-color: var(--blue-light);
-  }
-  @media (pointer: coarse) { .cursor-dot, .cursor-ring { display: none; } }
-
-  /* ─── SCROLL PROGRESS BAR ─── */
-  #progress-bar {
-    position: fixed; top: 0; left: 0;
-    height: 3px; width: 0%;
-    background: linear-gradient(90deg, var(--blue), var(--blue-light), var(--sky), var(--blue-light), var(--blue));
-    background-size: 300% 100%;
-    z-index: 10000;
-    box-shadow: 0 0 12px rgba(74,144,217,0.7);
-    animation: barShimmer 3s linear infinite;
-  }
-  @keyframes barShimmer {
-    0%   { background-position: 100% 0; }
-    100% { background-position: -100% 0; }
-  }
-
-  /* ─── FLOATING ORBS ─── */
-  .section-orb {
-    position: absolute; border-radius: 50%;
-    pointer-events: none; filter: blur(70px);
-    opacity: 0.13;
-    animation: orbFloat 14s ease-in-out infinite alternate;
-  }
-  @keyframes orbFloat {
-    0%   { transform: translate(0,0) scale(1); }
-    100% { transform: translate(30px,-50px) scale(1.2); }
-  }
-
-  /* ─── HERO CSS ANIMATIONS → GSAP takes over ─── */
-  .hero-label, #home h1, .hero-sub, .hero-ctas, .hero-stats {
-    animation: none !important;
-    opacity: 0;
-  }
-
-  /* ─── FADE-IN reset — GSAP handles all reveals ─── */
-  .fade-in          { opacity: 1 !important; transform: none !important; }
-  .fade-in.visible  { opacity: 1; transform: none; }
-
-  /* ─── NAV ACTIVE ─── */
-  .nav-links a.nav-active { color: var(--blue); }
-  .nav-links a.nav-active::after { transform: scaleX(1); }
-
-  /* ─── ATT CARD ICON GLOW ─── */
-  .att-icon i { transition: all 0.35s; }
-  .att-card:hover .att-icon i {
-    text-shadow: 0 0 20px rgba(74,144,217,0.8), 0 0 40px rgba(74,144,217,0.4);
-    transform: scale(1.15) translateY(-3px);
-  }
-
-  /* ─── SECTION TITLE ─── */
-  .section-title { display: block; }
-
-  /* ─── CARD CLIP-PATH SUPPORT ─── */
-  .card { transform-origin: bottom center; }
-
-  /* ─── STAT GLOW ─── */
-  .stat-num { transition: text-shadow 0.3s; }
-
-  @media (max-width: 900px) {
-    .nav-links { display: none; flex-direction: column; gap: 0; }
-    .nav-links.open {
-      display: flex; position: fixed; top: 72px; left: 0; right: 0;
-      background: rgba(255,255,255,0.98); backdrop-filter: blur(20px);
-      padding: 2rem 5vw; border-bottom: 1px solid var(--grey-light);
-    }
-    .nav-links.open li { padding: .8rem 0; border-bottom: 1px solid var(--grey-light); }
-    .hamburger { display: flex; }
-    .cards-grid { grid-template-columns: 1fr 1fr; }
-    .storia-layout, .lavora-container, .contatti-layout { grid-template-columns: 1fr; }
-    .storia-img { display: none; }
-    .form-row { grid-template-columns: 1fr; }
-    .hero-stats { position: relative; flex-wrap: wrap; }
-    .stat { flex: 50%; }
-    .hero-content { padding: 0 5vw; }
-  }
-  @media (max-width: 600px) {
-    .cards-grid { grid-template-columns: 1fr; }
-    section { padding: 70px 5vw; }
-    footer { flex-direction: column; text-align: center; }
-    .hero-content { padding: 0 6vw; }
-    .hero-stats { padding-bottom: .5rem; }
-    .stat { padding: 1rem 4vw; flex: 50%; }
-    .stat-num { font-size: 1.8rem; }
-    h1 { font-size: clamp(2.6rem, 11vw, 4rem) !important; }
-    .toast { left: 1rem; right: 1rem; bottom: 1rem; max-width: none; }
-    nav { padding: 0 5vw; }
-  }
-
-  /* ─── INTRO OVERLAY (immersive opening) ─── */
-  #intro {
-    position: fixed; inset: 0; z-index: 100000;
-    background: radial-gradient(ellipse at center, #102544 0%, #050b18 100%);
     display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--line-strong);
+    color: var(--blue);
+    cursor: none;
+    transition: all 0.3s;
+    font-size: 1.1rem;
   }
-  #intro::before {
-    content: ''; position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(168,200,240,0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(168,200,240,0.05) 1px, transparent 1px);
-    background-size: 60px 60px;
-    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  .pdf-close:hover {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+    transform: rotate(90deg);
   }
-  .intro-stack {
-    position: relative; z-index: 2; text-align: center;
-    display: flex; flex-direction: column; align-items: center; gap: 1.4rem;
-  }
-  .intro-logo {
-    width: clamp(120px, 22vw, 200px); height: auto;
-    opacity: 0; transform: scale(.7);
-    filter: drop-shadow(0 10px 40px rgba(74,144,217,0.5));
-  }
-  .intro-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2.2rem, 7vw, 4.4rem);
-    font-weight: 700; letter-spacing: 8px;
-    color: #fff; opacity: 0;
-  }
-  .intro-name span { color: var(--sky); font-weight: 300; }
-  .intro-tag {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: clamp(.7rem, 2vw, .85rem);
-    letter-spacing: 6px; text-transform: uppercase;
-    color: rgba(168,200,240,0.7);
-    opacity: 0;
-  }
-  .intro-line {
-    width: 0; height: 1px; background: var(--blue-light);
-    margin-top: .5rem;
-  }
-  body.intro-active { overflow: hidden; height: 100vh; }
 
-  /* ─── SECTION REVEAL CURTAIN (mobile-friendly cinematic transitions) ─── */
-  section { position: relative; }
-  .section-curtain {
-    position: absolute; inset: 0; z-index: 50; pointer-events: none;
-    background: linear-gradient(180deg, #0d1a2e 0%, #1A4B8C 100%);
-    transform-origin: top;
+  .pdf-viewer-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    flex: 1;
+    background: #fff;
+    border: 1px solid var(--line);
+    overflow: hidden;
+    transform: translateY(40px) scale(0.97);
+    opacity: 0;
+    transition: all 0.7s 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 30px 80px rgba(13,37,69,0.12);
+  }
+  .pdf-modal.open .pdf-viewer-wrap { transform: translateY(0) scale(1); opacity: 1; }
+
+  .pdf-viewer-wrap::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 22px; height: 22px;
+    border-top: 1px solid var(--blue);
+    border-left: 1px solid var(--blue);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .pdf-viewer-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; right: -1px;
+    width: 22px; height: 22px;
+    border-bottom: 1px solid var(--blue);
+    border-right: 1px solid var(--blue);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .pdf-iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #fff;
+    display: block;
+  }
+
+  .pdf-loader {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: var(--bg-base);
+    z-index: 1;
+    transition: opacity 0.4s;
+  }
+  .pdf-loader.hidden { opacity: 0; pointer-events: none; }
+  .pdf-loader-spinner {
+    width: 40px; height: 40px;
+    border: 2px solid var(--line);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.2rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .pdf-loader-text {
+    font-family: var(--font-cond);
+    font-size: 0.72rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+  }
+
+  .pdf-modal-foot {
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 1rem;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    color: var(--text-faint);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .pdf-modal.open .pdf-modal-foot { opacity: 1; transform: translateY(0); }
+  .pdf-modal-foot .esc-hint kbd {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-card);
+    margin: 0 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--blue);
+  }
+
+  .att-card-actions {
+    display: flex;
+    gap: 0.6rem;
+    align-items: stretch;
+  }
+  .att-view-btn {
+    flex: 1;
+    font-family: var(--font-cond);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--blue);
+    border: 1px solid var(--blue);
+    padding: 0.75rem 1.1rem;
+    cursor: none;
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+    transition: all 0.3s;
+  }
+  .att-view-btn:hover {
+    background: var(--blue-deep);
+    border-color: var(--blue-deep);
+  }
+  .att-dl-btn {
+    font-family: var(--font-cond);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--blue);
+    text-decoration: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0.75rem 0.95rem;
+    border: 1px solid var(--line-strong);
+    background: var(--bg-card);
+    transition: all 0.3s;
+  }
+  .att-dl-btn:hover {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+  }
+
+  @media (max-width: 720px) {
+    .pdf-modal { padding: 1rem 4vw 1rem; }
+    .pdf-modal-header { flex-direction: column; gap: 1rem; align-items: flex-start; }
+    .pdf-modal-name { font-size: 1.15rem; }
+    .pdf-action-btn { font-size: 0.65rem; padding: 0.6rem 0.9rem; }
+    .pdf-modal-foot { display: none; }
+  }
+
+  /* ─────────────────────────────────────────
+     MOBILE
+  ───────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .opere-grid, .att-grid, .social-cards { grid-template-columns: 1fr 1fr; }
+    .storia-layout, .lavora-layout, .contatti-layout { grid-template-columns: 1fr; gap: 3rem; }
+    .storia-text { position: static; }
+    .hero-stats { display: none; }
+  }
+  @media (max-width: 720px) {
+    body { cursor: auto; }
+    .cursor-dot, .cursor-ring { display: none; }
+    nav { padding: 1rem 5vw; }
+    .nav-links { display: none; }
+    .nav-cta { display: none; }
+    .hamburger {
+      display: flex; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 1.5px;
+      background: var(--blue); transition: 0.3s;
+    }
+    .nav-links.mobile-open {
+      display: flex; flex-direction: column;
+      position: fixed; top: 64px; left: 0; right: 0;
+      background: rgba(248,250,252,0.97);
+      backdrop-filter: blur(20px);
+      padding: 2rem;
+      gap: 1.5rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .stage { padding: 0 6vw; min-height: 100vh; }
+    #stage-hero h1 { font-size: clamp(2.5rem, 12vw, 4.5rem); }
+    .stage-title { font-size: clamp(2.2rem, 9vw, 3.5rem); }
+    .opere-grid, .att-grid, .social-cards { grid-template-columns: 1fr; }
+    .opera-card { aspect-ratio: 4/3; }
+    .form-row { grid-template-columns: 1fr; }
+    .scroll-hud { left: 5vw; bottom: 2vh; }
+    .scroll-hud-track { width: 70px; }
+    .contact-item { padding-left: 3rem; }
+    .contact-icon { width: 32px; height: 32px; }
+    #stage-opere, #stage-attestazioni, #stage-storia, #stage-lavora, #stage-contatti { min-height: auto; padding: 8vh 6vw; }
   }
 </style>
 </head>
 <body>
 
-<!-- IMMERSIVE INTRO -->
-<div id="intro">
-  <div class="intro-stack">
-    <img class="intro-logo" src="Designer.png" alt="ARTEDILE">
-    <div class="intro-name">ARTE<span>DILE</span></div>
-    <div class="intro-line"></div>
-    <div class="intro-tag"> IMPIANTI &amp; EDILIZIA</div>
-  </div>
+<!-- ═══════════════════════════════════════
+     PRELOADER
+═══════════════════════════════════════ -->
+<div id="preloader">
+  <div class="pre-logo">ARTEDILE</div>
+  <div class="pre-bar"></div>
+  <div class="pre-text">In ingresso nel cammino</div>
 </div>
 
-<!-- NAVBAR -->
+<!-- ═══════════════════════════════════════
+     CUSTOM CURSOR
+═══════════════════════════════════════ -->
+<div class="cursor-dot"></div>
+<div class="cursor-ring"></div>
+
+<!-- ═══════════════════════════════════════
+     SCENA 3D (Three.js)
+═══════════════════════════════════════ -->
+<canvas id="scene-canvas"></canvas>
+<div class="scene-vignette"></div>
+<div class="scene-grain"></div>
+
+<!-- ═══════════════════════════════════════
+     SCROLL HUD
+═══════════════════════════════════════ -->
+<div class="scroll-hud">
+  <span class="num" id="hud-num">00 / 06</span>
+  <span class="stage" id="hud-stage">Ingresso</span>
+  <span class="scroll-hud-track"><span class="scroll-hud-fill" id="hud-fill"></span></span>
+</div>
+
+<!-- ═══════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════ -->
 <nav id="navbar">
-  <a href="#home" class="nav-logo">
-    <img src="Designer.png" alt="ARTEDILE">
-    <span class="nav-logo-text">ARTE<span>DILE</span></span>
+  <a href="#stage-hero" class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 4 L28 26 L4 26 Z" fill="none" stroke="#1A4B8C" stroke-width="1.5"/>
+        <path d="M16 4 L22 16 L16 16 Z" fill="#4A90D9" opacity="0.85"/>
+        <path d="M16 16 L22 16 L28 26 L16 26 Z" fill="#1A4B8C" opacity="0.6"/>
+      </svg>
+    </div>
+    <div class="nav-logo-text">Arte<em>dile</em></div>
   </a>
   <ul class="nav-links" id="navLinks">
-    <li><a href="#home">Home</a></li>
-    <li><a href="#opere">Opere</a></li>
-    <li><a href="#attestazioni">Attestazioni</a></li>
-    <li><a href="#storia">Storia</a></li>
-    <li><a href="#social">Social</a></li>
-    <li><a href="#lavora">Lavora con noi</a></li>
-    <li><a href="#contatti">Contatti</a></li>
+    <li><a href="#stage-hero">Home</a></li>
+    <li><a href="#stage-opere">Opere</a></li>
+    <li><a href="#stage-attestazioni">Attestazioni</a></li>
+    <li><a href="#stage-storia">Storia</a></li>
+    <li><a href="#stage-social">Social</a></li>
+    <li><a href="#stage-lavora">Lavora</a></li>
+    <li><a href="#stage-contatti">Contatti</a></li>
   </ul>
+  <a href="#stage-contatti" class="nav-cta">Contattaci</a>
   <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
 </nav>
 
-<!-- HOME / HERO -->
-<section id="home">
-  <div class="hero-photo-wrap" id="heroParallax">
-    <div class="hero-photo-main"></div>
-  </div>
-  <canvas id="hero3d"></canvas>
-  <div class="hero-overlay-base"></div>
-  <div class="hero-light-streak"></div>
-  <div class="hero-dust"></div>
-  <div class="hero-vignette"></div>
-  <div class="hero-texture"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-line"></div>
+<!-- ═══════════════════════════════════════
+     JOURNEY — il "percorso 3D"
+═══════════════════════════════════════ -->
+<main class="journey">
 
-  <div class="hero-content">
-    <div class="hero-label">Impianti energetici &amp; Edilizia dal 2001</div>
-    <h1>Costruire il <strong>Futuro</strong> con Arte</h1>
-    <p class="hero-sub">
-      Specialisti in impianti energetici, edilizia civile e restauro architettonico.
-      Ogni progetto è un'opera che dura nel tempo.
-    </p>
-    <div class="hero-ctas">
-      <a href="#opere" class="btn-primary">Scopri le Opere</a>
-      <a href="#contatti" class="btn-outline">Contattaci</a>
-    </div>
-  </div>
-  <div class="hero-hint">
-    <i class="fas fa-hand-pointer"></i>
-    <span>Trascina &amp; gioca con la struttura</span>
-  </div>
-  <div class="hero-stats">
-    <div class="stat">
-      <div class="stat-num">60+</div>
-      <div class="stat-label">Anni di esperienza</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">500+</div>
-      <div class="stat-label">Progetti completati</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">100%</div>
-      <div class="stat-label">Certificato SOA</div>
-    </div>
-  </div>
-</section>
-
-<!-- OPERE -->
-<section id="opere">
-  <div class="section-label">Il Nostro Portfolio</div>
-  <h2 class="section-title">Le Nostre <strong>Opere</strong></h2>
-  <div class="divider"></div>
-
-  <div class="opere-category fade-in">
-    <div class="cat-header">
-      <div class="cat-icon">🏗️</div>
-      <div>
-        <div class="cat-title">Edilizia</div>
-        <div style="font-size:.8rem;color:var(--grey-dark);margin-top:.2rem;">Costruzioni civili, restauri e opere strutturali</div>
-      </div>
-    </div>
-    <div class="cards-grid">
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1590725121839-892b458a74fe?w=800&q=80" alt="Edilizia Generale" loading="lazy">
-        <div class="card-overlay">
-          <div class="card-tag">Edilizia</div>
-          <div class="card-name">Edilizia Generale</div>
-          <div class="card-desc">Costruzioni residenziali e commerciali chiavi in mano, con utilizzo di materiali certificati e tecniche costruttive all'avanguardia.</div>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80" alt="Restauro" loading="lazy">
-        <div class="card-overlay">
-          <div class="card-tag">Conservazione</div>
-          <div class="card-name">Restauro</div>
-          <div class="card-desc">Recupero e valorizzazione di edifici storici e di pregio architettonico, nel rispetto dei vincoli della Soprintendenza.</div>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80" alt="Opere Strutturali" loading="lazy">
-        <div class="card-overlay">
-          <div class="card-tag">Ingegneria</div>
-          <div class="card-name">Opere Strutturali</div>
-          <div class="card-desc">Consolidamenti statici, adeguamenti sismici, fondazioni speciali e opere in cemento armato per infrastrutture complesse.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="opere-category fade-in">
-    <div class="cat-header">
-      <div class="cat-icon">⚡</div>
-      <div>
-        <div class="cat-title">Impianti</div>
-        <div style="font-size:.8rem;color:var(--grey-dark);margin-top:.2rem;">Soluzioni energetiche e impiantistiche innovative</div>
-      </div>
-    </div>
-    <div class="cards-grid">
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80" alt="Parco Fotovoltaico" loading="lazy">
-        <div class="card-overlay">
-          <div class="card-tag">Energia Rinnovabile</div>
-          <div class="card-name">Parco Fotovoltaico</div>
-          <div class="card-desc">Progettazione e installazione di parchi fotovoltaici industriali e utility-scale. Oltre 12 MW di potenza installata in Italia.</div>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80" alt="Impianti Meccanici" loading="lazy">
-        <div class="card-overlay">
-          <div class="card-tag">Meccanica</div>
-          <div class="card-name">Impianti Meccanici</div>
-          <div class="card-desc">Climatizzazione, riscaldamento, idraulica e trattamento aria. Sistemi integrati per il benessere abitativo e industriale.</div>
-        </div>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80" alt="Impianti Elettrici" loading="lazy">
-        <div class="card-overlay">
-          <div class="card-tag">Elettrica</div>
-          <div class="card-name">Impianti Elettrici</div>
-          <div class="card-desc">Quadri elettrici, cabine MT/BT, illuminazione LED intelligente, domotica e sistemi di building automation.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ATTESTAZIONI -->
-<section id="attestazioni">
-  <div class="section-label">Qualifiche &amp; Certificazioni</div>
-  <h2 class="section-title">Le Nostre <strong>Attestazioni</strong></h2>
-  <p class="section-sub">Operiamo con le massime certificazioni di settore, garanzia di qualità, sicurezza e affidabilità per ogni tipologia di intervento.</p>
-  <div class="divider"></div>
-
-  <div class="attestazioni-grid">
-    <div class="att-card fade-in">
-      <div class="att-icon"><i class="fas fa-file-contract"></i></div>
-      <div class="att-name">ATTESTAZIONE SOA</div>
-      <div class="att-desc">Certificazione per l'esecuzione di lavori pubblici.</div>
-      <a href="soa_artedile.pdf" download class="btn-call">SCARICA PDF</a>
-    </div>
-    <div class="att-card fade-in">
-      <div class="att-icon"><i class="fas fa-certificate"></i></div>
-      <div class="att-name">CERTIFICAZIONI ISO</div>
-      <div class="att-desc">Sistema di Gestione della Qualità certificato. Processi controllati.</div>
-      <a href="Artedile SRL - UNI EN ISO 90012015.pdf" download class="btn-call">SCARICA PDF</a>
-    </div>
-    <div class="att-card fade-in">
-      <div class="att-icon"><i class="fas fa-shield-halved"></i></div>
-      <div class="att-name">WHITE LIST</div>
-      <div class="att-desc">Certificato di legalità e trasparenza operativa.</div>
-      <a href="Artedile SRL - White List e rinnovo.pdf" download class="btn-call">SCARICA PDF</a>
-    </div>
-  </div>
-</section>
-
-<!-- STORIA -->
-<section id="storia">
-  <div class="storia-layout">
-    <div class="storia-img fade-in">
-      <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800&q=80" alt="Storia ARTEDILE" loading="lazy">
-    </div>
-    <div class="fade-in">
-      <div class="section-label">Chi Siamo</div>
-      <h2 class="section-title">Una Storia di <strong>Passione</strong></h2>
-      <div class="divider"></div>
-      <p class="section-sub">
-        Nata nel 2001 dalla visione di costruttori appassionati, ARTEDILE è cresciuta fino a diventare un punto di riferimento nel panorama edilizio ed energetico italiano. Ogni mattone posato, ogni kilowatt prodotto raccontano la nostra storia.
+  <!-- STAGE 1: HERO -->
+  <section class="stage" id="stage-hero">
+    <div class="stage-inner">
+      <div class="hero-eyebrow">Cammino n.01 — Ingresso</div>
+      <h1>
+        <span class="line">Costruire <em>il</em></span>
+        <span class="line"><strong>Futuro</strong></span>
+        <span class="line"><em>con</em> Arte.</span>
+      </h1>
+      <p class="hero-sub">
+        Dal 1994 specialisti in impianti energetici, edilizia civile e restauro architettonico.
+        Ogni progetto è un'opera che attraversa il tempo.
       </p>
-      <div class="timeline">
-        <div class="tl-item">
-          <div class="tl-year">1994 — Consorzio DEMA</div>
-          <div class="tl-text">Un percorso di crescita che passa anche dalla fondazione, nel 1994, del Consorzio DeMa, segnando l'ingresso in progetti di maggiore rilievo.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">2001 — Prima espansione</div>
-          <div class="tl-text">Ottenimento delle prime attestazioni SOA e ampliamento del team con professionisti specializzati nel restauro.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">2011 — Divisione Energia</div>
-          <div class="tl-text">Nascita della divisione impianti con i primi parchi fotovoltaici. ARTEDILE diventa player nel mercato delle rinnovabili.</div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-year">Oggi</div>
-          <div class="tl-text">Artedile opera con certificazioni SOA e standard elevati, offrendo soluzioni moderne, efficienti e orientate al futuro.</div>
-        </div>
+      <div class="hero-ctas">
+        <a href="#stage-opere" class="btn btn-primary"><span>Inizia il viaggio</span><span class="arr">→</span></a>
+        <a href="#stage-contatti" class="btn btn-ghost">Contattaci</a>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- SOCIAL -->
-<section id="social" style="text-align: center; padding: 60px 0; background: var(--white);">
-  <div class="section-label" style="color: var(--blue-mid);">Seguici</div>
-  <h2 class="section-title" style="color: var(--dark);">Siamo sui <strong>Social</strong></h2>
-  <p class="section-sub" style="max-width: 700px; margin: 20px auto; color: var(--grey-dark); line-height: 1.6;">
-    Rimani aggiornato su cantieri, novità e progetti. Seguici sui nostri canali social per non perdere nessuna novità.
-  </p>
-  <div class="divider" style="margin: 0 auto 40px auto; width: 60px; height: 2px; background: var(--blue-light);"></div>
-
-  <div class="social-wrapper">
-    <a href="https://www.instagram.com/artedile?igsh=eGFxbmRsamp6ejc0&utm_source=qr" target="_blank" class="social-card fade-in">
-      <div class="social-icon"><i class="fab fa-instagram"></i></div>
-      <div style="flex-grow: 1;">
-        <div class="social-name">Instagram</div>
-        <div class="social-handle">@ARTEDILE</div>
-        <div class="social-desc">Immagini esclusive dai cantieri, prima e dopo e il dietro le quinte dei nostri progetti.</div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num" data-num="30">30+</span>
+        <span class="hero-stat-lbl">Anni di esperienza</span>
       </div>
-      <div class="social-arrow">→</div>
-    </a>
-    <a href="https://www.linkedin.com/company/artedilesrl/about/?viewAsMember=true" target="_blank" class="social-card fade-in">
-      <div class="social-icon"><i class="fab fa-linkedin-in"></i></div>
-      <div style="flex-grow: 1;">
-        <div class="social-name">LinkedIn</div>
-        <div class="social-handle">ARTEDILE</div>
-        <div class="social-desc">Aggiornamenti professionali, opportunità di lavoro e collaborazioni B2B nel settore.</div>
+      <div class="hero-stat">
+        <span class="hero-stat-num" data-num="500">500+</span>
+        <span class="hero-stat-lbl">Progetti completati</span>
       </div>
-      <div class="social-arrow">→</div>
-    </a>
-  </div>
-</section>
+      <div class="hero-stat">
+        <span class="hero-stat-num" data-num="100">100%</span>
+        <span class="hero-stat-lbl">Certificato SOA</span>
+      </div>
+    </div>
+  </section>
 
-<!-- LAVORA CON NOI -->
-<section id="lavora">
-  <div class="section-label">Carriera &amp; Futuro</div>
-  <h2 class="section-title">Costruisci il tuo <strong>Domani</strong></h2>
-  <div class="divider"></div>
+  <!-- STAGE 2: OPERE -->
+  <section class="stage" id="stage-opere">
+    <div class="stage-inner">
+      <div class="stage-marker">Tappa 02 / 06</div>
+      <div class="opere-intro">
+        <div class="stage-label">Il Nostro Portfolio</div>
+        <h2 class="stage-title">Le Nostre <em>Opere</em></h2>
+        <p class="stage-sub">
+          Una città di progetti completati. Edilizia, restauro, energia: ogni opera è una struttura
+          che resiste al tempo, costruita con materiali certificati e cura artigianale.
+        </p>
+      </div>
 
-  <div class="lavora-container">
-    <div class="career-info">
-      <p class="section-sub">
-        In ARTEDILE crediamo che la forza di un'azienda risieda nelle persone. Cerchiamo professionisti pronti a innovare il settore dell'edilizia e dell'energia.
+      <div class="opere-categories">
+
+        <div class="opere-cat">
+          <div class="opere-cat-head">
+            <span class="opere-cat-num">[ A ]</span>
+            <h3 class="opere-cat-title">Edilizia &amp; <em>Restauro</em></h3>
+            <p class="opere-cat-desc">Costruzioni civili, restauri e opere strutturali con tecniche all'avanguardia.</p>
+          </div>
+          <div class="opere-grid">
+            <article class="opera-card">
+              <span class="opera-card-num">001</span>
+              <img src="https://images.unsplash.com/photo-1590725121839-892b458a74fe?w=900&q=85" alt="Edilizia Generale" loading="lazy">
+              <div class="opera-card-content">
+                <div class="opera-card-tag">Edilizia</div>
+                <div class="opera-card-name">Edilizia Generale</div>
+                <div class="opera-card-desc">Costruzioni residenziali e commerciali chiavi in mano, con materiali certificati e tecniche costruttive all'avanguardia.</div>
+              </div>
+            </article>
+            <article class="opera-card">
+              <span class="opera-card-num">002</span>
+              <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=85" alt="Restauro" loading="lazy">
+              <div class="opera-card-content">
+                <div class="opera-card-tag">Conservazione</div>
+                <div class="opera-card-name">Restauro</div>
+                <div class="opera-card-desc">Recupero e valorizzazione di edifici storici e di pregio architettonico, nel rispetto dei vincoli della Soprintendenza.</div>
+              </div>
+            </article>
+            <article class="opera-card">
+              <span class="opera-card-num">003</span>
+              <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&q=85" alt="Opere Strutturali" loading="lazy">
+              <div class="opera-card-content">
+                <div class="opera-card-tag">Ingegneria</div>
+                <div class="opera-card-name">Opere Strutturali</div>
+                <div class="opera-card-desc">Consolidamenti statici, adeguamenti sismici, fondazioni speciali e opere in cemento armato per infrastrutture complesse.</div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="opere-cat">
+          <div class="opere-cat-head">
+            <span class="opere-cat-num">[ B ]</span>
+            <h3 class="opere-cat-title">Impianti &amp; <em>Energia</em></h3>
+            <p class="opere-cat-desc">Soluzioni energetiche e impiantistiche innovative per il futuro sostenibile.</p>
+          </div>
+          <div class="opere-grid">
+            <article class="opera-card">
+              <span class="opera-card-num">004</span>
+              <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=900&q=85" alt="Parco Fotovoltaico" loading="lazy">
+              <div class="opera-card-content">
+                <div class="opera-card-tag">Rinnovabili</div>
+                <div class="opera-card-name">Parco Fotovoltaico</div>
+                <div class="opera-card-desc">Progettazione e installazione di parchi fotovoltaici industriali e utility-scale. Oltre 12 MW di potenza installata in Italia.</div>
+              </div>
+            </article>
+            <article class="opera-card">
+              <span class="opera-card-num">005</span>
+              <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=900&q=85" alt="Impianti Meccanici" loading="lazy">
+              <div class="opera-card-content">
+                <div class="opera-card-tag">Meccanica</div>
+                <div class="opera-card-name">Impianti Meccanici</div>
+                <div class="opera-card-desc">Climatizzazione, riscaldamento, idraulica e trattamento aria. Sistemi integrati per benessere abitativo e industriale.</div>
+              </div>
+            </article>
+            <article class="opera-card">
+              <span class="opera-card-num">006</span>
+              <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=900&q=85" alt="Impianti Elettrici" loading="lazy">
+              <div class="opera-card-content">
+                <div class="opera-card-tag">Elettrica</div>
+                <div class="opera-card-name">Impianti Elettrici</div>
+                <div class="opera-card-desc">Quadri elettrici, cabine MT/BT, illuminazione LED intelligente, domotica e sistemi di building automation.</div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- STAGE 3: ATTESTAZIONI -->
+  <section class="stage" id="stage-attestazioni">
+    <div class="stage-inner">
+      <div class="stage-marker">Tappa 03 / 06</div>
+      <div class="att-intro">
+        <div class="stage-label">Qualifiche &amp; Certificazioni</div>
+        <h2 class="stage-title">Le Nostre <em>Attestazioni</em></h2>
+        <p class="stage-sub">
+          Operiamo con le massime certificazioni di settore. Documenti ufficiali,
+          firmati e verificabili: garanzia di qualità, legalità e affidabilità.
+        </p>
+      </div>
+
+      <div class="att-grid">
+        <article class="att-card">
+          <div class="att-card-num">DOC / 001</div>
+          <div class="att-card-icon"><i class="fas fa-file-contract"></i></div>
+          <h3 class="att-card-name">Attestazione SOA</h3>
+          <p class="att-card-desc">Certificazione per l'esecuzione di lavori pubblici. Categorie OG1-IV, OG2-II, OG10-II, OG11-II, OS21-III, OS30-I.</p>
+          <div class="att-card-meta">
+            <div><strong>N°</strong> 59075/17/00</div>
+            <div><strong>Validità</strong> 04/03/2030</div>
+          </div>
+          <div class="att-card-actions">
+            <button type="button" class="att-view-btn" data-pdf="soa_artedile.pdf" data-num="DOC / 001" data-name="Attestazione <em>SOA</em>">
+              <i class="fas fa-expand"></i> Visualizza
+            </button>
+            <a href="soa_artedile.pdf" download class="att-dl-btn" aria-label="Scarica PDF">
+              <i class="fas fa-arrow-down"></i>
+            </a>
+          </div>
+        </article>
+
+        <article class="att-card">
+          <div class="att-card-num">DOC / 002</div>
+          <div class="att-card-icon"><i class="fas fa-certificate"></i></div>
+          <h3 class="att-card-name">ISO 9001:2015</h3>
+          <p class="att-card-desc">Sistema di Gestione per la Qualità conforme UNI EN ISO 9001:2015. Manutenzione di edifici (IAF 28). Rilasciato da S.O.C.I.F. Eclat.</p>
+          <div class="att-card-meta">
+            <div><strong>N°</strong> 00404/I09</div>
+            <div><strong>Validità</strong> 09/04/2027</div>
+          </div>
+          <div class="att-card-actions">
+            <button type="button" class="att-view-btn" data-pdf="Artedile SRL -  UNI EN ISO 90012015.pdf" data-num="DOC / 002" data-name="Certificazione <em>ISO 9001</em>">
+              <i class="fas fa-expand"></i> Visualizza
+            </button>
+            <a href="Artedile SRL -  UNI EN ISO 90012015.pdf" download class="att-dl-btn" aria-label="Scarica PDF">
+              <i class="fas fa-arrow-down"></i>
+            </a>
+          </div>
+        </article>
+
+        <article class="att-card">
+          <div class="att-card-num">DOC / 003</div>
+          <div class="att-card-icon"><i class="fas fa-shield-halved"></i></div>
+          <h3 class="att-card-name">White List Antimafia</h3>
+          <p class="att-card-desc">Iscrizione negli elenchi della Prefettura di Cosenza dei fornitori non soggetti a tentativo di infiltrazione mafiosa. Settore noli a caldo.</p>
+          <div class="att-card-meta">
+            <div><strong>Prot.</strong> 0134567 / 2024</div>
+            <div><strong>Rinnovo</strong> Novembre 2025</div>
+          </div>
+          <div class="att-card-actions">
+            <button type="button" class="att-view-btn" data-pdf="Artedile SRL - White List e rinnovo.pdf" data-num="DOC / 003" data-name="<em>White List</em> Antimafia">
+              <i class="fas fa-expand"></i> Visualizza
+            </button>
+            <a href="Artedile SRL - White List e rinnovo.pdf" download class="att-dl-btn" aria-label="Scarica PDF">
+              <i class="fas fa-arrow-down"></i>
+            </a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- STAGE 4: STORIA -->
+  <section class="stage" id="stage-storia">
+    <div class="stage-inner">
+      <div class="stage-marker">Tappa 04 / 06</div>
+      <div class="storia-layout">
+        <div class="storia-text">
+          <div class="stage-label">Chi Siamo</div>
+          <h2 class="stage-title">Una Storia di <em>Passione</em></h2>
+          <p class="stage-sub">
+            Tre decenni di cantieri, restauri e innovazione energetica. Dalla Calabria a tutta Italia,
+            ARTEDILE è cresciuta come una struttura ben costruita: una pietra alla volta.
+            Ogni anno una scelta, ogni opera una firma.
+          </p>
+          <div class="hero-ctas" style="margin-top: 2rem;">
+            <a href="#stage-contatti" class="btn btn-ghost"><span>Lavora con noi</span><span class="arr">→</span></a>
+          </div>
+        </div>
+
+        <div class="storia-timeline">
+          <div class="tl-node">
+            <div class="tl-year">1994 — Origine</div>
+            <h3 class="tl-title">Consorzio DEMA</h3>
+            <p class="tl-body">Un percorso di crescita che parte dalla fondazione del Consorzio DeMa, segnando l'ingresso in progetti di rilievo nel territorio.</p>
+          </div>
+          <div class="tl-node">
+            <div class="tl-year">2001 — Espansione</div>
+            <h3 class="tl-title">Prime Attestazioni SOA</h3>
+            <p class="tl-body">Ottenimento delle prime attestazioni SOA per lavori pubblici e ampliamento del team con professionisti specializzati nel restauro architettonico.</p>
+          </div>
+          <div class="tl-node">
+            <div class="tl-year">2009 — Qualità</div>
+            <h3 class="tl-title">ISO 9001 — Sistema Qualità</h3>
+            <p class="tl-body">Prima certificazione del Sistema di Gestione per la Qualità UNI EN ISO 9001 per la manutenzione di edifici. Standard rinnovato fino al 2027.</p>
+          </div>
+          <div class="tl-node">
+            <div class="tl-year">2011 — Energia</div>
+            <h3 class="tl-title">Divisione Rinnovabili</h3>
+            <p class="tl-body">Nasce la divisione impianti con i primi parchi fotovoltaici. ARTEDILE diventa player nel mercato delle energie rinnovabili.</p>
+          </div>
+          <div class="tl-node">
+            <div class="tl-year">2022 — Legalità</div>
+            <h3 class="tl-title">White List Antimafia</h3>
+            <p class="tl-body">Iscrizione negli elenchi della Prefettura di Cosenza dei fornitori non soggetti a tentativo di infiltrazione mafiosa.</p>
+          </div>
+          <div class="tl-node">
+            <div class="tl-year">Oggi</div>
+            <h3 class="tl-title">Lo Sguardo Avanti</h3>
+            <p class="tl-body">Artedile opera con SOA OG1-IV, ISO 9001 e White List attive. Sedi a Pietrapaola e Milano. Soluzioni moderne, efficienti, sostenibili.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- STAGE 5: SOCIAL -->
+  <section class="stage" id="stage-social">
+    <div class="stage-inner">
+      <div class="stage-label">Seguici</div>
+      <h2 class="stage-title">Siamo sui <em>Social</em></h2>
+      <p class="stage-sub" style="margin: 0 auto 2rem;">
+        Cantieri, dietro le quinte, novità di settore. Resta connesso con noi sui canali ufficiali.
       </p>
 
-      <div class="career-toggle" onclick="togglePositions()">
-        <div class="toggle-content">
-          <i class="fas fa-briefcase"></i>
-          <span>Vedi le Posizioni Aperte</span>
-        </div>
-        <i class="fas fa-chevron-down" id="toggle-icon" style="color: var(--blue-light);"></i>
-      </div>
-
-      <div class="positions-wrapper" id="positions-menu">
-        <div class="position-card-modern">
-          <div class="pos-info">
-            <h4>Elettricista</h4>
-            <p>Impianti Elettrici</p>
+      <div class="social-cards">
+        <a href="https://www.instagram.com/artedile?igsh=eGFxbmRsamp6ejc0&utm_source=qr" target="_blank" rel="noopener" class="social-card">
+          <div class="social-card-icon"><i class="fab fa-instagram"></i></div>
+          <div class="social-card-text">
+            <div class="social-card-name">Instagram</div>
+            <div class="social-card-handle">@ARTEDILE</div>
+            <div class="social-card-desc">Foto esclusive dai cantieri, prima/dopo, dietro le quinte.</div>
           </div>
-          <span class="pos-status">Aperta</span>
-        </div>
-        <div class="position-card-modern">
-          <div class="pos-info">
-            <h4>Elettricista / Idraulico</h4>
-            <p>Impianti Tecnici</p>
+          <div class="social-card-arr">→</div>
+        </a>
+        <a href="https://www.linkedin.com/company/artedilesrl/about/?viewAsMember=true" target="_blank" rel="noopener" class="social-card">
+          <div class="social-card-icon"><i class="fab fa-linkedin-in"></i></div>
+          <div class="social-card-text">
+            <div class="social-card-name">LinkedIn</div>
+            <div class="social-card-handle">ARTEDILE SRL</div>
+            <div class="social-card-desc">Aggiornamenti professionali, posizioni aperte, collaborazioni B2B.</div>
           </div>
-          <span class="pos-status">Aperta</span>
-        </div>
-      </div>
-
-      <div class="spontaneous-box">
-        <h4>Candidatura Spontanea</h4>
-        <p>Non trovi la posizione adatta? Inviaci comunque il tuo profilo tramite il modulo a fianco.</p>
+          <div class="social-card-arr">→</div>
+        </a>
       </div>
     </div>
+  </section>
 
-    <div class="cv-form-container">
-      <h3>Invia il tuo CV</h3>
-      <form id="cv-form" action="https://formsubmit.co/carlocdl21@gmail.com" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="_subject" value="Nuova Candidatura CV — ARTEDILE">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_next" value="https://artedileimpresa.it/grazie.html">
-        <div class="form-row">
-          <input type="text" name="nome" placeholder="Nome" required>
-          <input type="text" name="cognome" placeholder="Cognome" required>
+  <!-- STAGE 6: LAVORA -->
+  <section class="stage" id="stage-lavora">
+    <div class="stage-inner">
+      <div class="stage-marker">Tappa 05 / 06</div>
+      <div class="lavora-layout">
+        <div class="career-info">
+          <div class="stage-label">Carriera &amp; Futuro</div>
+          <h2 class="stage-title">Costruisci il tuo <em>Domani</em></h2>
+          <p class="stage-sub">
+            In ARTEDILE crediamo che la forza di un'azienda risieda nelle persone.
+            Cerchiamo professionisti pronti a innovare il settore.
+          </p>
+
+          <div class="positions-block">
+            <div class="positions-block-head">
+              <i class="fas fa-briefcase"></i>
+              <span class="ttl">Posizioni Aperte</span>
+              <span class="badge">2 attive</span>
+            </div>
+            <div class="position">
+              <div class="position-info">
+                <h4>Elettricista</h4>
+                <p>Impianti Elettrici · Tempo pieno</p>
+              </div>
+              <span class="position-status">● Aperta</span>
+            </div>
+            <div class="position">
+              <div class="position-info">
+                <h4>Elettricista / Idraulico</h4>
+                <p>Impianti Tecnici · Tempo pieno</p>
+              </div>
+              <span class="position-status">● Aperta</span>
+            </div>
+          </div>
+
+          <div class="spontaneous">
+            <h4>Candidatura Spontanea</h4>
+            <p>Non trovi la posizione adatta? Inviaci comunque il tuo profilo. Conserviamo i CV ricevuti e li valutiamo all'apertura di nuove ricerche.</p>
+          </div>
         </div>
-        <div class="form-row">
-          <input type="email" name="email" placeholder="Email" required>
-          <input type="tel" name="telefono" placeholder="Telefono">
+
+        <div class="form-panel">
+          <h3>Invia il <em>tuo CV</em></h3>
+          <form id="cv-form" action="send-cv.php" method="POST" enctype="multipart/form-data">
+            <div class="form-row">
+              <input type="text" name="nome" placeholder="Nome" required>
+              <input type="text" name="cognome" placeholder="Cognome" required>
+            </div>
+            <div class="form-row">
+              <input type="email" name="email" placeholder="Email" required>
+              <input type="tel" name="telefono" placeholder="Telefono">
+            </div>
+            <select name="posizione" required>
+              <option value="">Posizione di interesse</option>
+              <option>Elettricista</option>
+              <option>Elettricista / Idraulico</option>
+              <option>Candidatura Spontanea</option>
+            </select>
+            <textarea name="messaggio" placeholder="Messaggio (opzionale)"></textarea>
+            <div class="file-drop" id="fileDrop">
+              <input type="file" id="cv-file" name="cv_file" hidden accept=".pdf,.doc,.docx" required>
+              <p id="fileText">Carica il tuo CV</p>
+              <span id="fileInfo">PDF o DOCX — max 5MB</span>
+            </div>
+            <button type="submit" class="submit-btn" id="cvSubmitBtn">Invia Candidatura →</button>
+          </form>
         </div>
-        <select name="posizione" required style="margin-bottom: 1rem;">
-          <option value="">Posizione di interesse</option>
-          <option>Elettricista</option>
-          <option>Elettricista / Idraulico</option>
-          <option>Candidatura Spontanea</option>
-        </select>
-        <textarea name="messaggio" placeholder="Messaggio (opzionale)" style="min-height: 80px; margin-bottom: 1rem;"></textarea>
-        <div class="file-drop-zone" onclick="document.getElementById('cv-file').click()">
-          <input type="file" id="cv-file" name="cv_file" hidden accept=".pdf,.doc,.docx" onchange="updateFileName(this)">
-          <p id="file-text">Carica il tuo CV</p>
-          <span id="file-info">PDF o DOCX — max 5MB</span>
-        </div>
-        <button type="submit" class="apply-btn" id="cv-submit-btn">Invia Candidatura</button>
-      </form>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- CONTATTI -->
-<section id="contatti">
-  <div class="section-label" style="text-align: center; color: var(--blue-mid);">Parliamo</div>
-  <h2 class="section-title" style="text-align: center;">Diamo una svolta <strong>INSIEME</strong></h2>
-  <div class="divider" style="width: 60px; height: 2px; background: var(--blue-light); margin: 0 auto 50px auto;"></div>
+  <!-- STAGE 7: CONTATTI -->
+  <section class="stage" id="stage-contatti">
+    <div class="stage-inner">
+      <div class="stage-marker" style="left: 50%; transform: translateX(-50%);">Tappa 06 / 06 — Arrivo</div>
+      <div class="stage-label">Parliamo</div>
+      <h2 class="stage-title">Diamo una svolta <em>insieme</em></h2>
 
-  <div class="contatti-layout">
-    <div class="contact-info fade-in">
-      <div class="contact-item">
-        <div class="contact-icon-box"><i class="fas fa-map-marked-alt"></i></div>
+      <div class="contatti-layout">
         <div>
-          <div class="contact-item-label">Le Nostre Sedi</div>
-          <div class="contact-item-value">
-            <strong>Sede Legale:</strong> Via San Remo, 4 - 87060 Pietrapaola (CS)<br>
-            <strong style="display:inline-block; margin-top:8px;">Sede Operativa:</strong> Via Atto Vannucci, 5 - 20135 Milano (MI)
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fas fa-map-marked-alt"></i></div>
+            <div class="contact-label">Le Nostre Sedi</div>
+            <div class="contact-value">
+              <strong>Sede Legale</strong>
+              Via San Remo, 4 — 87060 Pietrapaola (CS)
+              <strong>Sede Operativa</strong>
+              Via Atto Vannucci, 5 — 20135 Milano (MI)
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+            <div class="contact-label">Telefono</div>
+            <div class="contact-value">
+              <a href="tel:+393891495308">Carlo De Luca — +39 389 149 5308 <span style="color:var(--blue-light);font-size:.7rem;letter-spacing:.2em;">[NORD]</span></a><br>
+              <a href="tel:+393207735065">Giuseppe De Luca — +39 320 773 5065 <span style="color:var(--blue-light);font-size:.7rem;letter-spacing:.2em;">[NORD]</span></a><br>
+              <a href="tel:+393334232174">Gianfranco De Luca — +39 333 423 2174 <span style="color:var(--blue-light);font-size:.7rem;letter-spacing:.2em;">[SUD]</span></a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fas fa-envelope-open-text"></i></div>
+            <div class="contact-label">Email &amp; PEC</div>
+            <div class="contact-value">
+              <a href="mailto:info@artedileimpresa.it">info@artedileimpresa.it</a><br>
+              <a href="mailto:artedile.srl@legalmail.it" style="color:var(--blue-light);">artedile.srl@legalmail.it</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><i class="fas fa-briefcase"></i></div>
+            <div class="contact-label">Codice Fiscale</div>
+            <div class="contact-value">C.F. / P.IVA: 02400210783</div>
           </div>
         </div>
-      </div>
-      <div class="contact-item">
-        <div class="contact-icon-box"><i class="fas fa-phone-alt"></i></div>
-        <div>
-          <div class="contact-item-label">Telefono</div>
-          <div class="contact-item-value">
-            <a href="tel:+393891495308">Carlo De Luca: +39 389 149 5308 (ZONA:NORD)</a><br>
-            <a href="tel:+393207735065">Giuseppe De Luca: +39 320 773 5065 (ZONA:NORD)</a><br>
-            <a href="tel:+393334232174">Gianfranco De Luca: +39 333 423 2174 (ZONA:SUD)</a>
-          </div>
-        </div>
-      </div>
-      <div class="contact-item">
-        <div class="contact-icon-box"><i class="fas fa-envelope-open-text"></i></div>
-        <div>
-          <div class="contact-item-label">Email &amp; PEC</div>
-          <div class="contact-item-value">
-            <a href="mailto:info@artedileimpresa.it">info@artedileimpresa.it</a><br>
-            <a href="mailto:artedile.srl@legalmail.it" style="color: var(--blue-mid);">artedile.srl@legalmail.it</a>
-          </div>
-        </div>
-      </div>
-      <div class="contact-item" style="border-left-color: var(--grey-mid);">
-        <div class="contact-icon-box" style="color: var(--grey-mid);"><i class="fas fa-briefcase"></i></div>
-        <div class="contact-item-value" style="font-size: .8rem; color: var(--grey-mid);">
-          C.F. / P.IVA: 02400210783
+
+        <div class="form-panel">
+          <h3>Invia un <em>Messaggio</em></h3>
+          <form id="contact-form">
+            <div class="form-row">
+              <input type="text" name="nome" placeholder="Nome e Cognome" required>
+              <input type="text" name="azienda" placeholder="Azienda">
+            </div>
+            <input type="email" name="email" placeholder="Email" required>
+            <select name="oggetto">
+              <option value="">Seleziona oggetto...</option>
+              <option>Preventivo Edilizia</option>
+              <option>Preventivo Restauro</option>
+              <option>Preventivo Fotovoltaico</option>
+              <option>Informazioni Generali</option>
+            </select>
+            <textarea name="messaggio" placeholder="Come possiamo aiutarti?" required></textarea>
+            <label class="form-privacy">
+              <input type="checkbox" id="privacy" required>
+              <span>Accetto la Privacy Policy e il trattamento dati ai sensi del GDPR.</span>
+            </label>
+            <button type="submit" class="submit-btn" id="contactSubmitBtn">Invia Messaggio →</button>
+          </form>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="contact-form fade-in">
-      <h3>Invia un Messaggio</h3>
-      <form id="contact-form" action="https://formsubmit.co/ajax/carlocdl21@gmail.com" method="POST">
-        <input type="hidden" name="_subject" value="Nuovo Messaggio di Contatto — ARTEDILE">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_template" value="table">
-        <div class="form-row" style="margin-bottom: 20px;">
-          <input type="text" id="c-nome" name="nome" placeholder="Nome e Cognome">
-          <input type="text" id="c-azienda" name="azienda" placeholder="Azienda">
-        </div>
-        <input type="email" id="c-email" name="email" placeholder="Email" style="margin-bottom: 15px;">
-        <select id="c-oggetto" name="oggetto" style="margin-bottom: 15px;">
-          <option value="">Seleziona oggetto...</option>
-          <option>Preventivo Edilizia</option>
-          <option>Preventivo Restauro</option>
-          <option>Preventivo Fotovoltaico</option>
-          <option>Informazioni Generali</option>
-        </select>
-        <textarea id="c-messaggio" name="messaggio" placeholder="Come possiamo aiutarti?" style="min-height: 120px; margin-bottom: 15px;"></textarea>
-        <div style="display:flex; align-items:center; gap:.8rem; margin-bottom:20px;">
-          <input type="checkbox" id="privacy" name="privacy" style="accent-color:var(--blue); width: auto;">
-          <label for="privacy" style="font-size:.75rem; color:var(--grey-dark); cursor:pointer;">
-            Accetto la Privacy Policy e il trattamento dati GDPR.
-          </label>
-        </div>
-        <button type="submit" class="submit-btn" id="contact-submit-btn">Invia Messaggio →</button>
-      </form>
-    </div>
-  </div>
-</section>
+</main>
 
-<!-- FOOTER -->
 <footer>
-  <div class="footer-logo">ARTEDILE</div>
+  <div class="footer-logo">Artedile</div>
   <ul class="footer-links">
-    <li><a href="#home">Home</a></li>
-    <li><a href="#opere">Opere</a></li>
-    <li><a href="#attestazioni">Attestazioni</a></li>
-    <li><a href="#storia">Storia</a></li>
-    <li><a href="#contatti">Contatti</a></li>
+    <li><a href="#stage-hero">Home</a></li>
+    <li><a href="#stage-opere">Opere</a></li>
+    <li><a href="#stage-attestazioni">Attestazioni</a></li>
+    <li><a href="#stage-storia">Storia</a></li>
+    <li><a href="#stage-lavora">Lavora con noi</a></li>
+    <li><a href="#stage-contatti">Contatti</a></li>
   </ul>
-  <div class="footer-copy">© 2025 ARTEDILE S.r.l. — Tutti i diritti riservati</div>
+  <div class="footer-copy">© 2025 Artedile S.r.l. — Tutti i diritti riservati — P.IVA 02400210783</div>
 </footer>
+
+<!-- ═══════════════════════════════════════
+     PDF VIEWER MODAL
+═══════════════════════════════════════ -->
+<div class="pdf-modal" id="pdfModal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="pdf-modal-bg"></div>
+  <div class="pdf-modal-header">
+    <div class="pdf-modal-title">
+      <span class="pdf-modal-num" id="pdfModalNum">DOC / 001</span>
+      <h3 class="pdf-modal-name" id="pdfModalName">Documento</h3>
+    </div>
+    <div class="pdf-modal-actions">
+      <a href="#" id="pdfModalDownload" download class="pdf-action-btn primary">
+        <i class="fas fa-arrow-down"></i> Scarica
+      </a>
+      <a href="#" id="pdfModalOpen" target="_blank" rel="noopener" class="pdf-action-btn">
+        <i class="fas fa-external-link-alt"></i> Nuova scheda
+      </a>
+      <button type="button" class="pdf-close" id="pdfClose" aria-label="Chiudi">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+  <div class="pdf-viewer-wrap">
+    <div class="pdf-loader" id="pdfLoader">
+      <div class="pdf-loader-spinner"></div>
+      <div class="pdf-loader-text">Caricamento documento</div>
+    </div>
+    <iframe id="pdfIframe" class="pdf-iframe" title="Visualizzatore PDF"></iframe>
+  </div>
+  <div class="pdf-modal-foot">
+    <span>Documento ufficiale Artedile S.r.l.</span>
+    <span class="esc-hint">Premi <kbd>ESC</kbd> per chiudere</span>
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
+
 <script>
-/* ─── IMMERSIVE INTRO ANIMATION ─── */
-(function() {
-  document.body.classList.add('intro-active');
-  const intro = document.getElementById('intro');
-  if (!intro) return;
-  const tl = gsap.timeline({
-    onComplete() {
-      document.body.classList.remove('intro-active');
-      intro.remove();
+/* ════════════════════════════════════════════════════════════════════
+   IL CAMMINO DI ARTEDILE — 3D Scrollytelling Engine
+   ════════════════════════════════════════════════════════════════════ */
+gsap.registerPlugin(ScrollTrigger);
+
+const IS_MOBILE = window.matchMedia('(max-width: 720px)').matches;
+const IS_LOW_POWER = IS_MOBILE || navigator.hardwareConcurrency < 4;
+
+/* ──────────────────────────────────────────────
+   SCENA 3D — Three.js
+   ────────────────────────────────────────────── */
+const canvas = document.getElementById('scene-canvas');
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0xeef3f9, 0.014);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 600);
+camera.position.set(0, 2.5, 18);
+
+const renderer = new THREE.WebGLRenderer({
+  canvas, antialias: !IS_LOW_POWER, alpha: true,
+  powerPreference: 'high-performance'
+});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, IS_LOW_POWER ? 1.25 : 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x000000, 0);
+
+/* ─── LUCI ─── */
+const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+scene.add(ambient);
+
+const keyLight = new THREE.DirectionalLight(0xffffff, 0.9);
+keyLight.position.set(8, 12, 6);
+scene.add(keyLight);
+
+const rimLight = new THREE.PointLight(0x4a90d9, 1.2, 60);
+rimLight.position.set(-10, 4, -8);
+scene.add(rimLight);
+
+const accentLight = new THREE.PointLight(0x2563b0, 0.8, 35);
+accentLight.position.set(0, 8, 0);
+scene.add(accentLight);
+
+/* ─── STELLE / PARTICELLE PERSISTENTI (puntini blu su sfondo chiaro) ─── */
+const starGeo = new THREE.BufferGeometry();
+const STAR_COUNT = IS_LOW_POWER ? 700 : 1600;
+const starPositions = new Float32Array(STAR_COUNT * 3);
+const starColors = new Float32Array(STAR_COUNT * 3);
+const starSizes = new Float32Array(STAR_COUNT);
+for (let i = 0; i < STAR_COUNT; i++) {
+  const r = 30 + Math.random() * 180;
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.acos(2 * Math.random() - 1);
+  starPositions[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+  starPositions[i*3+1] = r * Math.cos(phi) * 0.6;
+  starPositions[i*3+2] = r * Math.sin(phi) * Math.sin(theta) - 40;
+  const tint = Math.random();
+  if (tint > 0.7) {
+    // Blu scuro navy
+    starColors[i*3]=0.10; starColors[i*3+1]=0.29; starColors[i*3+2]=0.55;
+  } else if (tint > 0.35) {
+    // Blu medio
+    starColors[i*3]=0.15; starColors[i*3+1]=0.39; starColors[i*3+2]=0.69;
+  } else {
+    // Blu chiaro
+    starColors[i*3]=0.29; starColors[i*3+1]=0.56; starColors[i*3+2]=0.85;
+  }
+  starSizes[i] = Math.random() * 1.4 + 0.3;
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+starGeo.setAttribute('size', new THREE.BufferAttribute(starSizes, 1));
+const starMat = new THREE.PointsMaterial({
+  size: 0.4, vertexColors: true,
+  transparent: true, opacity: 0.3,
+  blending: THREE.NormalBlending,
+  sizeAttenuation: true, depthWrite: false
+});
+const stars = new THREE.Points(starGeo, starMat);
+scene.add(stars);
+
+/* ─── DUST vicino alla camera (punti blu medi) ─── */
+const dustGeo = new THREE.BufferGeometry();
+const DUST_COUNT = IS_LOW_POWER ? 200 : 450;
+const dustPos = new Float32Array(DUST_COUNT * 3);
+for (let i = 0; i < DUST_COUNT; i++) {
+  dustPos[i*3]   = (Math.random() - 0.5) * 50;
+  dustPos[i*3+1] = (Math.random() - 0.5) * 30;
+  dustPos[i*3+2] = -Math.random() * 80;
+}
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+const dustMat = new THREE.PointsMaterial({
+  color: 0x4a90d9, size: 0.05,
+  transparent: true, opacity: 0.18,
+  blending: THREE.NormalBlending, depthWrite: false
+});
+const dust = new THREE.Points(dustGeo, dustMat);
+scene.add(dust);
+
+/* ──────────────────────────────────────────────
+   OGGETTI DELLA SCENA — i "monumenti" lungo il cammino
+   ────────────────────────────────────────────── */
+
+/* ── STAGE 1 — IL LOGO 3D che galleggia all'ingresso ── */
+const heroGroup = new THREE.Group();
+heroGroup.position.set(0, 1.5, -12);
+scene.add(heroGroup);
+
+// Triangolo Artedile in 3D (wireframe + filled)
+const triShape = new THREE.Shape();
+triShape.moveTo(0, 3);
+triShape.lineTo(2.6, -1.5);
+triShape.lineTo(-2.6, -1.5);
+triShape.lineTo(0, 3);
+
+const triExtrude = new THREE.ExtrudeGeometry(triShape, {
+  depth: 0.5, bevelEnabled: true, bevelThickness: 0.08,
+  bevelSize: 0.06, bevelSegments: 3
+});
+triExtrude.center();
+
+const triMatOuter = new THREE.MeshStandardMaterial({
+  color: 0x1a4b8c, metalness: 0.7, roughness: 0.35,
+  transparent: true, opacity: 0.92, side: THREE.DoubleSide
+});
+const heroTri = new THREE.Mesh(triExtrude, triMatOuter);
+heroGroup.add(heroTri);
+
+// Wireframe overlay
+const wireMat = new THREE.LineBasicMaterial({
+  color: 0x0d2545, transparent: true, opacity: 0.75
+});
+const wireGeo = new THREE.EdgesGeometry(triExtrude);
+const heroWire = new THREE.LineSegments(wireGeo, wireMat);
+heroGroup.add(heroWire);
+
+// Triangoli interni concentrici (effetto profondità logo)
+for (let i = 0; i < 3; i++) {
+  const s = 0.7 - i * 0.18;
+  const innerGeo = new THREE.EdgesGeometry(triExtrude.clone().scale(s, s, 0.4));
+  const innerMat = new THREE.LineBasicMaterial({
+    color: i % 2 ? 0x2563b0 : 0x4a90d9,
+    transparent: true, opacity: 0.45 - i * 0.1
+  });
+  const innerLine = new THREE.LineSegments(innerGeo, innerMat);
+  innerLine.position.z = -0.3 - i * 0.4;
+  heroGroup.add(innerLine);
+}
+
+/* ── STAGE 2 — LA CITTÀ delle OPERE (monoliti geometrici) ── */
+const cityGroup = new THREE.Group();
+cityGroup.position.set(0, -2, -80);
+scene.add(cityGroup);
+
+const buildingMat = new THREE.MeshStandardMaterial({
+  color: 0x1a4b8c, metalness: 0.5, roughness: 0.45,
+  transparent: true, opacity: 0
+});
+const buildingEdgeMat = new THREE.LineBasicMaterial({
+  color: 0x0d2545, transparent: true, opacity: 0
+});
+
+const buildings = [];
+const BUILDING_COUNT = IS_LOW_POWER ? 26 : 48;
+for (let i = 0; i < BUILDING_COUNT; i++) {
+  const w = 0.8 + Math.random() * 1.8;
+  const h = 3 + Math.random() * 12;
+  const d = 0.8 + Math.random() * 1.8;
+  const geo = new THREE.BoxGeometry(w, h, d);
+  const mat = buildingMat.clone();
+  const mesh = new THREE.Mesh(geo, mat);
+
+  const side = i % 2 === 0 ? 1 : -1;
+  const distFromCenter = 4 + Math.random() * 8;
+  mesh.position.set(
+    side * distFromCenter + (Math.random() - 0.5) * 4,
+    h / 2 - 1,
+    -i * 4 - Math.random() * 3
+  );
+
+  // Aggiungo edges
+  const edges = new THREE.EdgesGeometry(geo);
+  const lineMat = buildingEdgeMat.clone();
+  const line = new THREE.LineSegments(edges, lineMat);
+  mesh.add(line);
+
+  // "Finestre" — piccoli punti luce su lato del building
+  if (Math.random() > 0.4) {
+    const winCount = Math.floor(3 + Math.random() * 6);
+    const winGeo = new THREE.BufferGeometry();
+    const winPos = new Float32Array(winCount * 3);
+    for (let w = 0; w < winCount; w++) {
+      winPos[w*3]   = (Math.random() - 0.5) * 0.8;
+      winPos[w*3+1] = (Math.random() - 0.5) * (h * 0.8);
+      winPos[w*3+2] = d / 2 + 0.01;
+    }
+    winGeo.setAttribute('position', new THREE.BufferAttribute(winPos, 3));
+    const winMat = new THREE.PointsMaterial({
+      color: 0xffd97a, size: 0.13,
+      transparent: true, opacity: 0,
+      blending: THREE.AdditiveBlending, depthWrite: false
+    });
+    const wins = new THREE.Points(winGeo, winMat);
+    mesh.add(wins);
+    mesh.userData.windows = wins;
+  }
+
+  cityGroup.add(mesh);
+  buildings.push({ mesh, edges: line, mat, edgeMat: lineMat, baseY: mesh.position.y, h });
+}
+
+// Strada / piattaforma centrale (linee guida fluorescenti)
+const roadGeo = new THREE.PlaneGeometry(2.5, 200);
+const roadMat = new THREE.MeshBasicMaterial({
+  color: 0x2563b0, transparent: true, opacity: 0, side: THREE.DoubleSide
+});
+const road = new THREE.Mesh(roadGeo, roadMat);
+road.rotation.x = -Math.PI / 2;
+road.position.set(0, -0.95, -100);
+cityGroup.add(road);
+
+// Linee laterali
+for (let i = 0; i < 2; i++) {
+  const lineGeo = new THREE.PlaneGeometry(0.04, 200);
+  const lineMat2 = new THREE.MeshBasicMaterial({ color: 0x1a4b8c, transparent: true, opacity: 0 });
+  const line = new THREE.Mesh(lineGeo, lineMat2);
+  line.rotation.x = -Math.PI / 2;
+  line.position.set(i === 0 ? -1.3 : 1.3, -0.93, -100);
+  cityGroup.add(line);
+  buildings.push({ mat: lineMat2, edges: null, edgeMat: null, isRoadLine: true });
+}
+
+/* ── STAGE 3 — GALLERIA ATTESTAZIONI (pannelli orbitanti) ── */
+const galleryGroup = new THREE.Group();
+galleryGroup.position.set(0, 2, -270);
+scene.add(galleryGroup);
+
+const panels = [];
+for (let i = 0; i < 8; i++) {
+  const angle = (i / 8) * Math.PI * 2;
+  const radius = 10;
+  const panelGeo = new THREE.PlaneGeometry(3.2, 4.5);
+  const panelMat = new THREE.MeshStandardMaterial({
+    color: 0x1a4b8c, metalness: 0.3, roughness: 0.55,
+    transparent: true, opacity: 0,
+    side: THREE.DoubleSide,
+    emissive: 0x2563b0, emissiveIntensity: 0.08
+  });
+  const panel = new THREE.Mesh(panelGeo, panelMat);
+  panel.position.set(
+    Math.cos(angle) * radius,
+    Math.sin(i * 1.3) * 1.5,
+    Math.sin(angle) * radius
+  );
+  panel.lookAt(0, panel.position.y, 0);
+
+  const panelEdgeGeo = new THREE.EdgesGeometry(panelGeo);
+  const panelEdgeMat = new THREE.LineBasicMaterial({
+    color: 0x0d2545, transparent: true, opacity: 0
+  });
+  const panelEdge = new THREE.LineSegments(panelEdgeGeo, panelEdgeMat);
+  panel.add(panelEdge);
+
+  galleryGroup.add(panel);
+  panels.push({ mesh: panel, mat: panelMat, edgeMat: panelEdgeMat, angle, baseY: panel.position.y });
+}
+
+/* ── STAGE 4 — TUNNEL TEMPORALE (anelli concentrici) ── */
+const tunnelGroup = new THREE.Group();
+tunnelGroup.position.set(0, 2.5, -440);
+scene.add(tunnelGroup);
+
+const rings = [];
+const RING_COUNT = IS_LOW_POWER ? 12 : 22;
+for (let i = 0; i < RING_COUNT; i++) {
+  const ringGeo = new THREE.TorusGeometry(7 + Math.sin(i * 0.5) * 0.6, 0.04, 6, 64);
+  const ringMat = new THREE.MeshBasicMaterial({
+    color: i % 3 === 0 ? 0x1a4b8c : 0x2563b0,
+    transparent: true, opacity: 0,
+    blending: THREE.NormalBlending
+  });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.position.z = -i * 5;
+  ring.rotation.z = i * 0.15;
+  tunnelGroup.add(ring);
+  rings.push({ mesh: ring, mat: ringMat });
+}
+
+/* ── STAGE 5/6 — IMPALCATURA + ARRIVO ── */
+const finalGroup = new THREE.Group();
+finalGroup.position.set(0, 0, -620);
+scene.add(finalGroup);
+
+// Una struttura ad arco (telaio architettonico) all'arrivo
+const archMat = new THREE.MeshStandardMaterial({
+  color: 0x1a4b8c, metalness: 0.6, roughness: 0.45,
+  transparent: true, opacity: 0
+});
+const archEdgeMat = new THREE.LineBasicMaterial({
+  color: 0x0d2545, transparent: true, opacity: 0
+});
+
+const archParts = [];
+
+// Telaio: 4 pilastri verticali
+for (let i = 0; i < 4; i++) {
+  const x = (i % 2 === 0 ? -1 : 1) * 5;
+  const z = (i < 2 ? -1 : 1) * 5;
+  const pillarGeo = new THREE.BoxGeometry(0.3, 12, 0.3);
+  const pillarMat = archMat.clone();
+  const pillar = new THREE.Mesh(pillarGeo, pillarMat);
+  pillar.position.set(x, 5, z);
+  const edges = new THREE.EdgesGeometry(pillarGeo);
+  const edgeMat = archEdgeMat.clone();
+  const edge = new THREE.LineSegments(edges, edgeMat);
+  pillar.add(edge);
+  finalGroup.add(pillar);
+  archParts.push({ mat: pillarMat, edgeMat: edgeMat });
+}
+
+// Travi orizzontali (sopra)
+const beamOptions = [
+  { p: [0, 11, -5], r: [0, 0, 0], s: [10, 0.3, 0.3] },
+  { p: [0, 11, 5], r: [0, 0, 0], s: [10, 0.3, 0.3] },
+  { p: [-5, 11, 0], r: [0, 0, 0], s: [0.3, 0.3, 10] },
+  { p: [5, 11, 0], r: [0, 0, 0], s: [0.3, 0.3, 10] },
+];
+beamOptions.forEach(opt => {
+  const g = new THREE.BoxGeometry(opt.s[0], opt.s[1], opt.s[2]);
+  const m = archMat.clone();
+  const mesh = new THREE.Mesh(g, m);
+  mesh.position.set(opt.p[0], opt.p[1], opt.p[2]);
+  const e = new THREE.EdgesGeometry(g);
+  const em = archEdgeMat.clone();
+  mesh.add(new THREE.LineSegments(e, em));
+  finalGroup.add(mesh);
+  archParts.push({ mat: m, edgeMat: em });
+});
+
+// Piattaforma a terra
+const platGeo = new THREE.CircleGeometry(8, 64);
+const platMat = new THREE.MeshStandardMaterial({
+  color: 0x2563b0, metalness: 0.2, roughness: 0.7,
+  transparent: true, opacity: 0, side: THREE.DoubleSide,
+  emissive: 0x1a4b8c, emissiveIntensity: 0.03
+});
+const plat = new THREE.Mesh(platGeo, platMat);
+plat.rotation.x = -Math.PI / 2;
+plat.position.y = -1;
+finalGroup.add(plat);
+
+// Cerchi luminosi sulla piattaforma
+for (let i = 0; i < 3; i++) {
+  const circGeo = new THREE.RingGeometry(2 + i * 1.6, 2.05 + i * 1.6, 64);
+  const circMat = new THREE.MeshBasicMaterial({
+    color: 0x1a4b8c, transparent: true, opacity: 0,
+    side: THREE.DoubleSide
+  });
+  const circ = new THREE.Mesh(circGeo, circMat);
+  circ.rotation.x = -Math.PI / 2;
+  circ.position.y = -0.99;
+  finalGroup.add(circ);
+  archParts.push({ mat: circMat, edgeMat: null, isCircle: true });
+}
+
+archParts.push({ mat: platMat, edgeMat: null });
+
+/* ──────────────────────────────────────────────
+   PERCORSO DELLA CAMERA
+   Camera segue una curva nello spazio in base allo scroll
+   ────────────────────────────────────────────── */
+
+// Punti chiave del cammino (uno per ogni "tappa")
+const cameraStops = [
+  { pos: new THREE.Vector3(0, 2.5, 18),    look: new THREE.Vector3(0, 1.5, -12) },  // hero
+  { pos: new THREE.Vector3(0, 4, -20),     look: new THREE.Vector3(0, 0, -60) },    // tra hero e opere
+  { pos: new THREE.Vector3(2.5, 3, -85),   look: new THREE.Vector3(-1, 1, -120) }, // dentro la città
+  { pos: new THREE.Vector3(-1, 4, -180),   look: new THREE.Vector3(1, 1, -240) },  // uscita città
+  { pos: new THREE.Vector3(0, 4, -260),    look: new THREE.Vector3(0, 2, -270) },  // galleria
+  { pos: new THREE.Vector3(0, 3, -380),    look: new THREE.Vector3(0, 2.5, -440) },// ingresso tunnel
+  { pos: new THREE.Vector3(0, 2.5, -520),  look: new THREE.Vector3(0, 2, -560) },  // dentro tunnel
+  { pos: new THREE.Vector3(0, 4, -610),    look: new THREE.Vector3(0, 4, -620) },  // arrivo
+];
+
+const cameraCurve = new THREE.CatmullRomCurve3(cameraStops.map(s => s.pos), false, 'catmullrom', 0.5);
+const lookCurve = new THREE.CatmullRomCurve3(cameraStops.map(s => s.look), false, 'catmullrom', 0.5);
+
+/* ──────────────────────────────────────────────
+   SCROLL → CAMERA progress
+   ────────────────────────────────────────────── */
+let scrollProgress = 0;
+let targetProgress = 0;
+
+ScrollTrigger.create({
+  trigger: '.journey',
+  start: 'top top',
+  end: 'bottom bottom',
+  scrub: 1.2,
+  onUpdate: self => {
+    targetProgress = self.progress;
+  }
+});
+
+/* ──────────────────────────────────────────────
+   ANIMATION LOOP
+   ────────────────────────────────────────────── */
+let mouseX = 0, mouseY = 0;
+let camMouseOffsetX = 0, camMouseOffsetY = 0;
+document.addEventListener('mousemove', e => {
+  mouseX = (e.clientX / window.innerWidth - 0.5);
+  mouseY = (e.clientY / window.innerHeight - 0.5);
+});
+
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const elapsed = clock.getElapsedTime();
+  const dt = clock.getDelta();
+
+  // Smooth progress
+  scrollProgress += (targetProgress - scrollProgress) * 0.08;
+
+  // Camera segue la curva
+  const t = Math.max(0, Math.min(1, scrollProgress));
+  const camPos = cameraCurve.getPoint(t);
+  const camLook = lookCurve.getPoint(t);
+
+  // Aggiungo parallax del mouse alla camera (delicato)
+  camMouseOffsetX += (mouseX * 0.6 - camMouseOffsetX) * 0.04;
+  camMouseOffsetY += (-mouseY * 0.4 - camMouseOffsetY) * 0.04;
+  camera.position.set(
+    camPos.x + camMouseOffsetX,
+    camPos.y + camMouseOffsetY,
+    camPos.z
+  );
+  camera.lookAt(camLook);
+
+  // ── HERO logo: rotazione e fade-out in uscita
+  const heroVisibility = Math.max(0, 1 - t * 5);
+  heroGroup.rotation.y = elapsed * 0.25;
+  heroGroup.rotation.x = Math.sin(elapsed * 0.4) * 0.08;
+  heroTri.material.opacity = 0.55 * heroVisibility;
+  heroWire.material.opacity = 0.45 * heroVisibility;
+  heroGroup.position.y = 1.5 + Math.sin(elapsed * 0.7) * 0.15;
+  heroGroup.children.forEach(c => {
+    if (c.material && c.material !== triMatOuter && c.material !== wireMat) {
+      c.material.opacity = Math.max(0, (c.material.userData.baseOp || 0.25) * heroVisibility);
     }
   });
-  tl.to('.intro-logo', { opacity: 1, scale: 1, duration: 1.1, ease: 'power3.out' })
-    .to('.intro-logo', { rotate: 360, duration: 1.4, ease: 'power2.inOut' }, '-=0.5')
-    .to('.intro-name', { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=1.0')
-    .to('.intro-line', { width: 180, duration: 0.8, ease: 'power3.inOut' }, '-=0.6')
-    .to('.intro-tag',  { opacity: 1, duration: 0.7, ease: 'power2.out' }, '-=0.4')
-    .to({}, { duration: 0.6 })
-    .to('#intro', { yPercent: -100, duration: 1.1, ease: 'power4.inOut' });
-})();
 
-/* ─── HERO PARALLAX (desktop only — stable, no mobile jitter) ─── */
-(function() {
-  if (window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 901) return;
-  const wrap = document.getElementById('heroParallax');
-  const section = document.getElementById('home');
-  if (!wrap || !section) return;
-  let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
-  document.addEventListener('mousemove', (e) => {
-    const rect = section.getBoundingClientRect();
-    if (e.clientY > rect.bottom || e.clientY < rect.top) return;
-    targetX = (e.clientX / window.innerWidth - 0.5) * 2;
-    targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+  // ── CITY (opere): visibile da t≈0.08 a t≈0.45 — TENUE
+  const cityT = Math.max(0, Math.min(1, (t - 0.06) / 0.18));
+  const cityFadeOut = Math.max(0, Math.min(1, 1 - (t - 0.42) / 0.1));
+  const cityVis = cityT * cityFadeOut;
+  buildings.forEach((b, i) => {
+    if (b.isRoadLine) {
+      b.mat.opacity = 0.28 * cityVis;
+    } else {
+      b.mat.opacity = 0.42 * cityVis;
+      if (b.edgeMat) b.edgeMat.opacity = 0.32 * cityVis;
+      if (b.mesh) {
+        const rise = Math.max(0, Math.min(1, (cityT * 2) - (i / buildings.length) * 0.5));
+        b.mesh.position.y = b.baseY - (b.h * 0.5) * (1 - rise);
+        if (b.mesh.userData.windows) {
+          b.mesh.userData.windows.material.opacity = 0.45 * cityVis * (0.7 + Math.sin(elapsed * 2 + i) * 0.3);
+        }
+      }
+    }
   });
-  function lerp(a, b, t) { return a + (b - a) * t; }
+  road.material.opacity = 0.06 * cityVis;
+
+  // ── GALLERY (attestazioni): TENUE
+  const galT = Math.max(0, Math.min(1, (t - 0.42) / 0.12));
+  const galFadeOut = Math.max(0, Math.min(1, 1 - (t - 0.62) / 0.08));
+  const galVis = galT * galFadeOut;
+  galleryGroup.rotation.y = elapsed * 0.08;
+  panels.forEach((p, i) => {
+    p.mat.opacity = 0.4 * galVis;
+    p.edgeMat.opacity = 0.32 * galVis;
+    p.mesh.position.y = p.baseY + Math.sin(elapsed * 0.6 + i) * 0.4;
+  });
+
+  // ── TUNNEL (storia): TENUE
+  const tunT = Math.max(0, Math.min(1, (t - 0.62) / 0.1));
+  const tunFadeOut = Math.max(0, Math.min(1, 1 - (t - 0.82) / 0.08));
+  const tunVis = tunT * tunFadeOut;
+  rings.forEach((r, i) => {
+    r.mat.opacity = 0.3 * tunVis;
+    r.mesh.rotation.z = elapsed * (i % 2 === 0 ? 0.3 : -0.2) + i * 0.15;
+  });
+  tunnelGroup.rotation.z = elapsed * 0.05;
+
+  // ── FINAL (lavora + contatti): TENUE
+  const finT = Math.max(0, Math.min(1, (t - 0.78) / 0.1));
+  archParts.forEach((a, i) => {
+    a.mat.opacity = (a.isCircle ? 0.18 : 0.4) * finT;
+    if (a.edgeMat) a.edgeMat.opacity = 0.3 * finT;
+  });
+  archParts.filter(a => a.isCircle).forEach((a, i) => {
+    a.mat.opacity = (0.15 + Math.sin(elapsed * 0.8 + i * 1.5) * 0.08) * finT;
+  });
+
+  // Stars subtle drift
+  stars.rotation.y = elapsed * 0.003;
+
+  // Dust drift
+  const dustPosAttr = dustGeo.attributes.position;
+  for (let i = 0; i < DUST_COUNT; i++) {
+    dustPosAttr.array[i*3+1] += dt * 0.15 * (1 + i % 3 * 0.3);
+    if (dustPosAttr.array[i*3+1] > 15) dustPosAttr.array[i*3+1] = -15;
+  }
+  dustPosAttr.needsUpdate = true;
+
+  renderer.render(scene, camera);
+}
+animate();
+
+/* ──────────────────────────────────────────────
+   RESIZE
+   ────────────────────────────────────────────── */
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+
+/* ════════════════════════════════════════════════════════════════════
+   UI ENHANCEMENTS
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ─── PRELOADER ─── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('preloader').classList.add('done');
+    // Refresh ScrollTrigger dopo preloader: ricalcola tutti i trigger
+    // su una pagina ormai "settled" (font caricati, layout finale)
+    setTimeout(() => {
+      if (window.ScrollTrigger) ScrollTrigger.refresh();
+    }, 200);
+  }, 2200);
+});
+
+/* ─── CUSTOM CURSOR ─── */
+(() => {
+  if (IS_MOBILE) return;
+  const dot = document.querySelector('.cursor-dot');
+  const ring = document.querySelector('.cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
   function tick() {
-    currentX = lerp(currentX, targetX, 0.06);
-    currentY = lerp(currentY, targetY, 0.06);
-    wrap.style.transform = `translate(${currentX * 10}px, ${currentY * 6}px)`;
+    dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%, -50%)`;
+    rx += (mx - rx) * 0.18;
+    ry += (my - ry) * 0.18;
+    ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
     requestAnimationFrame(tick);
   }
   tick();
+  document.querySelectorAll('a, button, .opera-card, .att-card, .social-card, .file-drop, .position-toggle, .hero-stat, .att-view-btn, .att-dl-btn, .pdf-action-btn, .pdf-close').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+  });
 })();
 
-/* ─── Hamburger menu ─── */
-const hamburger = document.getElementById('hamburger');
-const navLinks = document.getElementById('navLinks');
-hamburger.addEventListener('click', () => navLinks.classList.toggle('open'));
-document.querySelectorAll('.nav-links a').forEach(link => {
-  link.addEventListener('click', () => navLinks.classList.remove('open'));
+/* ─── HUD: aggiorna il display del cammino ─── */
+const hudStages = [
+  { t: 0.00, label: 'Ingresso',      n: '01' },
+  { t: 0.12, label: 'Opere',          n: '02' },
+  { t: 0.45, label: 'Attestazioni',   n: '03' },
+  { t: 0.65, label: 'Storia',         n: '04' },
+  { t: 0.78, label: 'Social',         n: '05' },
+  { t: 0.85, label: 'Carriera',       n: '06' },
+  { t: 0.94, label: 'Contatti',       n: '07' }
+];
+const hudNum = document.getElementById('hud-num');
+const hudStage = document.getElementById('hud-stage');
+const hudFill = document.getElementById('hud-fill');
+
+ScrollTrigger.create({
+  trigger: '.journey',
+  start: 'top top',
+  end: 'bottom bottom',
+  onUpdate: self => {
+    const t = self.progress;
+    hudFill.style.width = (t * 100) + '%';
+    let current = hudStages[0];
+    for (const s of hudStages) if (t >= s.t) current = s;
+    if (hudStage.textContent !== current.label) {
+      hudStage.textContent = current.label;
+      hudNum.textContent = current.n + ' / 07';
+    }
+  }
 });
 
-/* ─── Navbar scroll ─── */
+/* ─── NAVBAR scroll ─── */
 window.addEventListener('scroll', () => {
   const nav = document.getElementById('navbar');
-  nav.style.boxShadow = window.scrollY > 80
-    ? '0 4px 30px rgba(26,75,140,0.12)'
-    : '0 2px 20px rgba(26,75,140,0.06)';
+  nav.classList.toggle('compact', window.scrollY > 100);
 });
 
-/* ─── Fade in observer ─── */
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      setTimeout(() => entry.target.classList.add('visible'), 100);
-      observer.unobserve(entry.target);
+/* ─── ACTIVE NAV LINK ─── */
+document.querySelectorAll('.stage').forEach(s => {
+  ScrollTrigger.create({
+    trigger: s, start: 'top 50%', end: 'bottom 50%',
+    onToggle: self => {
+      if (!self.isActive) return;
+      document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+      const a = document.querySelector(`.nav-links a[href="#${s.id}"]`);
+      if (a) a.classList.add('active');
     }
   });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+});
 
-/* ─── Toast ─── */
+/* ─── HAMBURGER ─── */
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+hamburger.addEventListener('click', () => navLinks.classList.toggle('mobile-open'));
+navLinks.querySelectorAll('a').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('mobile-open')));
+
+/* ─── SMOOTH SCROLL on nav clicks ─── */
+document.querySelectorAll('a[href^="#stage-"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      window.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
+    }
+  });
+});
+
+/* ─── HERO STATS counter ─── */
+ScrollTrigger.create({
+  trigger: '.hero-stats', start: 'top 90%', once: true,
+  onEnter() {
+    document.querySelectorAll('.hero-stat-num').forEach(el => {
+      const target = parseInt(el.dataset.num);
+      const suffix = el.textContent.replace(/\d+/g, '');
+      const obj = { v: 0 };
+      gsap.to(obj, {
+        v: target, duration: 2.5, ease: 'power2.out',
+        onUpdate: () => { el.textContent = Math.round(obj.v) + suffix; }
+      });
+    });
+  }
+});
+
+/* ─── STAGE ENTRANCE ANIMATIONS ─── */
+gsap.utils.toArray('.stage-marker, .stage-label, .stage-title, .stage-sub').forEach(el => {
+  if (el.closest('#stage-hero')) return; // hero ha la sua animazione
+  gsap.from(el, {
+    y: 50, opacity: 0, duration: 1.1,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+  });
+});
+
+/* ─── OPERE CARDS reveal ─── */
+gsap.utils.toArray('.opere-cat').forEach(cat => {
+  gsap.from(cat.querySelector('.opere-cat-head'), {
+    x: -40, opacity: 0, duration: 0.9, ease: 'power3.out',
+    scrollTrigger: { trigger: cat, start: 'top 85%', once: true }
+  });
+  gsap.from(cat.querySelectorAll('.opera-card'), {
+    y: 80, opacity: 0, duration: 0.9, stagger: 0.12,
+    ease: 'power3.out',
+    scrollTrigger: { trigger: cat, start: 'top 75%', once: true }
+  });
+});
+
+/* ─── ATTESTAZIONI cards reveal — sempre visibili, animazione solo come bonus ─── */
+gsap.fromTo('.att-card',
+  { y: 60, opacity: 0 },
+  {
+    y: 0, opacity: 1, duration: 1, stagger: 0.15,
+    ease: 'power3.out',
+    immediateRender: false,
+    scrollTrigger: { trigger: '.att-grid', start: 'top 85%', once: true }
+  }
+);
+
+/* ─── FALLBACK DI SICUREZZA: forza visibilità degli elementi animati ─── */
+// Se per qualunque ragione (refresh, preloader, scroll position iniziale)
+// un elemento resta a opacity 0 dopo 2.5s, lo rendiamo visibile.
+setTimeout(() => {
+  const animatedSelectors = [
+    '.att-card', '.opera-card', '.opere-cat-head',
+    '.stage-marker', '.stage-label', '.stage-title', '.stage-sub',
+    '.tl-node', '.social-card'
+  ];
+  document.querySelectorAll(animatedSelectors.join(', ')).forEach(el => {
+    const cs = window.getComputedStyle(el);
+    if (parseFloat(cs.opacity) < 0.05) {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    }
+  });
+  // Refresh finale per assicurarsi che ScrollTrigger ricalcoli
+  if (window.ScrollTrigger) ScrollTrigger.refresh();
+}, 2500);
+
+/* ─── TIMELINE nodes reveal ─── */
+gsap.utils.toArray('.tl-node').forEach((node, i) => {
+  ScrollTrigger.create({
+    trigger: node, start: 'top 80%', once: true,
+    onEnter: () => node.classList.add('in')
+  });
+});
+
+/* ─── SOCIAL cards ─── */
+gsap.from('.social-card', {
+  y: 50, opacity: 0, duration: 0.9, stagger: 0.15,
+  ease: 'power3.out',
+  scrollTrigger: { trigger: '.social-cards', start: 'top 85%', once: true }
+});
+
+/* ─── LAVORA reveal ─── */
+gsap.from('.career-info > *', {
+  x: -50, opacity: 0, duration: 1, stagger: 0.1,
+  ease: 'power3.out',
+  scrollTrigger: { trigger: '.lavora-layout', start: 'top 75%', once: true }
+});
+gsap.from('#stage-lavora .form-panel', {
+  x: 50, opacity: 0, duration: 1.1, ease: 'power3.out',
+  scrollTrigger: { trigger: '.lavora-layout', start: 'top 75%', once: true }
+});
+
+/* ─── CONTATTI reveal ─── */
+gsap.from('.contact-item', {
+  y: 40, opacity: 0, duration: 0.85, stagger: 0.12,
+  ease: 'power3.out',
+  scrollTrigger: { trigger: '.contatti-layout', start: 'top 80%', once: true }
+});
+gsap.from('#stage-contatti .form-panel', {
+  y: 50, opacity: 0, duration: 1, ease: 'power3.out',
+  scrollTrigger: { trigger: '.contatti-layout', start: 'top 80%', once: true }
+});
+
+/* ─── POSITION TOGGLE: non più necessario, posizioni sempre visibili ─── */
+(() => {
+  const t = document.getElementById('positionToggle');
+  if (t) t.addEventListener('click', function() {
+    this.classList.toggle('open');
+    const list = document.getElementById('positionsList');
+    if (list) list.classList.toggle('open');
+  });
+})();
+
+/* ─── FILE DROP ─── */
+const fileDrop = document.getElementById('fileDrop');
+const fileInput = document.getElementById('cv-file');
+const fileText = document.getElementById('fileText');
+const fileInfo = document.getElementById('fileInfo');
+
+fileDrop.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', () => {
+  if (fileInput.files.length) {
+    const f = fileInput.files[0];
+    if (f.size > 5 * 1024 * 1024) {
+      showToast('File troppo grande (max 5MB)', true);
+      fileInput.value = '';
+      return;
+    }
+    fileText.textContent = 'File pronto';
+    fileInfo.textContent = f.name;
+    fileDrop.classList.add('has-file');
+  }
+});
+
+/* ─── DRAG & DROP per il file CV ─── */
+['dragenter', 'dragover'].forEach(ev => {
+  fileDrop.addEventListener(ev, e => {
+    e.preventDefault();
+    fileDrop.style.borderColor = 'var(--sky)';
+    fileDrop.style.background = 'rgba(74,144,217,0.1)';
+  });
+});
+['dragleave', 'drop'].forEach(ev => {
+  fileDrop.addEventListener(ev, e => {
+    e.preventDefault();
+    fileDrop.style.borderColor = '';
+    fileDrop.style.background = '';
+  });
+});
+fileDrop.addEventListener('drop', e => {
+  if (e.dataTransfer.files.length) {
+    fileInput.files = e.dataTransfer.files;
+    fileInput.dispatchEvent(new Event('change'));
+  }
+});
+
+/* ─── TOAST ─── */
 function showToast(msg, isError) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.classList.toggle('toast-error', !!isError);
+  t.classList.toggle('error', !!isError);
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 4000);
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('show'), 4500);
 }
 
-/* ─── Toggle positions ─── */
-function togglePositions() {
-  const menu = document.getElementById('positions-menu');
-  const icon = document.getElementById('toggle-icon');
-  menu.classList.toggle('active');
-  icon.style.transform = menu.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
-}
-
-/* ─── File upload ─── */
-function updateFileName(input) {
-  document.getElementById('file-text').innerText = 'File caricato';
-  document.getElementById('file-info').innerText = input.files[0].name;
-}
-
-/* ─── CUSTOM CURSOR ─── */
-(function() {
-  if (window.matchMedia('(pointer: coarse)').matches) return;
-  const dot  = document.createElement('div');
-  const ring = document.createElement('div');
-  dot.className = 'cursor-dot'; ring.className = 'cursor-ring';
-  document.body.append(dot, ring);
-  let mx = 0, my = 0, rx = 0, ry = 0;
-  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-  gsap.ticker.add(() => {
-    rx += (mx - rx) * 0.16; ry += (my - ry) * 0.16;
-    dot.style.left  = mx + 'px'; dot.style.top  = my + 'px';
-    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-  });
-  document.querySelectorAll('a,button,.card,.att-card,.social-card,.career-toggle').forEach(el => {
-    el.addEventListener('mouseenter', () => ring.classList.add('cursor-hover'));
-    el.addEventListener('mouseleave', () => ring.classList.remove('cursor-hover'));
-  });
-})();
-
-/* ─── SCROLL PROGRESS BAR ─── */
-(function() {
-  const bar = document.createElement('div');
-  bar.id = 'progress-bar';
-  document.body.prepend(bar);
-  window.addEventListener('scroll', () => {
-    bar.style.width = Math.min(window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100, 100) + '%';
-  }, { passive: true });
-})();
-
-/* ══════════════════════════════════════
-   GSAP + ScrollTrigger — Animations
-══════════════════════════════════════ */
-gsap.registerPlugin(ScrollTrigger);
-
-/* ── Hero entrance (staggered timeline) ── */
-(function() {
-  const tl = gsap.timeline({ delay: 0.15 });
-  tl.fromTo('.hero-label', { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.85, ease: 'power3.out' })
-    .fromTo('#home h1',    { y: 90, opacity: 0 }, { y: 0, opacity: 1, duration: 1.0,  ease: 'power3.out' }, '-=0.45')
-    .fromTo('.hero-sub',   { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8,  ease: 'power3.out' }, '-=0.5')
-    .fromTo('.hero-ctas',  { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7,  ease: 'power3.out' }, '-=0.4')
-    .fromTo('.hero-stats', { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7,  ease: 'power3.out' }, '-=0.3');
-})();
-
-/* ── Hero stats counter ── */
-(function() {
-  const stats = document.querySelectorAll('.stat-num');
-  stats.forEach(el => { el.dataset.val = el.textContent.trim(); el.textContent = '0'; });
-  ScrollTrigger.create({
-    trigger: '.hero-stats', start: 'top 90%', once: true,
-    onEnter() {
-      stats.forEach(el => {
-        const raw = el.dataset.val, num = parseInt(raw.replace(/\D/g,'')), suffix = raw.replace(/[0-9]/g,'');
-        const o = { v: 0 };
-        gsap.to(o, { v: num, duration: 2.2, ease: 'power2.out',
-          onUpdate() { el.textContent = Math.round(o.v) + (o.v >= num ? suffix : ''); },
-          onComplete() { el.textContent = raw; }
-        });
-      });
-    }
-  });
-})();
-
-/* ── Section labels slide from left ── */
-document.querySelectorAll('.section-label').forEach(el => {
-  gsap.from(el, { x: -40, opacity: 0, duration: 0.7, ease: 'power3.out',
-    scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
-});
-
-/* ── Section titles rise up ── */
-document.querySelectorAll('.section-title').forEach(el => {
-  gsap.from(el, { y: 60, opacity: 0, duration: 1, ease: 'power3.out',
-    scrollTrigger: { trigger: el, start: 'top 86%', once: true } });
-});
-
-/* ── Section subtitles ── */
-document.querySelectorAll('.section-sub').forEach(el => {
-  gsap.from(el, { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out',
-    scrollTrigger: { trigger: el, start: 'top 88%', once: true } });
-});
-
-/* ── Dividers draw in ── */
-document.querySelectorAll('.divider').forEach(el => {
-  gsap.from(el, { width: 0, duration: 1.3, ease: 'power2.out',
-    scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
-});
-
-/* ── Opere: category headers alternating left/right ── */
-document.querySelectorAll('.cat-header').forEach((el, i) => {
-  gsap.from(el, { x: i % 2 === 0 ? -80 : 80, opacity: 0, duration: 0.9, ease: 'power3.out',
-    scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
-});
-
-/* ── Opere: cards clip-path curtain from bottom ── */
-document.querySelectorAll('.cards-grid').forEach(grid => {
-  gsap.fromTo(grid.querySelectorAll('.card'),
-    { clipPath: 'inset(100% 0% 0% 0%)', opacity: 0 },
-    { clipPath: 'inset(0% 0% 0% 0%)', opacity: 1, stagger: 0.15, duration: 1, ease: 'power3.out',
-      scrollTrigger: { trigger: grid, start: 'top 78%', once: true } }
-  );
-});
-
-/* ── Attestazioni: cards bounce up ── */
-gsap.fromTo('.att-card',
-  { y: 100, opacity: 0 },
-  { y: 0, opacity: 1, stagger: 0.14, duration: 0.85, ease: 'back.out(1.4)',
-    scrollTrigger: { trigger: '.attestazioni-grid', start: 'top 80%', once: true } }
-);
-
-/* ── Storia: image horizontal curtain reveal ── */
-gsap.fromTo('.storia-img img',
-  { clipPath: 'inset(0% 100% 0% 0%)' },
-  { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.6, ease: 'power4.inOut',
-    scrollTrigger: { trigger: '.storia-img', start: 'top 75%', once: true } }
-);
-
-/* ── Storia: text block slides from right ── */
-gsap.from('#storia .section-sub, #storia .timeline', {
-  x: 70, opacity: 0, stagger: 0.15, duration: 0.9, ease: 'power3.out',
-  scrollTrigger: { trigger: '#storia', start: 'top 70%', once: true }
-});
-
-/* ── Timeline items sequential from left ── */
-document.querySelectorAll('.tl-item').forEach((el, i) => {
-  gsap.from(el, { x: -60, opacity: 0, duration: 0.7, ease: 'power3.out', delay: i * 0.1,
-    scrollTrigger: { trigger: '.timeline', start: 'top 80%', once: true } });
-});
-
-/* ── Social cards: alternating fly-in ── */
-document.querySelectorAll('.social-card').forEach((el, i) => {
-  gsap.from(el, { x: i % 2 === 0 ? -110 : 110, opacity: 0, duration: 1, ease: 'power3.out',
-    scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
-});
-
-/* ── Lavora: career left, form right ── */
-gsap.from('.career-info', { x: -80, opacity: 0, duration: 1, ease: 'power3.out',
-  scrollTrigger: { trigger: '.lavora-container', start: 'top 78%', once: true } });
-gsap.from('.cv-form-container', { x: 80, opacity: 0, duration: 1, ease: 'power3.out',
-  scrollTrigger: { trigger: '.lavora-container', start: 'top 78%', once: true } });
-
-/* ── Contatti: info from left, form from right ── */
-gsap.from('.contact-info .contact-item', { x: -80, opacity: 0, stagger: 0.1, duration: 0.85, ease: 'power3.out',
-  scrollTrigger: { trigger: '.contatti-layout', start: 'top 80%', once: true } });
-gsap.from('.contact-form', { x: 80, opacity: 0, duration: 1, ease: 'power3.out',
-  scrollTrigger: { trigger: '.contatti-layout', start: 'top 80%', once: true } });
-
-/* ── Footer ── */
-gsap.from('footer > *', { y: 40, opacity: 0, stagger: 0.1, duration: 0.7, ease: 'power3.out',
-  scrollTrigger: { trigger: 'footer', start: 'top 90%', once: true } });
-
-/* ── MAGNETIC BUTTONS ── */
-(function() {
-  if (window.matchMedia('(pointer: coarse)').matches) return;
-  document.querySelectorAll('.btn-primary,.btn-outline,.apply-btn,.submit-btn,.btn-call').forEach(btn => {
-    btn.addEventListener('mousemove', e => {
-      const r = btn.getBoundingClientRect();
-      gsap.to(btn, { x: (e.clientX - r.left - r.width/2) * 0.35, y: (e.clientY - r.top - r.height/2) * 0.35,
-        duration: 0.4, ease: 'power2.out', overwrite: true });
-    });
-    btn.addEventListener('mouseleave', () => {
-      gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1,0.5)', overwrite: true });
-    });
-  });
-})();
-
-/* ── 3D CARD TILT ── */
-(function() {
-  if (window.matchMedia('(pointer: coarse)').matches) return;
-  document.querySelectorAll('.card').forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const r = card.getBoundingClientRect();
-      const x = ((e.clientX - r.left) / r.width  - 0.5) * 16;
-      const y = ((e.clientY - r.top)  / r.height - 0.5) * 16;
-      gsap.to(card, { rotationX: -y, rotationY: x, scale: 1.04,
-        transformPerspective: 700, duration: 0.25, ease: 'power2.out', overwrite: true });
-    });
-    card.addEventListener('mouseleave', () => {
-      gsap.to(card, { rotationX: 0, rotationY: 0, scale: 1,
-        duration: 0.6, ease: 'elastic.out(1,0.4)', overwrite: true });
-    });
-  });
-})();
-
-/* ── FLOATING ORBS in storia ── */
-(function() {
-  const sec = document.getElementById('storia');
-  if (!sec) return;
-  [{ s:'320px', c:'#1A4B8C', t:'-100px', r:'-80px', b:'auto', l:'auto', d:'0s' },
-   { s:'220px', c:'#2563B0', t:'auto',   r:'auto',  b:'-80px', l:'-60px', d:'5s' }
-  ].forEach(({ s, c, t, r, b, l, d }) => {
-    const orb = document.createElement('div');
-    orb.className = 'section-orb';
-    orb.style.cssText = `width:${s};height:${s};background:${c};top:${t};right:${r};bottom:${b};left:${l};animation-delay:${d};`;
-    sec.appendChild(orb);
-  });
-})();
-
-/* ── ACTIVE NAV on scroll ── */
-(function() {
-  document.querySelectorAll('section[id]').forEach(sec => {
-    ScrollTrigger.create({
-      trigger: sec, start: 'top 45%', end: 'bottom 45%',
-      onToggle(self) {
-        if (!self.isActive) return;
-        document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('nav-active'));
-        const a = document.querySelector(`.nav-links a[href="#${sec.id}"]`);
-        if (a) a.classList.add('nav-active');
-      }
-    });
-  });
-})();
-
-/* ─── Invio CV — submit tradizionale con file allegato ─── */
-document.getElementById('cv-form').addEventListener('submit', function() {
-  const btn = document.getElementById('cv-submit-btn');
-  btn.disabled = true;
-  btn.textContent = 'Invio in corso...';
-});
-
-/* ─── Invio Messaggio Contatto (Formsubmit) ─── */
-document.getElementById('contact-form').addEventListener('submit', async function(e) {
+/* ─── FORM CV (POST con file allegato) ─── */
+document.getElementById('cv-form').addEventListener('submit', async function(e) {
   e.preventDefault();
-  const privacy = document.getElementById('privacy').checked;
-  if (!privacy) { showToast('Accetta la Privacy Policy', true); return; }
-  const btn = document.getElementById('contact-submit-btn');
+  if (!fileInput.files.length) {
+    showToast('Carica il tuo CV per continuare', true);
+    return;
+  }
+  const btn = document.getElementById('cvSubmitBtn');
   btn.disabled = true;
   btn.textContent = 'Invio in corso...';
   try {
-    const res = await fetch('https://formsubmit.co/ajax/carlocdl21@gmail.com', {
+    const fd = new FormData(this);
+    const res = await fetch('send-cv.php', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.ok) {
+      window.location.href = 'grazie.html';
+    } else {
+      showToast(data.error || 'Errore durante l\'invio', true);
+      btn.disabled = false;
+      btn.textContent = 'Invia Candidatura →';
+    }
+  } catch (err) {
+    showToast('Errore di connessione. Riprova.', true);
+    btn.disabled = false;
+    btn.textContent = 'Invia Candidatura →';
+  }
+});
+
+/* ─── FORM CONTATTI ─── */
+document.getElementById('contact-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  if (!document.getElementById('privacy').checked) {
+    showToast('Accetta la Privacy Policy', true);
+    return;
+  }
+  const btn = document.getElementById('contactSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Invio in corso...';
+
+  const payload = {
+    nome:      this.nome.value,
+    email:     this.email.value,
+    azienda:   this.azienda.value,
+    oggetto:   this.oggetto.value,
+    messaggio: this.messaggio.value
+  };
+
+  try {
+    const res = await fetch('send-contact.php', {
       method: 'POST',
-      body: new FormData(this)
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
     const data = await res.json();
-    if (data.success === 'true' || data.success === true) {
-      showToast('Messaggio inviato con successo!');
+    if (data.ok) {
+      showToast(data.message || 'Messaggio inviato!');
       this.reset();
     } else {
-      showToast('Errore durante l\'invio. Riprova.', true);
+      showToast(data.error || 'Errore durante l\'invio', true);
     }
-  } catch {
+  } catch (err) {
     showToast('Errore di connessione. Riprova.', true);
   } finally {
     btn.disabled = false;
     btn.textContent = 'Invia Messaggio →';
   }
-})
-</script>
+});
 
-<!-- ═══════════════════════════════════════
-     THREE.JS — Interactive 3D Hero Scene
-     A floating cluster of architectural blocks
-     forming an "A" silhouette. Drags / touches
-     orbit the camera. Scroll explodes the cluster
-     and the user "enters" the structure.
-═══════════════════════════════════════ -->
-<script type="module">
-import * as THREE from 'three';
-
-(async function() {
-  const canvas = document.getElementById('hero3d');
-  if (!canvas) return;
-
-  // Respect reduced motion: just hide canvas, keep static gradient
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const renderer = new THREE.WebGLRenderer({
-    canvas, antialias: true, alpha: true,
-    powerPreference: 'high-performance'
-  });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setClearColor(0x000000, 0);
-
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x0a1628, 0.045);
-
-  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 200);
-  camera.position.set(0, 0, 22);
-
-  // Lights — blueprint-cool tone
-  const ambient = new THREE.AmbientLight(0x4a6fa5, 0.55);
-  scene.add(ambient);
-  const key = new THREE.DirectionalLight(0xa8c8f0, 1.4);
-  key.position.set(8, 12, 10);
-  scene.add(key);
-  const rim = new THREE.DirectionalLight(0x4A90D9, 1.0);
-  rim.position.set(-10, -4, -8);
-  scene.add(rim);
-  const accent = new THREE.PointLight(0x2563B0, 1.8, 50);
-  accent.position.set(0, 0, 6);
-  scene.add(accent);
-
-  // Floating 3D shapes (wireframes + metal cubes) drifting OVER the hero photo.
-  // Kept sparse and translucent so the construction photo stays visible.
-  const group = new THREE.Group();
-  scene.add(group);
-
-  const shapes = [];
-  const wireMat = new THREE.LineBasicMaterial({ color: 0x7fb3ff, transparent: true, opacity: 0.55 });
-  const solidMats = [
-    new THREE.MeshStandardMaterial({ color: 0x2563B0, metalness: 0.7, roughness: 0.25, transparent: true, opacity: 0.85, emissive: 0x0a1d3a, emissiveIntensity: 0.5 }),
-    new THREE.MeshStandardMaterial({ color: 0xa8c8f0, metalness: 0.9, roughness: 0.2, transparent: true, opacity: 0.75 }),
-  ];
-
-  function addShape(mesh, base) {
-    mesh.position.copy(base);
-    mesh.userData = {
-      base: base.clone(),
-      seed: Math.random() * Math.PI * 2,
-      spin: (Math.random() - 0.5) * 0.8,
-      baseOpacity: mesh.material.opacity ?? 1,
-      explodeDir: new THREE.Vector3(
-        (Math.random() - 0.5) * 1.5,
-        (Math.random() - 0.5) * 1.5,
-        Math.random() * 2 + 0.5
-      ).normalize(),
-    };
-    group.add(mesh);
-    shapes.push(mesh);
-  }
-
-  // Big wireframe icosahedron (centerpiece, see-through)
-  addShape(
-    new THREE.LineSegments(
-      new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(4.5, 1)),
-      wireMat
-    ),
-    new THREE.Vector3(0, 0, 0)
-  );
-
-  // Wireframe cube ring around it
-  for (let i = 0; i < 6; i++) {
-    const a = (i / 6) * Math.PI * 2;
-    const r = 8;
-    addShape(
-      new THREE.LineSegments(
-        new THREE.EdgesGeometry(new THREE.BoxGeometry(1.2, 1.2, 1.2)),
-        wireMat
-      ),
-      new THREE.Vector3(Math.cos(a) * r, Math.sin(a) * r * 0.6, (Math.random() - 0.5) * 4)
-    );
-  }
-
-  // A few solid metal cubes scattered around
-  for (let i = 0; i < 8; i++) {
-    const s = 0.6 + Math.random() * 0.9;
-    addShape(
-      new THREE.Mesh(new THREE.BoxGeometry(s, s, s), solidMats[i % 2]),
-      new THREE.Vector3(
-        (Math.random() - 0.5) * 18,
-        (Math.random() - 0.5) * 12,
-        (Math.random() - 0.5) * 6
-      )
-    );
-  }
-
-  // Octahedron accents
-  for (let i = 0; i < 3; i++) {
-    addShape(
-      new THREE.Mesh(new THREE.OctahedronGeometry(0.9), solidMats[0]),
-      new THREE.Vector3(
-        (Math.random() - 0.5) * 14,
-        (Math.random() - 0.5) * 10,
-        (Math.random() - 0.5) * 5
-      )
-    );
-  }
-
-  const blocks = shapes; // keep variable name used below
-
-  // Floating particles — dust / sparks
-  const particleCount = 220;
-  const pGeo = new THREE.BufferGeometry();
-  const pPos = new Float32Array(particleCount * 3);
-  for (let i = 0; i < particleCount; i++) {
-    pPos[i * 3]     = (Math.random() - 0.5) * 60;
-    pPos[i * 3 + 1] = (Math.random() - 0.5) * 40;
-    pPos[i * 3 + 2] = (Math.random() - 0.5) * 40 - 5;
-  }
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-  const pMat = new THREE.PointsMaterial({
-    color: 0xa8c8f0, size: 0.08, transparent: true, opacity: 0.7,
-    blending: THREE.AdditiveBlending, depthWrite: false,
-  });
-  const points = new THREE.Points(pGeo, pMat);
-  scene.add(points);
-
-  // Outer faint cage (atmosphere)
-  const cage = new THREE.LineSegments(
-    new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(18, 1)),
-    new THREE.LineBasicMaterial({ color: 0x4A90D9, transparent: true, opacity: 0.12 })
-  );
-  scene.add(cage);
-
-  // ───── Sizing ─────
-  function resize() {
-    const sec = document.getElementById('home');
-    const w = sec.clientWidth, h = sec.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    // Tighten FOV / pull back camera on portrait so "A" fits
-    if (w / h < 0.9) {
-      camera.fov = 70;
-      camera.position.z = 26;
-    } else {
-      camera.fov = 55;
-      camera.position.z = 22;
-    }
-    camera.updateProjectionMatrix();
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  // ───── Interaction (mouse + touch, drag to orbit) ─────
-  const target = { x: 0, y: 0 };
-  const current = { x: 0, y: 0 };
-  let dragging = false;
-  let lastX = 0, lastY = 0;
-  let userYaw = 0, userPitch = 0;
-
-  function pointerDown(e) {
-    dragging = true;
-    const p = e.touches ? e.touches[0] : e;
-    lastX = p.clientX; lastY = p.clientY;
-  }
-  function pointerMove(e) {
-    const p = e.touches ? e.touches[0] : e;
-    if (dragging) {
-      const dx = p.clientX - lastX;
-      const dy = p.clientY - lastY;
-      userYaw   += dx * 0.005;
-      userPitch += dy * 0.005;
-      userPitch = Math.max(-0.9, Math.min(0.9, userPitch));
-      lastX = p.clientX; lastY = p.clientY;
-      e.preventDefault?.();
-    } else {
-      // hover parallax
-      const rect = canvas.getBoundingClientRect();
-      target.x = ((p.clientX - rect.left) / rect.width  - 0.5) * 2;
-      target.y = ((p.clientY - rect.top)  / rect.height - 0.5) * 2;
-    }
-  }
-  function pointerUp() { dragging = false; }
-
-  canvas.addEventListener('mousedown', pointerDown);
-  window.addEventListener('mousemove', pointerMove);
-  window.addEventListener('mouseup', pointerUp);
-  canvas.addEventListener('touchstart', pointerDown, { passive: true });
-  canvas.addEventListener('touchmove', pointerMove, { passive: false });
-  canvas.addEventListener('touchend', pointerUp);
-
-  // Device tilt — gentle, mobile only, no page jitter (only rotates 3D scene)
-  if (window.matchMedia('(pointer: coarse)').matches) {
-    window.addEventListener('deviceorientation', (e) => {
-      if (e.gamma == null || e.beta == null) return;
-      target.x = Math.max(-1, Math.min(1, e.gamma / 30));
-      target.y = Math.max(-1, Math.min(1, (e.beta - 45) / 40));
+/* ─── OPERA CARDS 3D tilt ─── */
+if (!IS_MOBILE) {
+  document.querySelectorAll('.opera-card, .att-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = ((e.clientX - r.left) / r.width - 0.5) * 12;
+      const y = ((e.clientY - r.top) / r.height - 0.5) * 12;
+      card.style.transform = `perspective(900px) rotateX(${-y}deg) rotateY(${x}deg) translateY(-8px)`;
     });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+}
+
+/* ─── BUTTON MAGNETIC EFFECT ─── */
+if (!IS_MOBILE) {
+  document.querySelectorAll('.btn, .submit-btn, .nav-cta').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const r = btn.getBoundingClientRect();
+      const x = (e.clientX - r.left - r.width / 2) * 0.25;
+      const y = (e.clientY - r.top - r.height / 2) * 0.25;
+      btn.style.transform = `translate(${x}px, ${y}px)`;
+    });
+    btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+  });
+}
+
+/* ─── PDF VIEWER MODAL ─── */
+(() => {
+  const modal     = document.getElementById('pdfModal');
+  const iframe    = document.getElementById('pdfIframe');
+  const loader    = document.getElementById('pdfLoader');
+  const closeBtn  = document.getElementById('pdfClose');
+  const downloadA = document.getElementById('pdfModalDownload');
+  const openA     = document.getElementById('pdfModalOpen');
+  const numEl     = document.getElementById('pdfModalNum');
+  const nameEl    = document.getElementById('pdfModalName');
+
+  function openPdf(url, num, nameHTML) {
+    numEl.textContent = num;
+    nameEl.innerHTML = nameHTML;
+    downloadA.setAttribute('href', url);
+    downloadA.setAttribute('download', '');
+    openA.setAttribute('href', url);
+
+    loader.classList.remove('hidden');
+    // iframe src vuoto prima, poi imposto (per riavviare il caricamento ogni volta)
+    iframe.src = '';
+    setTimeout(() => {
+      // Aggiungo parametri per ottimizzare il viewer Chrome/Edge/Firefox
+      iframe.src = url + '#view=FitH&toolbar=1&navpanes=0';
+    }, 50);
+
+    iframe.onload = () => {
+      setTimeout(() => loader.classList.add('hidden'), 200);
+    };
+    // Fallback timeout
+    setTimeout(() => loader.classList.add('hidden'), 4000);
+
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
   }
 
-  // ───── Scroll-driven "enter the structure" ─────
-  let scrollT = 0; // 0..1 over hero height
-  function updateScroll() {
-    const sec = document.getElementById('home');
-    const r = sec.getBoundingClientRect();
-    const h = sec.clientHeight;
-    scrollT = Math.max(0, Math.min(1, -r.top / h));
+  function closePdf() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      iframe.src = '';
+      loader.classList.remove('hidden');
+    }, 500);
   }
-  window.addEventListener('scroll', updateScroll, { passive: true });
-  updateScroll();
 
-  // ───── Animate ─────
-  const clock = new THREE.Clock();
-  let running = true;
+  // Bind tutti i bottoni "Visualizza"
+  document.querySelectorAll('.att-view-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const url = btn.dataset.pdf;
+      const num = btn.dataset.num;
+      const nameHTML = btn.dataset.name;
+      openPdf(url, num, nameHTML);
+    });
+  });
 
-  // Pause when offscreen for perf
-  const io = new IntersectionObserver((entries) => {
-    running = entries[0].isIntersecting;
-  }, { threshold: 0.01 });
-  io.observe(document.getElementById('home'));
+  // Chiusura
+  closeBtn.addEventListener('click', closePdf);
 
-  function animate() {
-    requestAnimationFrame(animate);
-    if (!running) return;
-    const t = clock.getElapsedTime();
-
-    // Smooth pointer parallax
-    current.x += (target.x - current.x) * 0.05;
-    current.y += (target.y - current.y) * 0.05;
-
-    // Combine pointer parallax + drag orbit
-    const yaw   = current.x * 0.45 + userYaw;
-    const pitch = current.y * 0.25 + userPitch;
-    group.rotation.y = yaw;
-    group.rotation.x = pitch;
-
-    // Camera dolly + scene "explode" with scroll
-    const explode = scrollT;
-    camera.position.z = (window.innerWidth / window.innerHeight < 0.9 ? 26 : 22) - explode * 14;
-    camera.position.y = explode * 1.5;
-
-    // Per-block: subtle float + scroll explosion
-    for (let i = 0; i < blocks.length; i++) {
-      const m = blocks[i];
-      const u = m.userData;
-      const float = Math.sin(t * 0.8 + u.seed) * 0.18;
-      const driftX = Math.cos(t * 0.4 + u.seed) * 0.15;
-      m.position.x = u.base.x + driftX + u.explodeDir.x * explode * 14;
-      m.position.y = u.base.y + float  + u.explodeDir.y * explode * 14;
-      m.position.z = u.base.z         + u.explodeDir.z * explode * 14;
-      m.rotation.x = t * 0.15 * u.spin + explode * Math.PI * 2 * u.spin;
-      m.rotation.y = t * 0.25 * u.spin + explode * Math.PI * 2 * u.spin;
-      // Fade as they fly past camera (preserve each shape's base opacity)
-      m.material.opacity = u.baseOpacity * (1 - Math.max(0, explode * 1.6 - 0.6));
+  // Click sullo sfondo (non sui contenuti)
+  modal.addEventListener('click', e => {
+    if (e.target === modal || e.target.classList.contains('pdf-modal-bg')) {
+      closePdf();
     }
+  });
 
-    // Particles slow drift
-    points.rotation.y = t * 0.02;
-    cage.rotation.y = t * 0.05;
-    cage.rotation.x = t * 0.03;
-
-    accent.position.x = Math.cos(t * 0.6) * 6;
-    accent.position.y = Math.sin(t * 0.5) * 3;
-
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  // Lost-context recovery
-  canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); }, false);
+  // ESC
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) {
+      closePdf();
+    }
+  });
 })();
+
+/* ─── KEYBOARD NAV (frecce) ─── */
+const stageIds = ['stage-hero', 'stage-opere', 'stage-attestazioni', 'stage-storia', 'stage-social', 'stage-lavora', 'stage-contatti'];
+document.addEventListener('keydown', e => {
+  if (['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+  if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+    e.preventDefault();
+    const cur = stageIds.find(id => {
+      const el = document.getElementById(id);
+      const r = el.getBoundingClientRect();
+      return r.top >= -50 && r.top < window.innerHeight * 0.7;
+    });
+    const idx = stageIds.indexOf(cur);
+    if (idx < stageIds.length - 1) {
+      document.getElementById(stageIds[idx + 1]).scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+  if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+    e.preventDefault();
+    const cur = stageIds.find(id => {
+      const el = document.getElementById(id);
+      const r = el.getBoundingClientRect();
+      return r.top >= -50 && r.top < window.innerHeight * 0.7;
+    });
+    const idx = stageIds.indexOf(cur);
+    if (idx > 0) {
+      document.getElementById(stageIds[idx - 1]).scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+});
 </script>
+
 </body>
 </html>
