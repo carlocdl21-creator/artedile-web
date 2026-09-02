@@ -2179,42 +2179,74 @@ scene.add(dust);
 const heroGroup = new THREE.Group();
 heroGroup.position.set(0, 1.5, -12);
 scene.add(heroGroup);
-// Triangolo Artedile in 3D (wireframe + filled)
-const triShape = new THREE.Shape();
-triShape.moveTo(0, 3);
-triShape.lineTo(2.6, -1.5);
-triShape.lineTo(-2.6, -1.5);
-triShape.lineTo(0, 3);
-const triExtrude = new THREE.ExtrudeGeometry(triShape, {
-  depth: 0.5, bevelEnabled: true, bevelThickness: 0.08,
-  bevelSize: 0.06, bevelSegments: 3
-});
-triExtrude.center();
-const triMatOuter = new THREE.MeshStandardMaterial({
-  color: 0x1a4b8c, metalness: 0.7, roughness: 0.35,
-  transparent: true, opacity: 0.92, side: THREE.DoubleSide
-});
-const heroTri = new THREE.Mesh(triExtrude, triMatOuter);
-heroGroup.add(heroTri);
-// Wireframe overlay
-const wireMat = new THREE.LineBasicMaterial({
-  color: 0x0d2545, transparent: true, opacity: 0.75
-});
-const wireGeo = new THREE.EdgesGeometry(triExtrude);
-const heroWire = new THREE.LineSegments(wireGeo, wireMat);
-heroGroup.add(heroWire);
-// Triangoli interni concentrici (effetto profondità logo)
-for (let i = 0; i < 3; i++) {
-  const s = 0.7 - i * 0.18;
-  const innerGeo = new THREE.EdgesGeometry(triExtrude.clone().scale(s, s, 0.4));
-  const innerMat = new THREE.LineBasicMaterial({
-    color: i % 2 ? 0x2563b0 : 0x4a90d9,
-    transparent: true, opacity: 0.45 - i * 0.1
+// ─── MARCHIO ARTEDILE IN 3D ───
+// Le 5 tessere del logo ufficiale, ricostruite come poligoni ed estruse:
+// ruotando mostrano lo spessore reale del marchio.
+// Coordinate nello spazio del logo (159 x 132 px, y verso il basso).
+const LOGO_W = 159, LOGO_H = 132;
+const LOGO_SCALE = 6.4 / LOGO_W;          // larghezza finale in unità di scena
+const LOGO_DEPTH = 0.85;                  // spessore dell'estrusione
+
+const logoPieces = [
+  { // barra inferiore — grigio
+    color: 0x9a9c9b, edge: 0x5f6160,
+    pts: [[57,94],[100,94],[154,102],[158,108],[145,130],[34,130]]
+  },
+  { // braccio destro — blu Artedile
+    color: 0x2c6196, edge: 0x14304f,
+    pts: [[95,7],[151,95],[104,88],[84,56]]
+  },
+  { // braccio sinistro — argento
+    color: 0xa7a9a8, edge: 0x6b6d6c,
+    pts: [[5,99],[55,19],[75,55],[56,85]]
+  },
+  { // tassello in basso a sinistra — blu notte
+    color: 0x132345, edge: 0x0a1226,
+    pts: [[1,107],[50,93],[26,130],[13,130]]
+  },
+  { // vertice superiore — grigio scuro
+    color: 0x696a69, edge: 0x3d3e3d,
+    pts: [[58,13],[65,1],[90,1],[79,47]]
+  }
+];
+
+const heroLogo = new THREE.Group();       // il marchio vero e proprio
+heroGroup.add(heroLogo);
+const heroMats = [];                      // materiali da far comparire/sparire
+
+logoPieces.forEach(piece => {
+  const shape = new THREE.Shape();
+  piece.pts.forEach(([px, py], k) => {
+    // da coordinate immagine (y in giù) a coordinate scena (y in su), centrate
+    const x = (px - LOGO_W / 2) * LOGO_SCALE;
+    const y = (LOGO_H / 2 - py) * LOGO_SCALE;
+    k === 0 ? shape.moveTo(x, y) : shape.lineTo(x, y);
   });
-  const innerLine = new THREE.LineSegments(innerGeo, innerMat);
-  innerLine.position.z = -0.3 - i * 0.4;
-  heroGroup.add(innerLine);
-}
+  shape.closePath();
+
+  const geo = new THREE.ExtrudeGeometry(shape, {
+    depth: LOGO_DEPTH, bevelEnabled: true, bevelThickness: 0.05,
+    bevelSize: 0.035, bevelOffset: 0, bevelSegments: 3
+  });
+  geo.translate(0, 0, -LOGO_DEPTH / 2);   // spessore centrato sull'asse di rotazione
+
+  const mat = new THREE.MeshStandardMaterial({
+    color: piece.color, metalness: 0.4, roughness: 0.42,
+    transparent: true, opacity: 0, side: THREE.DoubleSide
+  });
+  mat.userData.baseOp = 0.95;
+  heroMats.push(mat);
+  heroLogo.add(new THREE.Mesh(geo, mat));
+
+  // spigoli: tengono il marchio leggibile anche di taglio
+  const edgeMat = new THREE.LineBasicMaterial({
+    color: piece.edge, transparent: true, opacity: 0
+  });
+  edgeMat.userData.baseOp = 0.55;
+  heroMats.push(edgeMat);
+  heroLogo.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo, 25), edgeMat));
+});
+
 /* ── STAGE 2 — LA CITTÀ delle OPERE (monoliti geometrici) ── */
 const cityGroup = new THREE.Group();
 cityGroup.position.set(0, -2, -80);
@@ -2472,15 +2504,12 @@ function animate() {
   camera.lookAt(camLook);
   // ── HERO logo: rotazione e fade-out in uscita
   const heroVisibility = Math.max(0, 1 - t * 5);
-  heroGroup.rotation.y = elapsed * 0.25;
-  heroGroup.rotation.x = Math.sin(elapsed * 0.4) * 0.08;
-  heroTri.material.opacity = 0.55 * heroVisibility;
-  heroWire.material.opacity = 0.45 * heroVisibility;
+  heroGroup.rotation.y = elapsed * 0.25;                       // giro continuo sull'asse verticale
+  heroGroup.rotation.x = 0.34 + Math.sin(elapsed * 0.4) * 0.06; // inclinato: anche di profilo resta leggibile
+  heroGroup.rotation.z = Math.sin(elapsed * 0.31) * 0.05;
   heroGroup.position.y = 1.5 + Math.sin(elapsed * 0.7) * 0.15;
-  heroGroup.children.forEach(c => {
-    if (c.material && c.material !== triMatOuter && c.material !== wireMat) {
-      c.material.opacity = Math.max(0, (c.material.userData.baseOp || 0.25) * heroVisibility);
-    }
+  heroMats.forEach(m => {
+    m.opacity = Math.max(0, m.userData.baseOp * heroVisibility);
   });
   // ── CITY (opere): visibile da t≈0.08 a t≈0.45 — TENUE
   const cityT = Math.max(0, Math.min(1, (t - 0.06) / 0.18));
