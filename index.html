@@ -246,6 +246,14 @@
     align-items: center;
     z-index: 10;
   }
+  /* ─── NAVIGAZIONE A PAGINE: si vede una sola tappa per volta, si cambia a click ─── */
+  .journey .stage { display: none; }
+  .journey .stage.page-active {
+    display: flex;
+    min-height: 100vh !important;
+    padding-top: 110px;
+    padding-bottom: 7vh;
+  }
   /* Wash bianco semi-trasparente che ammorbidisce ulteriormente la 3D sotto i contenuti */
   .stage:not(#stage-hero)::before {
     content: '';
@@ -1864,7 +1872,7 @@
           <div class="tl-node">
             <div class="tl-year">Oggi</div>
             <h3 class="tl-title">Lo Sguardo Avanti</h3>
-            <p class="tl-body">Artedile opera con SOA OG1-IV, ISO 9001 e White List attive. Sedi a Pietrapaola e Milano. Soluzioni moderne, efficienti, sostenibili.</p>
+            <p class="tl-body">Artedile opera con SOA OG1-IV, ISO 9001 e White List attive. Sedi a Pietrapaola, Milano e Corigliano-Rossano. Soluzioni moderne, efficienti, sostenibili.</p>
           </div>
         </div>
       </div>
@@ -1981,8 +1989,10 @@
             <div class="contact-value">
               <strong>Sede Legale</strong>
               Via San Remo, 4 — 87060 Pietrapaola (CS)
-              <strong>Sede Operativa</strong>
+              <strong>Sede Operativa — Milano</strong>
               Via Atto Vannucci, 5 — 20135 Milano (MI)
+              <strong>Sede Operativa — Corigliano-Rossano</strong>
+              Via Santo Stefano, 21 — 87067 Corigliano-Rossano (CS)
             </div>
           </div>
           <div class="contact-item">
@@ -1998,7 +2008,7 @@
             <div class="contact-icon"><i class="fas fa-envelope-open-text"></i></div>
             <div class="contact-label">Email &amp; PEC</div>
             <div class="contact-value">
-              <a href="mailto:info@artedileimpresa.it">info@artedileimpresa.it</a><br>
+              <a href="mailto:info@artedilenord.it">info@artedilenord.it</a><br>
               <a href="mailto:artedile.srl@legalmail.it" style="color:var(--blue-light);">artedile.srl@legalmail.it</a>
             </div>
           </div>
@@ -2463,16 +2473,7 @@ const lookCurve = new THREE.CatmullRomCurve3(cameraStops.map(s => s.look), false
    SCROLL → CAMERA progress
    ────────────────────────────────────────────── */
 let scrollProgress = 0;
-let targetProgress = 0;
-ScrollTrigger.create({
-  trigger: '.journey',
-  start: 'top top',
-  end: 'bottom bottom',
-  scrub: 1.2,
-  onUpdate: self => {
-    targetProgress = self.progress;
-  }
-});
+let targetProgress = 0; // impostato dalla navigazione a pagine (showPage): la camera "vola" alla tappa
 /* ──────────────────────────────────────────────
    ANIMATION LOOP
    ────────────────────────────────────────────── */
@@ -2586,6 +2587,7 @@ window.addEventListener('resize', () => {
 window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('preloader').classList.add('done');
+    runHeroStats();
     // Refresh ScrollTrigger dopo preloader: ricalcola tutti i trigger
     // su una pagina ormai "settled" (font caricati, layout finale)
     setTimeout(() => {
@@ -2594,111 +2596,95 @@ window.addEventListener('load', () => {
   }, 2200);
 });
 /* ─── HUD: aggiorna il display del cammino ─── */
-const hudStages = [
-  { t: 0.00, label: 'Ingresso',      n: '01' },
-  { t: 0.12, label: 'Opere',          n: '02' },
-  { t: 0.45, label: 'Attestazioni',   n: '03' },
-  { t: 0.65, label: 'Storia',         n: '04' },
-  { t: 0.78, label: 'Social',         n: '05' },
-  { t: 0.85, label: 'Carriera',       n: '06' },
-  { t: 0.94, label: 'Contatti',       n: '07' }
-];
 const hudNum = document.getElementById('hud-num');
 const hudStage = document.getElementById('hud-stage');
 const hudFill = document.getElementById('hud-fill');
-ScrollTrigger.create({
-  trigger: '.journey',
-  start: 'top top',
-  end: 'bottom bottom',
-  onUpdate: self => {
-    const t = self.progress;
-    hudFill.style.width = (t * 100) + '%';
-    let current = hudStages[0];
-    for (const s of hudStages) if (t >= s.t) current = s;
-    if (hudStage.textContent !== current.label) {
-      hudStage.textContent = current.label;
-      hudNum.textContent = current.n + ' / 07';
-    }
-  }
-});
+// (il HUD viene aggiornato da showPage, in base alla pagina attiva)
 /* ─── NAVBAR scroll ─── */
 window.addEventListener('scroll', () => {
   const nav = document.getElementById('navbar');
   nav.classList.toggle('compact', window.scrollY > 100);
-});
-/* ─── ACTIVE NAV LINK ─── */
-document.querySelectorAll('.stage').forEach(s => {
-  ScrollTrigger.create({
-    trigger: s, start: 'top 50%', end: 'bottom 50%',
-    onToggle: self => {
-      if (!self.isActive) return;
-      document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
-      const a = document.querySelector(`.nav-links a[href="#${s.id}"]`);
-      if (a) a.classList.add('active');
-    }
-  });
 });
 /* ─── HAMBURGER ─── */
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
 hamburger.addEventListener('click', () => navLinks.classList.toggle('mobile-open'));
 navLinks.querySelectorAll('a').forEach(l => l.addEventListener('click', () => navLinks.classList.remove('mobile-open')));
-/* ─── SMOOTH SCROLL on nav clicks ─── */
+/* ─────────────────────────────────────────────
+   NAVIGAZIONE A PAGINE
+   Ogni tappa è una pagina: si cambia cliccando il menù.
+   La camera 3D "vola" alla scena della tappa scelta.
+   ───────────────────────────────────────────── */
+const PAGES = ['stage-hero','stage-opere','stage-attestazioni','stage-storia','stage-social','stage-lavora','stage-contatti'];
+const pageInfo = {
+  'stage-hero':         { t: 0.00, label: 'Ingresso',     n: '01' },
+  'stage-opere':        { t: 0.32, label: 'Opere',        n: '02' },
+  'stage-attestazioni': { t: 0.56, label: 'Attestazioni', n: '03' },
+  'stage-storia':       { t: 0.74, label: 'Storia',       n: '04' },
+  'stage-social':       { t: 0.82, label: 'Social',       n: '05' },
+  'stage-lavora':       { t: 0.90, label: 'Carriera',     n: '06' },
+  'stage-contatti':     { t: 1.00, label: 'Contatti',     n: '07' }
+};
+function animateStageIn(sec) {
+  // timeline della Storia: i nodi si accendono in sequenza
+  sec.querySelectorAll('.tl-node').forEach((n, i) => {
+    n.classList.remove('in');
+    setTimeout(() => n.classList.add('in'), 250 + i * 160);
+  });
+  const els = sec.querySelectorAll('.stage-label, .stage-title, .stage-sub, .opere-cat-head, .opera-card, .att-card, .social-card, .career-info > *, .form-panel, .contact-item');
+  if (els.length) {
+    gsap.killTweensOf(els);
+    gsap.fromTo(els,
+      { y: 36, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, stagger: 0.05, ease: 'power3.out', clearProps: 'all' }
+    );
+  }
+}
+function showPage(id, opts = {}) {
+  const info = pageInfo[id];
+  if (!info) return;
+  document.querySelectorAll('.journey .stage').forEach(s => s.classList.toggle('page-active', s.id === id));
+  window.scrollTo(0, 0);
+  targetProgress = info.t;
+  if (opts.instant) scrollProgress = info.t; // al primo caricamento niente volo
+  // HUD
+  hudFill.style.width = (PAGES.indexOf(id) / (PAGES.length - 1) * 100) + '%';
+  hudStage.textContent = info.label;
+  hudNum.textContent = info.n + ' / 07';
+  // voce di menù attiva
+  document.querySelectorAll('.nav-links a').forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+  // cronologia browser (indietro/avanti funzionano)
+  if (!opts.fromHash && location.hash !== '#' + id) history.pushState(null, '', '#' + id);
+  if (id !== 'stage-hero') animateStageIn(document.getElementById(id));
+}
 document.querySelectorAll('a[href^="#stage-"]').forEach(a => {
   a.addEventListener('click', e => {
     e.preventDefault();
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) {
-      window.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
-    }
+    showPage(a.getAttribute('href').slice(1));
   });
 });
-/* ─── HERO STATS counter ─── */
-ScrollTrigger.create({
-  trigger: '.hero-stats', start: 'top 90%', once: true,
-  onEnter() {
-    document.querySelectorAll('.hero-stat-num').forEach(el => {
-      const target = parseInt(el.dataset.num);
-      const suffix = el.textContent.replace(/\d+/g, '');
-      const obj = { v: 0 };
-      gsap.to(obj, {
-        v: target, duration: 2.5, ease: 'power2.out',
-        onUpdate: () => { el.textContent = Math.round(obj.v) + suffix; }
-      });
+window.addEventListener('popstate', () => {
+  const id = (location.hash || '#stage-hero').slice(1);
+  if (pageInfo[id]) showPage(id, { fromHash: true });
+});
+// Pagina iniziale: dall'hash se valido, altrimenti Home
+showPage(pageInfo[(location.hash || '').slice(1)] ? location.hash.slice(1) : 'stage-hero', { instant: true, fromHash: true });
+/* ─── HERO STATS counter (parte una volta, dopo il preloader) ─── */
+let heroStatsDone = false;
+function runHeroStats() {
+  if (heroStatsDone) return;
+  heroStatsDone = true;
+  document.querySelectorAll('.hero-stat-num').forEach(el => {
+    const target = parseInt(el.dataset.num);
+    const suffix = el.textContent.replace(/\d+/g, '');
+    const obj = { v: 0 };
+    gsap.to(obj, {
+      v: target, duration: 2.5, ease: 'power2.out',
+      onUpdate: () => { el.textContent = Math.round(obj.v) + suffix; }
     });
-  }
-});
-/* ─── STAGE ENTRANCE ANIMATIONS ─── */
-gsap.utils.toArray('.stage-marker, .stage-label, .stage-title, .stage-sub').forEach(el => {
-  if (el.closest('#stage-hero')) return; // hero ha la sua animazione
-  gsap.from(el, {
-    y: 50, opacity: 0, duration: 1.1,
-    ease: 'power3.out',
-    scrollTrigger: { trigger: el, start: 'top 85%', once: true }
   });
-});
-/* ─── OPERE CARDS reveal ─── */
-gsap.utils.toArray('.opere-cat').forEach(cat => {
-  gsap.from(cat.querySelector('.opere-cat-head'), {
-    x: -40, opacity: 0, duration: 0.9, ease: 'power3.out',
-    scrollTrigger: { trigger: cat, start: 'top 85%', once: true }
-  });
-  gsap.from(cat.querySelectorAll('.opera-card'), {
-    y: 80, opacity: 0, duration: 0.9, stagger: 0.12,
-    ease: 'power3.out',
-    scrollTrigger: { trigger: cat, start: 'top 75%', once: true }
-  });
-});
-/* ─── ATTESTAZIONI cards reveal — sempre visibili, animazione solo come bonus ─── */
-gsap.fromTo('.att-card',
-  { y: 60, opacity: 0 },
-  {
-    y: 0, opacity: 1, duration: 1, stagger: 0.15,
-    ease: 'power3.out',
-    immediateRender: false,
-    scrollTrigger: { trigger: '.att-grid', start: 'top 85%', once: true }
-  }
-);
+}
+/* (I reveal delle sezioni ora sono gestiti da animateStageIn al cambio pagina) */
 /* ─── FALLBACK DI SICUREZZA: forza visibilità degli elementi animati ─── */
 // Se per qualunque ragione (refresh, preloader, scroll position iniziale)
 // un elemento resta a opacity 0 dopo 2.5s, lo rendiamo visibile.
@@ -2718,39 +2704,6 @@ setTimeout(() => {
   // Refresh finale per assicurarsi che ScrollTrigger ricalcoli
   if (window.ScrollTrigger) ScrollTrigger.refresh();
 }, 2500);
-/* ─── TIMELINE nodes reveal ─── */
-gsap.utils.toArray('.tl-node').forEach((node, i) => {
-  ScrollTrigger.create({
-    trigger: node, start: 'top 80%', once: true,
-    onEnter: () => node.classList.add('in')
-  });
-});
-/* ─── SOCIAL cards ─── */
-gsap.from('.social-card', {
-  y: 50, opacity: 0, duration: 0.9, stagger: 0.15,
-  ease: 'power3.out',
-  scrollTrigger: { trigger: '.social-cards', start: 'top 85%', once: true }
-});
-/* ─── LAVORA reveal ─── */
-gsap.from('.career-info > *', {
-  x: -50, opacity: 0, duration: 1, stagger: 0.1,
-  ease: 'power3.out',
-  scrollTrigger: { trigger: '.lavora-layout', start: 'top 75%', once: true }
-});
-gsap.from('#stage-lavora .form-panel', {
-  x: 50, opacity: 0, duration: 1.1, ease: 'power3.out',
-  scrollTrigger: { trigger: '.lavora-layout', start: 'top 75%', once: true }
-});
-/* ─── CONTATTI reveal ─── */
-gsap.from('.contact-item', {
-  y: 40, opacity: 0, duration: 0.85, stagger: 0.12,
-  ease: 'power3.out',
-  scrollTrigger: { trigger: '.contatti-layout', start: 'top 80%', once: true }
-});
-gsap.from('#stage-contatti .form-panel', {
-  y: 50, opacity: 0, duration: 1, ease: 'power3.out',
-  scrollTrigger: { trigger: '.contatti-layout', start: 'top 80%', once: true }
-});
 /* ─── POSITION TOGGLE: non più necessario, posizioni sempre visibili ─── */
 (() => {
   const t = document.getElementById('positionToggle');
